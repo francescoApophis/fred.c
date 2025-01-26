@@ -69,10 +69,10 @@ typedef struct {
 } FredEditor;
 
 
-// void error(const char* msg);
-// FredFile FRED_open_file(const char* file_path);
-// struct termios FRED_setup_terminal(void);
-// void fred_editor_init(FredEditor* fe, FredFile* ff);
-// void FRED_start_editor(FredFile* ff);
+bool FRED_open_file(FredFile* ff, const char* file_path);
+bool FRED_setup_terminal(termios* term_orig);
+bool FRED_render(bool idle, FredFile* ff);
+bool FRED_start_editor(FredFile* ff);
+bool fred_editor_init(FredEditor* fe, FredFile* ff); 
 
 #endif 
