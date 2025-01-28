@@ -1,4 +1,6 @@
 #include <errno.h>
+#include <sys/ioctl.h>
+#include <signal.h>
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
@@ -72,9 +74,16 @@ end:
 }
 
 
+void handle_win_resize_sig(int sig)
+{
+  (void)sig;
+}
+
+
 bool FRED_setup_terminal(termios* term_orig)
 {
   bool failed = 0;
+  bool win_resize_sig_set = false;
 
   if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)){
     ERROR("Fred editor can only be run on a terminal.");
@@ -96,9 +105,25 @@ bool FRED_setup_terminal(termios* term_orig)
   if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_raw)){
     ERROR("could not set terminal options.");
   }
+
+  // NOTE: docs say that this function changes what a process does 
+  // when receiving a signal. i guess in noed it's used 
+  // to make sure nothing other than the editor resize would happen on it, 
+  // idk. But signal(7) lists SIGWINCH with action 'Ign' so, is this thing really 
+  // needed?
+  // https://www.reddit.com/r/cprogramming/comments/1d1r5cj/about_sigusr1_and_sigaction/?rdt=64600
+  struct sigaction old = {0}; 
+  struct sigaction act = {0};
+  act.sa_handler = handle_win_resize_sig;
+  if (-1 == sigaction(SIGWINCH, &act, &old)){
+    ERROR("could not set the editor to detect window changes.");
+  }
+  win_resize_sig_set = true;
+
   GOTO_END(failed);
 
 end:
+  if (failed && win_resize_sig_set) sigaction(SIGWINCH, &old, NULL);
   return failed;
 }
 
@@ -106,13 +131,13 @@ end:
 bool fred_editor_init(FredEditor* fe, FredFile* ff)
 {
   bool failed = 0;
-
   PIECE_TABLE_INIT(&fe->pt);
   PIECE_TABLE_PUSH(&fe->pt, ((Piece){
     .which_buf = 0,
     .offset = 250,
     .len = ff->size,
   }));
+
   fe->cursor = ((Cursor){.row = 0, .col = 0});
 
   GOTO_END(failed);
@@ -121,38 +146,82 @@ end:
 }
 
 
-bool FRED_render(bool idle, FredFile* ff)
+bool fred_win_resize(Display* d)
 {
-  bool failed = 0;
+  bool failed = false;
+  struct winsize w;
+  if (-1 == ioctl(STDIN_FILENO, TIOCGWINSZ, &w)){
+    ERROR("could not retrieve terminal size.");
+  }
 
+  d->size = w.ws_row * w.ws_col;
+  d->rows = w.ws_row;
+  d->cols = w.ws_col;
+  void* temp = realloc(d->text, d->size);
+  if (temp == NULL) ERROR("not enough space to get and display text.");
+  d->text = temp;
+  memset(d->text, SPACE_CH, d->size);
   GOTO_END(failed);
 end:
   return failed;
 }
 
+
+bool FRED_render_text(bool prev_idle, bool idle, Display* d)
+{
+  bool failed = false;
+  for (size_t i = 0; i < d->rows; i++) {
+    d->text[i * d->cols] = '~';
+  }
+  memset(d->text + d->size - d->cols + 1, SPACE_CH, prev_idle ? 10 : 4);
+  strncpy(d->text + d->size - d->cols + 1, idle ? "responsive" : "idle", idle? 10 : 4);
+
+  write(STDOUT_FILENO, "\033[2J\033[H", 8);
+  write(STDOUT_FILENO, d->text, d->size);
+  write(STDOUT_FILENO, "\033[H", 4);
+  GOTO_END(failed);
+end:
+  return failed;
+}
+
+
 bool FRED_start_editor(FredFile* ff)
 {
   bool failed = 0;
   FredEditor fe;
-  fred_editor_init(&fe, ff);
+  // NOTE: this can only fail because of the very first call to realloc 
+  // in the PIECE_TABLE_PUSH macro, which takes care of reporting the error
+  failed = fred_editor_init(&fe, ff);
+  if (failed) GOTO_END(1);
 
   bool running = true;
   bool idle = false;
+  bool prev_idle;
   char key;
+
+  Display d = {0};
+  fred_win_resize(&d);
+
   while (running) {
+    failed = FRED_render_text(prev_idle, idle, &d);
+    if (failed) GOTO_END(1);
+
     ssize_t b_read = read(STDIN_FILENO, &key, 1);
-    if (b_read == -1) ERROR("couldn't read from stdin");
-
-    idle = (bool)b_read;
-    if (key == 'q') running = false;
-    failed = FRED_render(idle, ff);
-    if (failed) GOTO_END(failed);
-    key = 0;
+    if (b_read == -1) {
+      if (errno == EINTR){
+        fred_win_resize(&d);
+        continue;
+      }
+      ERROR("couldn't read from stdin");
+    }
+    prev_idle = idle;
+    idle = ((bool) b_read);
+    if (key == 'q') running = 0;
   }
-
   GOTO_END(failed);
 
 end:
+  free(d.text); 
   PIECE_TABLE_FREE(&fe.pt);
   return failed;
 }

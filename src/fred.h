@@ -9,6 +9,9 @@
 #define ADD_BUF_INIT_CAP 512
 #define PIECE_TABLE_INIT_CAP 59
 
+
+#define SPACE_CH 32
+
 #define DA_PUSH(da, item, da_cap_init, da_type) do {                                  \
   if ((da)->len + 1 >= (da)->cap) {                                                   \
     (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                       \
@@ -64,8 +67,21 @@ typedef struct {
 } Cursor;
 
 typedef struct {
+  size_t width;
+  size_t height;
+} Window;
+
+typedef struct {
+  char* text;
+  size_t size;
+  size_t rows;
+  size_t cols;
+} Display;
+
+typedef struct {
   PieceTable pt;
   Cursor cursor;
+  Window window;
 } FredEditor;
 
 
