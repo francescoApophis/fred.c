@@ -6,12 +6,12 @@ CFLAGS = -Wall -Wextra -Wpedantic
 BDIR = ./build
 OBJS = $(BDIR)/main.o
 
-.PHONY = all debug clean
+.PHONY = all clean
 
 all: $(BDIR)/$(EXE) 
 
 $(BDIR)/$(EXE) : $(OBJS) 
-	$(CC) -o $@ $< $(CFLAGS)
+	$(CC) -o $@ $< $(CFLAGS) 
 
 $(BDIR)/%.o : src/%.c src/fred.h
 	mkdir -p $(BDIR)
@@ -19,9 +19,6 @@ $(BDIR)/%.o : src/%.c src/fred.h
 
 clean :
 	$(RM) $(BDIR)/*
-
-# debug : $(OBJS) all 
-#	$(CC) -g -o $(BDIR)/$(EXE)_debug $< $(CFLAGS) 
 
 # https://stackoverflow.com/questions/5178125/how-to-place-object-files-in-separate-subdirectory
 
