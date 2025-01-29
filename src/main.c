@@ -13,13 +13,13 @@
 #include <fcntl.h>
 #include "fred.h"
 
+// #define TERM_OFF
 
 #define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
 
 // TODO: about the 'FAILURE: message printing, I could pass it to goto_end'
 #define ERROR(msg) do { \
-  fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n", \
-                  __FILE__, __LINE__, msg, errno); \
+  fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n",  __FILE__, __LINE__, msg, errno); \
   GOTO_END(1); \
 } while (0)
 
@@ -95,7 +95,6 @@ bool FRED_setup_terminal(termios* term_orig)
 
   termios term_raw = *term_orig;
   term_raw.c_iflag &= ~(BRKINT | ISTRIP | INPCK |  IXON); // ICRNL |
-  term_raw.c_oflag &= ~OPOST;
   term_raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
   term_raw.c_cflag &= ~(CSIZE | PARENB);
   term_raw.c_cflag |= CS8;
@@ -160,25 +159,57 @@ bool fred_win_resize(Display* d)
   void* temp = realloc(d->text, d->size);
   if (temp == NULL) ERROR("not enough space to get and display text.");
   d->text = temp;
-  memset(d->text, SPACE_CH, d->size);
   GOTO_END(failed);
 end:
   return failed;
 }
 
 
-bool FRED_render_text(bool prev_idle, bool idle, Display* d)
+size_t fred_grab_text(Display* d, FredFile* ff, size_t scroll)
 {
-  bool failed = false;
-  for (size_t i = 0; i < d->rows; i++) {
-    d->text[i * d->cols] = '~';
+  size_t lines_written = 0;
+  size_t tot = 0;
+  
+  for (size_t i = 0; i < d->size; i++){
+    d->text[i] = ' ';
   }
-  memset(d->text + d->size - d->cols + 1, SPACE_CH, prev_idle ? 10 : 4);
-  strncpy(d->text + d->size - d->cols + 1, idle ? "responsive" : "idle", idle? 10 : 4);
 
-  write(STDOUT_FILENO, "\033[2J\033[H", 8);
-  write(STDOUT_FILENO, d->text, d->size);
-  write(STDOUT_FILENO, "\033[H", 4);
+  char* start_line = ff->text;
+  size_t newlines = 0;
+
+  for (size_t i = 0; i < ff->size; i++){
+    if (ff->text[i] == '\n') newlines++;
+    if (newlines == scroll){
+      start_line = start_line + i + 1;
+      break;
+    }
+  }
+
+  size_t j = 0;
+  for (size_t i = 0; i < ff->size; i++){
+    size_t row = j / d->cols;
+    size_t col = j % d->cols;
+
+    if (row >= d->rows) break;
+
+    if (start_line[i] != '\n') {
+      d->text[j++] = start_line[i];
+    } else {
+      j += d->cols - col;
+    }
+  }
+
+  return d->size;
+}
+
+bool FRED_render_text(Display* d, FredFile* ff, size_t tot)
+{
+  bool failed = 0;
+
+  fprintf(stdout, "\x1b[H");
+  fwrite(d->text, sizeof(*d->text), d->size, stdout);
+  fflush(stdout);
+
   GOTO_END(failed);
 end:
   return failed;
@@ -198,13 +229,14 @@ bool FRED_start_editor(FredFile* ff)
   bool idle = false;
   bool prev_idle;
   char key;
+  size_t scroll = 0;
 
   Display d = {0};
   fred_win_resize(&d);
 
   while (running) {
-    failed = FRED_render_text(prev_idle, idle, &d);
-    if (failed) GOTO_END(1);
+    size_t tot = fred_grab_text(&d, ff, scroll);
+    FRED_render_text(&d, ff, tot);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 1);
     if (b_read == -1) {
@@ -214,10 +246,25 @@ bool FRED_start_editor(FredFile* ff)
       }
       ERROR("couldn't read from stdin");
     }
+
     prev_idle = idle;
     idle = ((bool) b_read);
-    if (key == 'q') running = 0;
+
+    switch(key) {
+      case 'q': { running = 0; break;}
+      case 'k': {
+        scroll++; 
+        break;
+      }
+      case 'l': {
+        scroll--; 
+        break;
+      }
+      default: {}
+    }
+    key = 0;
   }
+
   GOTO_END(failed);
 
 end:
@@ -243,10 +290,12 @@ int main(int argc, char** argv)
   failed = FRED_open_file(&ff, filepath);
   if (failed) GOTO_END(1);
 
+#ifndef TERM_OFF
   termios term_orig;
   failed = FRED_setup_terminal(&term_orig);
   if (failed) GOTO_END(1);
   else term_set = 1;
+#endif
 
   failed = FRED_start_editor(&ff);
   if (failed) GOTO_END(1);
@@ -255,10 +304,13 @@ int main(int argc, char** argv)
 
 end:
   if (term_set) {
+    // TODO: reset SIGWINCH from here 
+#ifndef TERM_OFF
     while (8 != write(STDOUT_FILENO, "\033[2J\033[H", 8)){}
     // TODO: not really sure if this is the best way to handle it.
     // What if something causes tcsetattr() to fail continously?
     while (0 != tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_orig)){}
+#endif
 
     free(ff.text);
   }
