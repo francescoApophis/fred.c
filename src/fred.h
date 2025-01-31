@@ -12,6 +12,20 @@
 
 #define SPACE_CH 32
 
+
+
+#define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
+
+
+
+
+#define ERROR(msg) do { \
+  fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n",  __FILE__, __LINE__, msg, errno); \
+  GOTO_END(1); \
+} while (0)
+
+
+
 #define DA_PUSH(da, item, da_cap_init, da_type) do {                                  \
   if ((da)->len + 1 >= (da)->cap) {                                                   \
     (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                       \
@@ -23,16 +37,17 @@
 } while (0)
 
 
-
-#define PIECE_TABLE_INIT(da) do { \
+#define DA_INIT(da) do { \
   (da)->cap = 0;                  \
   (da)->len = 0;                  \
   (da)->items = NULL;             \
 } while(0)
 
-#define PIECE_TABLE_FREE(da) do { \
-  free((da)->items);              \
-  PIECE_TABLE_INIT((da));         \
+#define DA_FREE(da, end) do { \
+  free((da)->items);          \
+  if (!(end)){                \
+    DA_INIT((da));            \
+  }                           \
 } while(0)
 
 #define PIECE_TABLE_PUSH(da, item) do {                     \
@@ -40,14 +55,12 @@
 } while (0)
 
 
+
 typedef struct termios termios;
 
-typedef struct {
-  char* text;
-  size_t size;
-} FredFile;
 
-// NOTE: using int instead of size_t could save much more memory 
+
+// NOTE: using uint32_t instead of size_t could save much more memory 
 typedef struct {
   bool which_buf;
   size_t offset;
@@ -66,10 +79,6 @@ typedef struct {
   size_t col; 
 } Cursor;
 
-typedef struct {
-  size_t width;
-  size_t height;
-} Window;
 
 typedef struct {
   char* text;
@@ -78,17 +87,38 @@ typedef struct {
   size_t cols;
 } Display;
 
+
 typedef struct {
-  PieceTable pt;
+  char* text;
+  size_t size;
+} FileBuf;
+
+
+typedef struct {
+  char* items;
+  size_t len;
+  size_t cap;
+} AddBuf;
+
+
+typedef struct {
+  PieceTable piece_table;
+  AddBuf add_buf;
+  FileBuf file_buf;
   Cursor cursor;
-  Window window;
+  char* file_path;
 } FredEditor;
 
 
-bool FRED_open_file(FredFile* ff, const char* file_path);
-bool FRED_setup_terminal(termios* term_orig);
-bool FRED_render(bool idle, FredFile* ff);
-bool FRED_start_editor(FredFile* ff);
-bool fred_editor_init(FredEditor* fe, FredFile* ff); 
+bool FRED_open_file(FileBuf* file_buf, const char* file_path);
+bool FRED_setup_terminal();
+bool FRED_render_text(Display* d, Cursor* c);
+bool fred_editor_init(FredEditor* fe, const char* file_path);
+bool FRED_start_editor(FredEditor* fe);
+bool fred_win_resize(Display* d);
+void fred_grab_text(FredEditor* fe, Display* d, size_t scroll);
+bool fred_make_piece(FredEditor* fe, char key);
+void dump_piece_table(FredEditor* fe);
+
 
 #endif 

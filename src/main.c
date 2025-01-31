@@ -13,22 +13,16 @@
 #include <fcntl.h>
 #include "fred.h"
 
-// #define TERM_OFF
 
-#define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
-
-// TODO: about the 'FAILURE: message printing, I could pass it to goto_end'
-#define ERROR(msg) do { \
-  fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n",  __FILE__, __LINE__, msg, errno); \
-  GOTO_END(1); \
-} while (0)
+termios term_orig = {0};
+struct sigaction act = {0};
+struct sigaction old = {0};
 
 
-
-bool FRED_open_file(FredFile* ff, const char* file_path)
+bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 {
   bool failed = 0;   
-  bool loaded_file = 0;
+  bool file_loaded = 0;
 
   struct stat sb;
   if (stat(file_path, &sb) == -1) {
@@ -46,16 +40,16 @@ bool FRED_open_file(FredFile* ff, const char* file_path)
   int fd = open(file_path, O_RDONLY);
   if (fd == -1) ERROR("could not open given file.");
 
-  ff->size = sb.st_size;
-  ff->text = malloc(sizeof(*ff->text) * ff->size);
-  if (ff->text == NULL) ERROR("not enough memory for file buffer.");
-  loaded_file = 1;
+  file_buf->size = sb.st_size;
+  file_buf->text = malloc(sizeof(*file_buf->text) * file_buf->size);
+  if (file_buf->text == NULL) ERROR("not enough memory for file bufile_bufer.");
+  file_loaded = 1;
 
-  ssize_t bytes_read = read(fd, ff->text, ff->size);
+  ssize_t bytes_read = read(fd, file_buf->text, file_buf->size);
   if (bytes_read == -1) ERROR("could not read file content.");
 
-  while ((size_t) bytes_read < ff->size) {
-    ssize_t new_bytes_read = read(fd, ff->text + bytes_read, ff->size - bytes_read);
+  while ((size_t) bytes_read < file_buf->size) {
+    ssize_t new_bytes_read = read(fd, file_buf->text + bytes_read, file_buf->size - bytes_read);
     if (new_bytes_read == -1) {
       ERROR("could not read file content.");
     }
@@ -69,7 +63,7 @@ bool FRED_open_file(FredFile* ff, const char* file_path)
   GOTO_END(failed);
 
 end:
-  if (loaded_file && failed) free(ff->text);
+  if (file_loaded && failed) free(file_buf->text);
   return failed; 
 }
 
@@ -80,67 +74,87 @@ void handle_win_resize_sig(int sig)
 }
 
 
-bool FRED_setup_terminal(termios* term_orig)
+bool FRED_setup_terminal()
 {
   bool failed = 0;
-  bool win_resize_sig_set = false;
+  bool term_set = 0;
 
   if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)){
     ERROR("Fred editor can only be run on a terminal.");
   }
   
-  if (tcgetattr(STDIN_FILENO, term_orig) == -1){
-    ERROR("could not retrieve terminal options.");
+  if (tcgetattr(STDIN_FILENO, &term_orig) == -1){
+    ERROR("could not retrieve terminal opiece_tableions.");
   }
 
-  termios term_raw = *term_orig;
+  termios term_raw = term_orig;
   term_raw.c_iflag &= ~(BRKINT | ISTRIP | INPCK |  IXON); // ICRNL |
-  term_raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+  term_raw.c_lflag &= ~(ICANON | IEXTEN);
   term_raw.c_cflag &= ~(CSIZE | PARENB);
   term_raw.c_cflag |= CS8;
   term_raw.c_cc[VTIME] = 5;
   term_raw.c_cc[VMIN] = 0;
 
   if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_raw)){
-    ERROR("could not set terminal options.");
+    ERROR("could not set terminal opiece_tableions.");
   }
 
-  // NOTE: docs say that this function changes what a process does 
-  // when receiving a signal. i guess in noed it's used 
-  // to make sure nothing other than the editor resize would happen on it, 
-  // idk. But signal(7) lists SIGWINCH with action 'Ign' so, is this thing really 
-  // needed?
-  // https://www.reddit.com/r/cprogramming/comments/1d1r5cj/about_sigusr1_and_sigaction/?rdt=64600
-  struct sigaction old = {0}; 
-  struct sigaction act = {0};
   act.sa_handler = handle_win_resize_sig;
   if (-1 == sigaction(SIGWINCH, &act, &old)){
     ERROR("could not set the editor to detect window changes.");
   }
-  win_resize_sig_set = true;
 
   GOTO_END(failed);
-
 end:
-  if (failed && win_resize_sig_set) sigaction(SIGWINCH, &old, NULL);
+  if (failed && term_set) {
+    tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
+  }
   return failed;
 }
 
 
-bool fred_editor_init(FredEditor* fe, FredFile* ff)
+bool fred_editor_init(FredEditor* fe, const char* file_path)
 {
   bool failed = 0;
-  PIECE_TABLE_INIT(&fe->pt);
-  PIECE_TABLE_PUSH(&fe->pt, ((Piece){
-    .which_buf = 0,
-    .offset = 250,
-    .len = ff->size,
-  }));
+  bool file_loaded = 0;
+  bool term_and_sig_set = 0;
+  bool piece_table_allocated = 0;
+
+  DA_INIT(&fe->piece_table);
+  DA_INIT(&fe->add_buf);
+  failed = FRED_open_file(&fe->file_buf, file_path);
+  if (failed) GOTO_END(1);
+  file_loaded = 1;
+
+  failed = FRED_setup_terminal(&term_orig);
+  if (failed) GOTO_END(1);
+  term_and_sig_set = 1;
+
+  if (fe->file_buf.size > 0){
+    PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
+      .which_buf = 0,
+      .offset = 0,
+      .len = fe->file_buf.size,
+    }));
+    piece_table_allocated = 1;
+  }
 
   fe->cursor = ((Cursor){.row = 0, .col = 0});
 
   GOTO_END(failed);
 end:
+  if (failed){
+    if (file_loaded) free(fe->file_buf.text);
+
+    if (term_and_sig_set) {
+      tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
+      sigaction(SIGWINCH, &old, NULL);
+    }
+
+    if (piece_table_allocated){
+      DA_FREE(&fe->piece_table, true);
+    }
+  }
   return failed;
 }
 
@@ -165,50 +179,68 @@ end:
 }
 
 
-size_t fred_grab_text(Display* d, FredFile* ff, size_t scroll)
+void fred_grab_text(FredEditor* fe, Display* d, size_t scroll)
 {
-  size_t lines_written = 0;
-  size_t tot = 0;
-  
+  (void)scroll;
+
   for (size_t i = 0; i < d->size; i++){
     d->text[i] = ' ';
   }
 
-  char* start_line = ff->text;
-  size_t newlines = 0;
+  size_t i = 0;
+  size_t p_idx = 0;
 
-  for (size_t i = 0; i < ff->size; i++){
-    if (ff->text[i] == '\n') newlines++;
-    if (newlines == scroll){
-      start_line = start_line + i + 1;
-      break;
+  while (i < d->size && p_idx < fe->piece_table.len){
+    Piece* piece = fe->piece_table.items + p_idx;
+    char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+    
+    for (size_t j = 0; j < piece->len; j++){
+      if (i >= d->size) break; // NOTE: it crashes if the first piece is the 'original' file-buf piece
+                               // and the file-buf is a big ass file of size is bigger than display
+      size_t row = i / d->cols;
+      if (buf[piece->offset + j] != '\n'){
+        d->text[i++] = buf[piece->offset + j];
+      } else {
+        i = (row + 1) * d->cols;
+      }
     }
+    p_idx++;
   }
-
-  size_t j = 0;
-  for (size_t i = 0; i < ff->size; i++){
-    size_t row = j / d->cols;
-    size_t col = j % d->cols;
-
-    if (row >= d->rows) break;
-
-    if (start_line[i] != '\n') {
-      d->text[j++] = start_line[i];
-    } else {
-      j += d->cols - col;
-    }
-  }
-
-  return d->size;
 }
 
-bool FRED_render_text(Display* d, FredFile* ff, size_t tot)
+bool FRED_render_text(Display* d, Cursor* c)
 {
+  
   bool failed = 0;
-
   fprintf(stdout, "\x1b[H");
   fwrite(d->text, sizeof(*d->text), d->size, stdout);
+  fprintf(stdout, "\033[%zu;%zuH", c->row + 1, c->col + 1);
   fflush(stdout);
+  GOTO_END(failed);
+end:
+  return failed;
+}
+
+
+
+bool fred_make_piece(FredEditor* fe, char key)
+{
+  bool failed = 0;
+  
+  
+  size_t offset = 0;
+  if (fe->piece_table.len > 0) {
+    Piece last_piece = fe->piece_table.items[fe->piece_table.len - 1];
+    offset = last_piece.offset + last_piece.len;
+  }
+
+  PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
+    .which_buf = 1, 
+    .offset = offset, 
+    .len = 1,
+  }));
+
+  DA_PUSH(&fe->add_buf, key, ADD_BUF_INIT_CAP, "add_buf");
 
   GOTO_END(failed);
 end:
@@ -216,18 +248,23 @@ end:
 }
 
 
-bool FRED_start_editor(FredFile* ff)
+void dump_piece_table(FredEditor* fe)
+{
+  for (size_t i = 0; i < fe->piece_table.len; i++){
+    Piece piece = fe->piece_table.items[i];
+    char buf = !piece.which_buf ? 
+                      fe->file_buf.text[piece.offset] : 
+                      fe->add_buf.items[piece.offset] ;
+    fprintf(stdout, "piece at [%ld] = {buf = %d, offset = %lu, len = %lu} \"%c\"\n", 
+            i, piece.which_buf, piece.offset, piece.len, buf);
+  }
+}
+
+
+bool FRED_start_editor(FredEditor* fe)
 {
   bool failed = 0;
-  FredEditor fe;
-  // NOTE: this can only fail because of the very first call to realloc 
-  // in the PIECE_TABLE_PUSH macro, which takes care of reporting the error
-  failed = fred_editor_init(&fe, ff);
-  if (failed) GOTO_END(1);
-
   bool running = true;
-  bool idle = false;
-  bool prev_idle;
   char key;
   size_t scroll = 0;
 
@@ -235,10 +272,10 @@ bool FRED_start_editor(FredFile* ff)
   fred_win_resize(&d);
 
   while (running) {
-    size_t tot = fred_grab_text(&d, ff, scroll);
-    FRED_render_text(&d, ff, tot);
+    fred_grab_text(fe, &d, scroll);
+    FRED_render_text(&d, &fe->cursor);
 
-    ssize_t b_read = read(STDIN_FILENO, &key, 1);
+    ssize_t b_read = read(STDIN_FILENO, &key, 10);
     if (b_read == -1) {
       if (errno == EINTR){
         fred_win_resize(&d);
@@ -247,20 +284,39 @@ bool FRED_start_editor(FredFile* ff)
       ERROR("couldn't read from stdin");
     }
 
-    prev_idle = idle;
-    idle = ((bool) b_read);
-
     switch(key) {
-      case 'q': { running = 0; break;}
-      case 'k': {
-        scroll++; 
+      case 'q': { running = false; break;}
+      case 27 : {
+        size_t i = 0;
+        size_t file_final_size = 0;
+        while (i++ < fe->piece_table.len){
+          file_final_size += fe->piece_table.items[i].len;
+        }
+
+        if (file_final_size > 0){
+          FILE* f = fopen(fe->file_path, "wb");
+
+          size_t j = 0;
+          while (j < fe->piece_table.len){
+            Piece* piece = fe->piece_table.items + j;
+            char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+            fwrite(buf + piece->offset, sizeof(*buf), piece->len, f);
+            j++;
+          }
+        }
         break;
       }
-      case 'l': {
-        scroll--; 
-        break;
+      default : {
+        if (key == '\n' || (key >= ' ' && key <= '~')){
+          fred_make_piece(fe, key);
+          fe->cursor.col++;
+        }  
+
+        if (key == '\n') {
+          fe->cursor.row++;
+          fe->cursor.col = 0;
+        }
       }
-      default: {}
     }
     key = 0;
   }
@@ -268,8 +324,13 @@ bool FRED_start_editor(FredFile* ff)
   GOTO_END(failed);
 
 end:
-  free(d.text); 
-  PIECE_TABLE_FREE(&fe.pt);
+  DA_FREE(&fe->piece_table, true);
+  DA_FREE(&fe->add_buf, true);
+  free(fe->file_buf.text);
+  tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
+  sigaction(SIGWINCH, &old, NULL);
+  fprintf(stdout, "\033[2J\033[H");
+
   return failed;
 }
 
@@ -277,47 +338,66 @@ end:
 
 int main(int argc, char** argv)
 {
-  // TODO: move ff into a editor struct?
   // REMEMBER: JUST MAKE SOMETHING THAT WORKS FIRST!!!!!!!!
   bool failed = 0;
-  bool term_set = 0;
 
   if (argc < 2) ERROR("no file-path provided.");
   if (argc > 2) ERROR("too many arguments; can only handle one file right now.");
 
-  char* filepath = argv[1];
-  FredFile ff;
-  failed = FRED_open_file(&ff, filepath);
+  char* file_path = argv[1];
+
+  FredEditor fe = {0};
+  fe.file_path = file_path;
+  failed = fred_editor_init(&fe, file_path);
   if (failed) GOTO_END(1);
 
-#ifndef TERM_OFF
-  termios term_orig;
-  failed = FRED_setup_terminal(&term_orig);
+  failed = FRED_start_editor(&fe);
   if (failed) GOTO_END(1);
-  else term_set = 1;
-#endif
 
-  failed = FRED_start_editor(&ff);
-  if (failed) GOTO_END(1);
 
   GOTO_END(failed);
-
 end:
-  if (term_set) {
-    // TODO: reset SIGWINCH from here 
-#ifndef TERM_OFF
-    while (8 != write(STDOUT_FILENO, "\033[2J\033[H", 8)){}
-    // TODO: not really sure if this is the best way to handle it.
-    // What if something causes tcsetattr() to fail continously?
-    while (0 != tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_orig)){}
-#endif
-
-    free(ff.text);
-  }
   return failed;
 }
 
-// For the error-handling with goto's: 
+
+
+// TODO: grab_text() -> get_text() wtf was i even thinking 
+ 
+// TODO: handle eintr on close() in open_file()
+
+// TODO: display -> screen
+
+// TODO: handle failures in render_text()
+
+// TODO: I probably need a flag to differentiate action 
+// such as writing, deleting etc in make_piece()
+
+// TODO: what if I save each '\n' as a separate piece?
+// it would make the text-retrieval for rendering much easier 
+// (i could just while-loop through d->text and step through the 
+// piece-table with a variable; i could just memcpy each text-piece 
+// without having to check for newlines).
+// but idk maybe it's a waste of space.
+
+// TODO: use cursor position with offset in make_piece()
+
+// TODO: don't use hardcoded which_buf in make_piece()
+
+// TODO: make macro for add_buf push in make_piece()
+
+// TODO: I could have a fixed-size buffer something
+// not too big (100 chars) where character typed are stored. From 
+// this buffer render the char on the screen. 
+// Once you exit inser mode (or even save maybe?) push 
+// the make a piece table out of the buffer and clear
+// the latter.
+
+
+
+
+
+// For the error-handling: 
 // https://github.com/tsoding/noed
 // Copyright 2022 Alexey Kutepov <reximkut@gmail.com>
 
