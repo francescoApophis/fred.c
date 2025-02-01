@@ -11,6 +11,7 @@
 
 
 #define SPACE_CH 32
+#define ESC_CH 27
 
 
 
@@ -109,17 +110,18 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
-  char* file_path;
 } FredEditor;
 
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
+bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_setup_terminal();
 bool FRED_render_text(TermWin* term_win, Cursor* c);
 bool fred_editor_init(FredEditor* fe, const char* file_path);
-bool FRED_start_editor(FredEditor* fe);
+void fred_editor_free(FredEditor* fe);
+bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool fred_win_resize(TermWin* term_win);
-void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t scroll);
+void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, bool insert);
 bool fred_make_piece(FredEditor* fe, char key);
 void dump_piece_table(FredEditor* fe);
 

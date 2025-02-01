@@ -19,6 +19,7 @@ struct sigaction act = {0};
 struct sigaction old = {0};
 
 
+
 bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 {
   bool failed = 0;   
@@ -65,6 +66,37 @@ bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 end:
   if (file_loaded && failed) free(file_buf->text);
   return failed; 
+}
+
+
+bool FRED_save_file(FredEditor* fe, const char* file_path)
+{
+  bool failed = 0;
+  size_t file_size = 0;
+
+  for (size_t i = 0; i < fe->piece_table.len; i++){
+    file_size += fe->piece_table.items[i].len;
+  }
+
+  FILE* f = fopen(file_path, "wb");
+  if (f == NULL){
+    ERROR("could not save file: failed to open file.");
+  }
+
+  if (file_size > 0){
+    for (size_t j = 0; j < fe->piece_table.len; j++){
+      Piece* piece = fe->piece_table.items + j;
+      char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+      fwrite(buf + piece->offset, sizeof(*buf), piece->len, f);
+    }
+  } else {
+    int fd = fileno(f);
+    ftruncate(fd, 0);
+  }
+
+  fclose(f);
+end: 
+  return failed;
 }
 
 
@@ -158,6 +190,14 @@ end:
   return failed;
 }
 
+void fred_editor_free(FredEditor* fe)
+{
+  DA_FREE(&fe->piece_table, true);
+  DA_FREE(&fe->add_buf, true);
+  free(fe->file_buf.text);
+}
+
+
 
 bool fred_win_resize(TermWin* term_win)
 {
@@ -179,13 +219,16 @@ end:
 }
 
 
-void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t scroll)
+void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, bool insert)
 {
-  (void)scroll;
 
   for (size_t i = 0; i < term_win->size; i++){
     term_win->text[i] = ' ';
   }
+
+  char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
+  size_t last_row_idx = (term_win->rows - 1) * term_win->cols + 1;
+  memcpy(term_win->text + last_row_idx, mode, strlen(mode));
 
   size_t i = 0;
   size_t p_idx = 0;
@@ -193,15 +236,16 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t sc
   while (i < term_win->size && p_idx < fe->piece_table.len){
     Piece* piece = fe->piece_table.items + p_idx;
     char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
-    
-    for (size_t j = 0; j < piece->len; j++){
-      // NOTE: prevents crashing if the first piece is the 
-      // 'original' file-buf piece and file-buf is is bigger than term_win->size
-      if (i >= term_win->size) break; 
 
+    for (size_t j = 0; j < piece->len; j++){
       size_t row = i / term_win->cols;
+
+      if (i >= term_win->size) break; // NOTE: avoid out-of-bound write if piece->len > term_win->size
+      if (row >= term_win->rows - 1) break;
+
       if (buf[piece->offset + j] != '\n'){
-        term_win->text[i++] = buf[piece->offset + j];
+        term_win->text[i] = buf[piece->offset + j];
+        i++;
       } else {
         i = (row + 1) * term_win->cols;
       }
@@ -212,7 +256,6 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t sc
 
 bool FRED_render_text(TermWin* term_win, Cursor* cursor)
 {
-  
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
   fwrite(term_win->text, sizeof(*term_win->text), term_win->size, stdout);
@@ -263,18 +306,18 @@ void dump_piece_table(FredEditor* fe)
 }
 
 
-bool FRED_start_editor(FredEditor* fe)
+bool FRED_start_editor(FredEditor* fe, const char* file_path)
 {
   bool failed = 0;
   bool running = true;
+  bool insert = false;
   char key;
-  size_t scroll = 0;
 
   TermWin term_win = {0};
   fred_win_resize(&term_win);
 
   while (running) {
-    fred_get_text_from_piece_table(fe, &term_win, scroll);
+    fred_get_text_from_piece_table(fe, &term_win, insert);
     FRED_render_text(&term_win, &fe->cursor);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 10);
@@ -286,36 +329,25 @@ bool FRED_start_editor(FredEditor* fe)
       ERROR("couldn't read from stdin");
     }
 
-    switch(key) {
-      case 'q': { running = false; break;}
-      case 27 : {
-        size_t i = 0;
-        size_t file_final_size = 0;
-        while (i++ < fe->piece_table.len){
-          file_final_size += fe->piece_table.items[i].len;
-        }
+    if (insert) {
+      if (key == ESC_CH) insert = false;
 
-        if (file_final_size > 0){
-          FILE* f = fopen(fe->file_path, "wb");
+      if (key == '\n' || (key >= ' ' && key <= '~')){
+        fred_make_piece(fe, key);
+        fe->cursor.col++;
+      }  
 
-          for (size_t j = 0; j < fe->piece_table.len; j++){
-            Piece* piece = fe->piece_table.items + j;
-            char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
-            fwrite(buf + piece->offset, sizeof(*buf), piece->len, f);
-          }
-        }
-        break;
+      if (key == '\n') {
+        fe->cursor.row++;
+        fe->cursor.col = 0;
       }
-      default : {
-        if (key == '\n' || (key >= ' ' && key <= '~')){
-          fred_make_piece(fe, key);
-          fe->cursor.col++;
-        }  
-
-        if (key == '\n') {
-          fe->cursor.row++;
-          fe->cursor.col = 0;
-        }
+    } else {
+      switch(key) {
+        case 'w': { FRED_save_file(fe, file_path); break;}
+        case 'q': { running = false; break;}
+        case 'i': { insert = true; break;}
+        case ESC_CH: { insert = false; break; }
+        default:{}
       }
     }
     key = 0;
@@ -324,14 +356,11 @@ bool FRED_start_editor(FredEditor* fe)
   GOTO_END(failed);
 
 end:
-  DA_FREE(&fe->piece_table, true);
-  DA_FREE(&fe->add_buf, true);
-  free(fe->file_buf.text);
+  fred_editor_free(fe);
   free(term_win.text);
   tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
   sigaction(SIGWINCH, &old, NULL);
   fprintf(stdout, "\033[2J\033[H");
-
   return failed;
 }
 
@@ -348,11 +377,10 @@ int main(int argc, char** argv)
   char* file_path = argv[1];
 
   FredEditor fe = {0};
-  fe.file_path = file_path;
   failed = fred_editor_init(&fe, file_path);
   if (failed) GOTO_END(1);
 
-  failed = FRED_start_editor(&fe);
+  failed = FRED_start_editor(&fe, file_path);
   if (failed) GOTO_END(1);
 
 
@@ -361,8 +389,19 @@ end:
   return failed;
 }
 
+// at the moment fred is able to render text and write to an empty file.
+// You cannot navigate end edit just write, almost as in unbuffered mode.
+// GOAL: 
+//  - squash pieces into signle pieces. 
+//  - Move the cursor and edit at cursor pos.
+//  - delete characters
 
 
+// TODO: handle ftruncate error
+
+// TODO: differentiate errors for the user and internal errors.
+// TODO: have a separate buffer to report error messages in the 
+// bottom line of the screen
 
 // TODO: handle eintr on close() in open_file()
 
@@ -383,14 +422,46 @@ end:
 // TODO: don't use hardcoded which_buf in make_piece()
 
 
-// TODO: I could have a fixed-size buffer something
-// not too big (100 chars) where character typed are stored. From 
-// this buffer render the char on the screen. 
-// Once you exit inser mode (or even save maybe?) push 
-// the make a piece table out of the buffer and clear
-// the latter.
+// TODO: cursor should not move outside text in line.
 
 
+
+// TODO: when entering insert mode, push a SINGLE PIECE
+// and increase it's length as you type. 
+// But the thing is that when entering insert mode, 2 actions
+// can be made: inserting new text or deleting old text.
+//
+// So when entering insert mode, I cannot just push a piece 
+// directly, instead I should: 
+//   - parse and reach the 'right' index in the piece table where 
+//   the edit should happen;
+//
+//   There's two cases when reaching the the 'right' piece index:
+//       1. the cursor position is 'inside' a piece (cursor is for example
+//       at (row = 0, col = 15) and the piece as (offset = 0, len = 52))
+//
+//       2. the cursor position is 'after' a piece.
+//
+//    So to reach the right piece_index, i will loop through the table and 
+//    check if the length is less the cursor coordinates.
+//
+//   - then, based on the key-press (BACKSPACE/any text-key) i should 
+//   edit: decrease the piece length if deleting or pushing a new piece
+//   and increasing it's length if inserting.
+//       
+//
+//
+// If you delete decrease the length; 
+// if the piece has length==0 ? 
+//  if the piece.idx == piece_table.len ? decrease piece_table.len
+//  else do the memmove thingy
+//
+
+// TODO: in the future if i decide to add custom key-maps, I could 
+// use an array with designated initializers to hold mappings
+// mappings = { [ESC_KEY] = void (*some_job)(void*)...,
+             // [SPACE_KEY] = void (*some_job)(void*)...,}
+// where ESC_KEY is a preproc constant
 
 
 
