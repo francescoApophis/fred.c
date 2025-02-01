@@ -85,7 +85,7 @@ typedef struct {
   size_t size;
   size_t rows;
   size_t cols;
-} Display;
+} TermWin;
 
 
 typedef struct {
@@ -112,11 +112,11 @@ typedef struct {
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_setup_terminal();
-bool FRED_render_text(Display* d, Cursor* c);
+bool FRED_render_text(TermWin* term_win, Cursor* c);
 bool fred_editor_init(FredEditor* fe, const char* file_path);
 bool FRED_start_editor(FredEditor* fe);
-bool fred_win_resize(Display* d);
-void fred_grab_text(FredEditor* fe, Display* d, size_t scroll);
+bool fred_win_resize(TermWin* term_win);
+void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t scroll);
 bool fred_make_piece(FredEditor* fe, char key);
 void dump_piece_table(FredEditor* fe);
 

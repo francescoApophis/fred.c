@@ -159,7 +159,7 @@ end:
 }
 
 
-bool fred_win_resize(Display* d)
+bool fred_win_resize(TermWin* term_win)
 {
   bool failed = false;
   struct winsize w;
@@ -167,54 +167,56 @@ bool fred_win_resize(Display* d)
     ERROR("could not retrieve terminal size.");
   }
 
-  d->size = w.ws_row * w.ws_col;
-  d->rows = w.ws_row;
-  d->cols = w.ws_col;
-  void* temp = realloc(d->text, d->size);
+  term_win->size = w.ws_row * w.ws_col;
+  term_win->rows = w.ws_row;
+  term_win->cols = w.ws_col;
+  void* temp = realloc(term_win->text, term_win->size);
   if (temp == NULL) ERROR("not enough space to get and display text.");
-  d->text = temp;
+  term_win->text = temp;
   GOTO_END(failed);
 end:
   return failed;
 }
 
 
-void fred_grab_text(FredEditor* fe, Display* d, size_t scroll)
+void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, size_t scroll)
 {
   (void)scroll;
 
-  for (size_t i = 0; i < d->size; i++){
-    d->text[i] = ' ';
+  for (size_t i = 0; i < term_win->size; i++){
+    term_win->text[i] = ' ';
   }
 
   size_t i = 0;
   size_t p_idx = 0;
 
-  while (i < d->size && p_idx < fe->piece_table.len){
+  while (i < term_win->size && p_idx < fe->piece_table.len){
     Piece* piece = fe->piece_table.items + p_idx;
     char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
     
     for (size_t j = 0; j < piece->len; j++){
-      if (i >= d->size) break; // NOTE: it crashes if the first piece is the 'original' file-buf piece
-                               // and the file-buf is a big ass file of size is bigger than display
-      size_t row = i / d->cols;
+      // NOTE: prevents crashing if the first piece is the 
+      // 'original' file-buf piece and file-buf is is bigger than term_win->size
+      if (i >= term_win->size) break; 
+
+      size_t row = i / term_win->cols;
       if (buf[piece->offset + j] != '\n'){
-        d->text[i++] = buf[piece->offset + j];
+        term_win->text[i++] = buf[piece->offset + j];
       } else {
-        i = (row + 1) * d->cols;
+        i = (row + 1) * term_win->cols;
       }
     }
     p_idx++;
   }
 }
 
-bool FRED_render_text(Display* d, Cursor* c)
+bool FRED_render_text(TermWin* term_win, Cursor* cursor)
 {
   
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
-  fwrite(d->text, sizeof(*d->text), d->size, stdout);
-  fprintf(stdout, "\033[%zu;%zuH", c->row + 1, c->col + 1);
+  fwrite(term_win->text, sizeof(*term_win->text), term_win->size, stdout);
+  fprintf(stdout, "\033[%zu;%zuH", cursor->row + 1, cursor->col + 1);
   fflush(stdout);
   GOTO_END(failed);
 end:
@@ -268,17 +270,17 @@ bool FRED_start_editor(FredEditor* fe)
   char key;
   size_t scroll = 0;
 
-  Display d = {0};
-  fred_win_resize(&d);
+  TermWin term_win = {0};
+  fred_win_resize(&term_win);
 
   while (running) {
-    fred_grab_text(fe, &d, scroll);
-    FRED_render_text(&d, &fe->cursor);
+    fred_get_text_from_piece_table(fe, &term_win, scroll);
+    FRED_render_text(&term_win, &fe->cursor);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 10);
     if (b_read == -1) {
       if (errno == EINTR){
-        fred_win_resize(&d);
+        fred_win_resize(&term_win);
         continue;
       }
       ERROR("couldn't read from stdin");
@@ -296,12 +298,10 @@ bool FRED_start_editor(FredEditor* fe)
         if (file_final_size > 0){
           FILE* f = fopen(fe->file_path, "wb");
 
-          size_t j = 0;
-          while (j < fe->piece_table.len){
+          for (size_t j = 0; j < fe->piece_table.len; j++){
             Piece* piece = fe->piece_table.items + j;
             char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
             fwrite(buf + piece->offset, sizeof(*buf), piece->len, f);
-            j++;
           }
         }
         break;
@@ -327,6 +327,7 @@ end:
   DA_FREE(&fe->piece_table, true);
   DA_FREE(&fe->add_buf, true);
   free(fe->file_buf.text);
+  free(term_win.text);
   tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
   sigaction(SIGWINCH, &old, NULL);
   fprintf(stdout, "\033[2J\033[H");
@@ -363,10 +364,10 @@ end:
 
 
 // TODO: grab_text() -> get_text() wtf was i even thinking 
- 
-// TODO: handle eintr on close() in open_file()
+// TODO: display -> term_win
+// TODO: make macro for add_buf push in make_piece()
 
-// TODO: display -> screen
+// TODO: handle eintr on close() in open_file()
 
 // TODO: handle failures in render_text()
 
@@ -384,7 +385,6 @@ end:
 
 // TODO: don't use hardcoded which_buf in make_piece()
 
-// TODO: make macro for add_buf push in make_piece()
 
 // TODO: I could have a fixed-size buffer something
 // not too big (100 chars) where character typed are stored. From 
