@@ -54,6 +54,9 @@
   DA_PUSH((da), (item), PIECE_TABLE_INIT_CAP, PieceTable);  \
 } while (0)
 
+#define ADD_BUF_PUSH(da, item) do { \
+  DA_PUSH((da), (item), ADD_BUF_INIT_CAP, AddBuf);  \
+} while (0)
 
 
 typedef struct termios termios;

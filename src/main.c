@@ -242,7 +242,7 @@ bool fred_make_piece(FredEditor* fe, char key)
     .len = 1,
   }));
 
-  DA_PUSH(&fe->add_buf, key, ADD_BUF_INIT_CAP, "add_buf");
+  ADD_BUF_PUSH(&fe->add_buf, key);
 
   GOTO_END(failed);
 end:
@@ -363,9 +363,6 @@ end:
 
 
 
-// TODO: grab_text() -> get_text() wtf was i even thinking 
-// TODO: display -> term_win
-// TODO: make macro for add_buf push in make_piece()
 
 // TODO: handle eintr on close() in open_file()
 
