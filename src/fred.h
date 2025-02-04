@@ -113,10 +113,7 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
-  short spaces_for_line_num;
-  // NOTE: if spaces_for_line_num gets increased, increase the 
-  // size of 'temp' and space-string in sprintf too in fred_get_text_from_piece_table(). 
-  // For some fucking reason this is the only thing that works.
+  short line_column_w;
 } FredEditor;
 
 
