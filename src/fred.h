@@ -81,6 +81,8 @@ typedef struct {
 typedef struct {
   size_t row; 
   size_t col; 
+  size_t win_row;
+  size_t win_col;
 } Cursor;
 
 
@@ -89,6 +91,7 @@ typedef struct {
   size_t size;
   size_t rows;
   size_t cols;
+  size_t rows_to_scroll;
 } TermWin;
 
 
@@ -110,13 +113,17 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
+  short spaces_for_line_num;
+  // NOTE: if spaces_for_line_num gets increased, increase the 
+  // size of 'temp' and space-string in sprintf too in fred_get_text_from_piece_table(). 
+  // For some fucking reason this is the only thing that works.
 } FredEditor;
 
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_setup_terminal();
-bool FRED_render_text(TermWin* term_win, Cursor* c);
+bool FRED_render_text(TermWin* tw, Cursor* cursor, short spaces_for_rows_num);
 bool fred_editor_init(FredEditor* fe, const char* file_path);
 void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);
