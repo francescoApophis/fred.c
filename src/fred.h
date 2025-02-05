@@ -60,6 +60,13 @@
 } while (0)
 
 
+
+
+#define LINE_NUM_OFFSET (tw_row - line_wrapped_rows) * \
+                        tw->cols + fe->line_num_w - \
+                        line_digits - fe->line_num_w / 3
+
+
 typedef struct termios termios;
 
 
@@ -91,7 +98,7 @@ typedef struct {
   size_t size;
   size_t rows;
   size_t cols;
-  size_t rows_to_scroll;
+  size_t lines_to_scroll;
 } TermWin;
 
 
@@ -113,7 +120,7 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
-  short line_column_w;
+  short line_num_w; // NOTE: the max width for displaying line-nums
 } FredEditor;
 
 

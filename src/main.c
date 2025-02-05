@@ -178,7 +178,7 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   }
 
   fe->cursor = (Cursor){0};
-  fe->line_column_w = 7;
+  fe->line_num_w = 8;
 
   GOTO_END(failed);
 end:
@@ -229,7 +229,7 @@ end:
 void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 {
   // TODO: maybe binary search the piece-table
-  size_t last_row = 0;
+  size_t tot_rows = 0;
   size_t line_len_at_curs = 0;
   size_t line_len_at_curs_up = 0;
   size_t line_len_at_curs_down = 0;
@@ -239,13 +239,13 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 
   for (size_t i = 0; i < piece->len; i++){
     if (buf[i] == '\n') {
-      last_row = ((last_row + 1) * tw->cols) / tw->cols;
+      tot_rows = ((tot_rows + 1) * tw->cols) / tw->cols;
     }else {
-      if (last_row == fe->cursor.row){
+      if (tot_rows == fe->cursor.row){
         line_len_at_curs++;
-      } else if (last_row == fe->cursor.row - 1){
+      } else if (tot_rows == fe->cursor.row - 1){
         line_len_at_curs_up++;
-      } else if (last_row == fe->cursor.row + 1){
+      } else if (tot_rows == fe->cursor.row + 1){
         line_len_at_curs_down++;
       }
     }
@@ -263,13 +263,14 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
   
   switch (key){
     case 'j': {
-      if (fe->cursor.row + 1 >= last_row) return;
+      if (fe->cursor.row + 1 >= tot_rows) return; 
+      if (fe->cursor.win_row + 1 >= tw->rows - 1) return;
       
       fe->cursor.row++;
-      if (fe->cursor.win_row + 1 < tw->rows - 1){
+      if (fe->cursor.win_row + 1 < tw->rows - tw->rows / 3 || fe->cursor.row + 1 > tot_rows - tw->rows / 3){
         fe->cursor.win_row++;
       } else {
-        tw->rows_to_scroll++; 
+        tw->lines_to_scroll++; 
       }
 
       if (fe->cursor.col >= line_len_at_curs_down){
@@ -280,12 +281,13 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
     }
     case 'k': {
       if ((int)fe->cursor.row - 1 < 0) return;
+      if ((int)fe->cursor.win_row - 1 < 0) return;
 
       fe->cursor.row--;
-      if ((int)fe->cursor.win_row - 1 > -1){
-        fe->cursor.win_row--;
+      if (fe->cursor.win_row - 1 < tw->rows / 3 && (int)tw->lines_to_scroll > 0) {
+        tw->lines_to_scroll--;
       } else {
-        tw->rows_to_scroll--; 
+        fe->cursor.win_row--;
       }
 
       if (fe->cursor.col >= line_len_at_curs_up){
@@ -316,46 +318,52 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
 {
   memset(tw->text, SPACE_CH, tw->size);
 
-  // render line-nums
-  for (size_t row = 0; row < tw->rows - 1; row++){
-    int row_scrolled = row + 1 + tw->rows_to_scroll;
-    char row_digits_num = snprintf(NULL, 0, "%d", row_scrolled);
-    char temp[row_digits_num]; 
-    size_t buf_idx = row * tw->cols + fe->line_column_w - row_digits_num - fe->line_column_w / 4; // NOTE: left-pad line-nums
-    sprintf(temp, "%d", row_scrolled);
-    memcpy(tw->text + buf_idx, temp, row_digits_num);
-  }
-
   char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   size_t last_row_idx = (tw->rows - 1) * tw->cols + 1;
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
-
+  
   // display cursor row:col
   sprintf(tw->text + last_row_idx + tw->cols - 10, 
           "%d:%d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1);
 
-  size_t tw_text_idx = fe->line_column_w;
-  size_t rows_to_scroll = tw->rows_to_scroll;
+  size_t tw_text_idx = fe->line_num_w;
+  size_t lines_to_scroll = tw->lines_to_scroll;
   Piece* piece = fe->piece_table.items;
   Piece* last_piece = fe->piece_table.items + fe->piece_table.len;
   char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+  size_t tot_lines = 0;
+  size_t line_wrapped_rows = 0;
 
   for (size_t i = 0; i < piece->len; i++){
     size_t buf_idx = piece->offset + i;
 
-    if (rows_to_scroll > 0) {
-      if (buf[buf_idx] == '\n') rows_to_scroll--;
+    if (lines_to_scroll > 0) {
+      if (buf[buf_idx] == '\n') lines_to_scroll--;
       continue;
     }
 
-    size_t row = tw_text_idx / tw->cols;
+    size_t tw_row = tw_text_idx / tw->cols;
+    size_t tw_col = tw_text_idx % tw->cols;
+
     if (tw_text_idx >= tw->size) break;
-    if (row >= tw->rows - 1) break;
+    if (tw_row >= tw->rows - 1) break;
 
     if (buf[buf_idx] != '\n'){
+      if (tw_col == 0){
+        tw_text_idx += fe->line_num_w;
+        line_wrapped_rows++;
+      }
       tw->text[tw_text_idx++] = buf[buf_idx];
+
     } else {
-      tw_text_idx = (row + 1) * tw->cols + fe->line_column_w;
+      int line_scrolled = tot_lines + tw->lines_to_scroll + 1;
+      char line_digits = snprintf(NULL, 0, "%d", line_scrolled);
+      char line_str[line_digits]; 
+      sprintf(line_str, "%d", line_scrolled);
+      memcpy(tw->text + LINE_NUM_OFFSET, line_str, line_digits);
+      line_wrapped_rows = 0;
+      tot_lines++;
+      tw_text_idx = (tw_row + 1) * tw->cols + fe->line_num_w;
     }
 
     if (buf_idx + 1 >= piece->len){
@@ -367,14 +375,14 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
   }
 }
 
-bool FRED_render_text(TermWin* tw, Cursor* cursor, short line_column_w)
+bool FRED_render_text(TermWin* tw, Cursor* cursor, short line_num_w)
 {
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
   fwrite(tw->text, sizeof(*tw->text), tw->size, stdout);
   fprintf(stdout, "\033[%zu;%zuH", 
           cursor->win_row + 1, 
-          line_column_w + cursor->win_col + 1); // TODO: use win_row, win_col
+          line_num_w + cursor->win_col + 1); // TODO: use win_row, win_col
   fflush(stdout);
   GOTO_END(failed);
 end:
@@ -432,7 +440,7 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
 
   while (running) {
     fred_get_text_from_piece_table(fe, &tw, insert);
-    FRED_render_text(&tw, &fe->cursor, fe->line_column_w);
+    FRED_render_text(&tw, &fe->cursor, fe->line_num_w);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 10);
     if (b_read == -1) {
@@ -518,12 +526,15 @@ end:
 //  - squash pieces into signle pieces. 
 //  - delete characters
 
+// FIXME: when i zoom in the terminal to size 27*112, if the 
+// first line is wrapped, its line-num is rendered in the wrong spot
+
+// TODO: fred_get_text_from_piece_table() is doing unrelated things either
+// call it get_all_text or move something out
 
 // TODO: add testing
 
 // TODO: add a line-limit 
-
-// TODO: maybe i should have a counter of newlines somwhere
 
 // TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
 // since the contents should not be touched, I think the user 
