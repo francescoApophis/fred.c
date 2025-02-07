@@ -62,9 +62,6 @@
 
 
 
-#define LINE_NUM_OFFSET (tw_row - line_wrapped_rows) * \
-                        tw->cols + fe->line_num_w - \
-                        line_digits - fe->line_num_w / 3
 
 
 typedef struct termios termios;
@@ -99,6 +96,7 @@ typedef struct {
   size_t rows;
   size_t cols;
   size_t lines_to_scroll;
+  size_t first_line_rows;
 } TermWin;
 
 

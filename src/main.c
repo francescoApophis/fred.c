@@ -26,6 +26,14 @@ void printing(void)
   fprintf(stdout, "\033[2J\033[H");
 }
 
+#define PRINTING(statement) do { \
+  printing(); \
+  { \
+    statement; \
+  } \
+  exit(1); \
+} while (0)
+
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 {
@@ -170,10 +178,26 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   term_and_sig_set = 1;
 
   if (fe->file_buf.size > 0){
+    // PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
+      // .which_buf = 0,
+      // .offset = 0,
+      // .len = fe->file_buf.size,
+    // }));
+    // piece_table_allocated = 1;
+
+    int d = 10;
+
     PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
       .which_buf = 0,
       .offset = 0,
-      .len = fe->file_buf.size,
+      .len = d,
+    }));
+    piece_table_allocated = 1;
+
+    PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
+      .which_buf = 0,
+      .offset = d, 
+      .len = fe->file_buf.size - d,
     }));
     piece_table_allocated = 1;
   }
@@ -231,92 +255,156 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 {
   // TODO: maybe binary search the piece-table
   size_t tot_rows = 0;
-  size_t line_len_at_curs = 0;
-  size_t line_len_at_curs_up = 0;
-  size_t line_len_at_curs_down = 0;
+  size_t line_at_curs_len = 0;
+  // size_t line_at_curs_wrapped_rows = 0;
+  // size_t first_line_in_tw_len = 0;
+  // size_t first_line_in_tw_wrapped_rows = 0;
+
+  // size_t line_at_curs_up_len = 0;
+  // size_t line_at_curs_down_len = 0;
+
   Piece* piece = fe->piece_table.items;
   Piece* last_piece = fe->piece_table.items + fe->piece_table.len;
   char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
 
+  size_t last_newline_idx = 0; // TODO: not really index, find a better fitting name
+  bool first_newline_in_piece_met = false;
+    
   for (size_t i = 0; i < piece->len; i++){
     if (buf[i] == '\n') {
-      tot_rows = ((tot_rows + 1) * tw->cols) / tw->cols;
-    }else {
-      if (tot_rows == fe->cursor.row){
-        line_len_at_curs++;
-      } else if (tot_rows == fe->cursor.row - 1){
-        line_len_at_curs_up++;
-      } else if (tot_rows == fe->cursor.row + 1){
-        line_len_at_curs_down++;
-      }
+      tot_rows++;
+
+      // what if there is no newline? Like when the file has only one line 
+      
+      // if (piece == fe->piece_table.items){
+        // line_at_curs_len = i - last_newline_idx - (first_newline_in_piece_met ? 1 : 0); // one piece could have multiple lines
+        // last_newline_idx = i; // there will probably be an off-by-one error here
+        // first_newline_in_piece_met = true;
+
+      // } else {
+        // if (!first_newline_in_piece_met){
+          // line_at_curs_len = i + (piece[-1].len - last_newline_idx); // the parenthesis should happen only when meeting the first newline in piece
+          // first_newline_in_piece_met = true;
+
+          // PRINTING(
+            // printf("line: %ld, len: %ld, last_newline_Idx: %ld, i: %ld\n", tot_rows, line_at_curs_len, last_newline_idx, i);
+          // );
+
+        // } else {
+          // line_at_curs_len = i - last_newline_idx;
+        // }
+        // last_newline_idx = i;
+      // }
     }
 
     if (i + 1 >= piece->len){
       if (piece + 1 >= last_piece) break;
       piece++;
       buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+      first_newline_in_piece_met = false;
     }
   }
+
+/*
   
-  if (line_len_at_curs_up > 0) line_len_at_curs_up--;
-  if (line_len_at_curs > 0) line_len_at_curs--;
-  if (line_len_at_curs_down > 0) line_len_at_curs_down--;
+    last
+    nl at          nl    | nl
+    len 15         len 21| len 25
+  [1, 0, 18],     [0, 19, 31]
+
+*/
+
+
+    // }else {
+      // if (tot_rows == tw->lines_to_scroll){
+        // first_line_in_tw_len++;
+        // if (first_line_in_tw_len % (tw->cols - fe->line_num_w) == 0){
+          // first_line_in_tw_wrapped_rows++;
+        // }
+      // }
+
+      // if (tot_rows == fe->cursor.row){
+        // line_at_curs_len++;
+        // if (line_at_curs_len % (tw->cols - fe->line_num_w) == 0){
+          // line_at_curs_wrapped_rows++;
+        // }
+
+      // } else if (tot_rows == fe->cursor.row - 1){
+        // line_at_curs_up_len++;
+      // } else if (tot_rows == fe->cursor.row + 1){
+        // line_at_curs_down_len++;
+      // }
+    // }
+
+    // if (i + 1 >= piece->len){
+      // if (piece + 1 >= last_piece) break;
+      // piece++;
+      // buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+    // }
+  // }
   
-  switch (key){
-    case 'j': {
-      if (fe->cursor.row + 1 > tot_rows) return; 
-      if (fe->cursor.win_row + 1 >= tw->rows - 1) return;
-      
-      fe->cursor.row++;
-      if (fe->cursor.win_row + 1 < tw->rows - tw->rows / 3 || fe->cursor.row + 1 > tot_rows - tw->rows / 3){
-        fe->cursor.win_row++;
-      } else {
-        tw->lines_to_scroll++; 
-      }
+  // switch (key){
+    // case 'j': {
+      // if (fe->cursor.row + 1 >= tot_rows) return; 
+      // if (fe->cursor.win_row >= tot_rows - 3) return;
 
-      if (fe->cursor.col >= line_len_at_curs_down){
-        fe->cursor.col = line_len_at_curs_down;
-        fe->cursor.win_col = line_len_at_curs_down;
-      }
-      return;
-    }
-    case 'k': {
-      if ((int)fe->cursor.row - 1 < 0) return;
-      if ((int)fe->cursor.win_row - 1 < 0) return;
+      // fe->cursor.row++;
+      // if (fe->cursor.win_row + 1 < tw->rows / 2 + 3){
+        // fe->cursor.win_row += line_at_curs_wrapped_rows + 1;
+      // }else{
+        // tw->lines_to_scroll++;
+        // int offset = -first_line_in_tw_wrapped_rows + line_at_curs_wrapped_rows;
+        // fe->cursor.win_row += offset;
+      // }
 
-      fe->cursor.row--;
-      if (fe->cursor.win_row - 1 < tw->rows / 3 && (int)tw->lines_to_scroll > 0) {
-        tw->lines_to_scroll--;
-      } else {
-        fe->cursor.win_row--;
-      }
+      // if (fe->cursor.col >= line_at_curs_down_len){
+        // fe->cursor.col = line_at_curs_down_len;
+        // fe->cursor.win_col = line_at_curs_down_len;
+      // }
+      // return;
+    // }
 
-      if (fe->cursor.col >= line_len_at_curs_up){
-        fe->cursor.col = line_len_at_curs_up;
-        fe->cursor.win_col = line_len_at_curs_up;
-      }
-      return;
-    }
+    // case 'k': {
+      // if ((int)fe->cursor.row - 1 < 0) return;
+      // if ((int)fe->cursor.win_row - 1 < 0) return;
 
-    case 'h': {
-      if (fe->cursor.col == 0) return;
-      fe->cursor.col--; 
-      fe->cursor.win_col--;
-      return;
-    }
-    case 'l': {
-      if (fe->cursor.col + 1 <= line_len_at_curs){
-        fe->cursor.col++;
-        fe->cursor.win_col++;
-      }
-      return;
-    }
-  }
+      // fe->cursor.row--;
+      // if (fe->cursor.win_row - 1 < tw->rows / 3 && (int)tw->lines_to_scroll > 0) {
+        // tw->lines_to_scroll--;
+      // } else {
+        // fe->cursor.win_row--;
+      // }
+
+      // if (fe->cursor.col >= line_len_at_curs_up){
+        // fe->cursor.col = line_len_at_curs_up;
+        // fe->cursor.win_col = line_len_at_curs_up;
+      // }
+      // return;
+    // }
+
+    // case 'h': {
+      // if (fe->cursor.col == 0) return;
+      // fe->cursor.col--; 
+      // fe->cursor.win_col--;
+      // return;
+    // }
+    // case 'l': {
+      // if (fe->cursor.col + 1 <= line_len_at_curs){
+        // fe->cursor.col++;
+        // fe->cursor.win_col++;
+      // }
+      // return;
+    // }
+  // }
 }
 
 
 void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
 {
+#define LINE_NUM_OFFSET (tw_row - line_wrapped_rows) *    \
+                        tw->cols + fe->line_num_w -       \
+                        line_digits - fe->line_num_w / 3
+
   memset(tw->text, SPACE_CH, tw->size);
 
   char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
@@ -366,11 +454,15 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
       char line_str[line_digits]; 
       sprintf(line_str, "%d", line_scrolled);
       memcpy(tw->text + LINE_NUM_OFFSET, line_str, line_digits);
+
       line_wrapped_rows = 0;
       tot_lines++;
       tw_text_idx = (tw_row + 1) * tw->cols + fe->line_num_w;
     }
   }
+
+  // sprintf(tw->text + last_row_idx + tw->cols - 20, "%ld", tw->first_line_rows);
+  #undef LINE_NUM_OFFSET
 }
 
 bool FRED_render_text(TermWin* tw, Cursor* cursor, short line_num_w)
@@ -378,9 +470,7 @@ bool FRED_render_text(TermWin* tw, Cursor* cursor, short line_num_w)
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
   fwrite(tw->text, sizeof(*tw->text), tw->size, stdout);
-  fprintf(stdout, "\033[%zu;%zuH", 
-          cursor->win_row + 1, 
-          line_num_w + cursor->win_col + 1); // TODO: use win_row, win_col
+  fprintf(stdout, "\033[%zu;%zuH", cursor->win_row + 1, line_num_w + cursor->win_col + 1); // TODO: use win_row, win_col
   fflush(stdout);
   GOTO_END(failed);
 end:
@@ -525,48 +615,36 @@ end:
 
 // FIXME: when i zoom in the terminal to size 27*112, if the 
 // first line is wrapped, its line-num is rendered in the wrong spot
-
+// FIXME: fred sometimes crashes with empty file even though that should already be handled
+// FIXME: when scrolling down, if the next line is too big (2500 > chars), it won't be able to scroll 
+// enough lines to show the full file text
 // TODO: fred_get_text_from_piece_table() is doing unrelated things either
 // call it get_all_text or move something out
-
 // TODO: add testing
-
 // TODO: add a line-limit 
-
 // TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
 // since the contents should not be touched, I think the user 
 // should be prompted whether or not to write the all the edits 
 // to the file.
-
 // TODO: handle ftruncate error
-
 // TODO: differentiate errors for the user and internal errors. Use strerror()
 // TODO: have a separate buffer to report error messages in the 
 // bottom line of the screen
 // TODO: if i choose to do the above, change fred_get_text_from_piece_table()
 // to fred_get_all_text()
-
 // TODO: handle eintr on close() in open_file()
-
 // TODO: handle failures in render_text()
-
 // TODO: I probably need a flag to differentiate action 
 // such as writing, deleting etc in make_piece()
-
 // TODO: what if I save each '\n' as a separate piece?
 // it would make the text-retrieval for rendering much easier 
 // (i could just while-loop through d->text and step through the 
 // piece-table with a variable; i could just memcpy each text-piece 
 // without having to check for newlines).
 // but idk maybe it's a waste of space.
-
 // TODO: use cursor position with offset in make_piece()
-
 // TODO: don't use hardcoded which_buf in make_piece()
-
 // TODO: cursor should not move outside text in line.
-
-
 // TODO: when entering insert mode, push a SINGLE PIECE
 // and increase it's length as you type. 
 // But the thing is that when entering insert mode, 2 actions
