@@ -26,6 +26,7 @@ void printing(void)
   fprintf(stdout, "\033[2J\033[H");
 }
 
+
 bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 {
   bool failed = 0;
@@ -263,7 +264,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
   
   switch (key){
     case 'j': {
-      if (fe->cursor.row + 1 >= tot_rows) return; 
+      if (fe->cursor.row + 1 > tot_rows) return; 
       if (fe->cursor.win_row + 1 >= tw->rows - 1) return;
       
       fe->cursor.row++;
@@ -334,28 +335,32 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
   size_t tot_lines = 0;
   size_t line_wrapped_rows = 0;
 
-  for (size_t i = 0; i < piece->len; i++){
-    size_t buf_idx = piece->offset + i;
+  for (size_t piece_idx = 0; piece_idx < fe->piece_table.len; piece_idx++){
+    Piece* piece = fe->piece_table.items + piece_idx;
+    char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
 
-    if (lines_to_scroll > 0) {
-      if (buf[buf_idx] == '\n') lines_to_scroll--;
-      continue;
-    }
+    for (size_t i = 0; i < piece->len; i++){
+      size_t buf_idx = piece->offset + i;
+      size_t tw_row = tw_text_idx / tw->cols;
+      size_t tw_col = tw_text_idx % tw->cols;
 
-    size_t tw_row = tw_text_idx / tw->cols;
-    size_t tw_col = tw_text_idx % tw->cols;
+      if (tw_text_idx >= tw->size) return;
+      if (tw_row >= tw->rows - 1) return;
 
-    if (tw_text_idx >= tw->size) break;
-    if (tw_row >= tw->rows - 1) break;
-
-    if (buf[buf_idx] != '\n'){
-      if (tw_col == 0){
-        tw_text_idx += fe->line_num_w;
-        line_wrapped_rows++;
+      if (lines_to_scroll > 0) {
+        if (buf[buf_idx] == '\n') lines_to_scroll--;
+        continue;
       }
-      tw->text[tw_text_idx++] = buf[buf_idx];
 
-    } else {
+      if (buf[buf_idx] != '\n'){
+        if (tw_col == 0){
+          tw_text_idx += fe->line_num_w;
+          line_wrapped_rows++;
+        }
+        tw->text[tw_text_idx++] = buf[buf_idx];
+        continue;
+      } 
+
       int line_scrolled = tot_lines + tw->lines_to_scroll + 1;
       char line_digits = snprintf(NULL, 0, "%d", line_scrolled);
       char line_str[line_digits]; 
@@ -365,13 +370,6 @@ void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
       tot_lines++;
       tw_text_idx = (tw_row + 1) * tw->cols + fe->line_num_w;
     }
-
-    if (buf_idx + 1 >= piece->len){
-      if (piece + 1 >= last_piece) break;
-      piece++;
-      buf = !piece->which_buf ? 
-        fe->file_buf.text : fe->add_buf.items;
-    } 
   }
 }
 
@@ -468,9 +466,9 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       }
     } else {
       switch(key) {
-        case 'w': { FRED_save_file(fe, file_path); break;}
+        // case 'w': { FRED_save_file(fe, file_path); break;}
         case 'q': { running = false; break;}
-        case 'i': { insert = true; break;}
+        // case 'i': { insert = true; break;}
 
         case 'h': 
         case 'j': 
@@ -512,7 +510,6 @@ int main(int argc, char** argv)
 
   failed = FRED_start_editor(&fe, file_path);
   if (failed) GOTO_END(1);
-
 
   GOTO_END(failed);
 end:
