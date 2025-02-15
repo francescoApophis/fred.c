@@ -96,7 +96,6 @@ typedef struct {
   size_t rows;
   size_t cols;
   size_t lines_to_scroll;
-  size_t first_line_rows;
 } TermWin;
 
 
@@ -119,6 +118,7 @@ typedef struct {
   FileBuf file_buf;
   Cursor cursor;
   short line_num_w; // NOTE: the max width for displaying line-nums
+                    // TODO: this should be in TermWin dumbass
 } FredEditor;
 
 
