@@ -229,7 +229,7 @@ void fred_editor_free(FredEditor* fe)
 }
 
 
-bool fred_win_resize(TermWin* tw)
+bool FRED_win_resize(TermWin* tw)
 {
   bool failed = false;
   struct winsize w;
@@ -351,7 +351,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 }
 
 
-void fred_get_text_from_piece_table(FredEditor* fe, TermWin* tw, bool insert)
+void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
   memset(tw->text, SPACE_CH, tw->size);
 
@@ -423,7 +423,7 @@ end:
 }
 
 
-bool fred_make_piece(FredEditor* fe, char key)
+bool FRED_make_piece(FredEditor* fe, char key)
 {
   bool failed = 0;
   
@@ -469,16 +469,16 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   char key;
 
   TermWin tw = {0};
-  fred_win_resize(&tw);
+  FRED_win_resize(&tw);
 
   while (running) {
-    fred_get_text_from_piece_table(fe, &tw, insert);
+    FRED_get_text_to_render(fe, &tw, insert);
     FRED_render_text(&tw, &fe->cursor, fe->line_num_w);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 10);
     if (b_read == -1) {
       if (errno == EINTR){
-        fred_win_resize(&tw);
+        FRED_win_resize(&tw);
         continue;
       }
       ERROR("couldn't read from stdin");
@@ -488,7 +488,7 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (key == ESC_CH) insert = false;
 
       if (key == '\n' || (key >= ' ' && key <= '~')){
-        fred_make_piece(fe, key);
+        FRED_make_piece(fe, key);
         // TODO: this should not be handled here
         fe->cursor.col++;
         fe->cursor.win_col++;

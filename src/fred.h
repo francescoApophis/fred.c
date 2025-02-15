@@ -123,15 +123,14 @@ typedef struct {
 
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
-bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_setup_terminal();
 bool FRED_render_text(TermWin* tw, Cursor* cursor, short spaces_for_rows_num);
 bool fred_editor_init(FredEditor* fe, const char* file_path);
 void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);
-bool fred_win_resize(TermWin* term_win);
-void fred_get_text_from_piece_table(FredEditor* fe, TermWin* term_win, bool insert);
-bool fred_make_piece(FredEditor* fe, char key);
+bool FRED_win_resize(TermWin* term_win);
+void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
+bool FRED_make_piece(FredEditor* fe, char key);
 void dump_piece_table(FredEditor* fe);
 
 
