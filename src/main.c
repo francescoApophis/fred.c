@@ -561,11 +561,11 @@ end:
 // FIXME: SIGWINCH doesn't handle resizing on zooming in/out when
 // the terminal is not full screen?
 
-// FIXME: when resizing the window i need to reposition the win_curs 
+// FIXME: when zooming in too much, if the cursor win_row is greater than
+// the tw->rows the the lines should get scrolled.
 
 // FIXME: fred sometimes crashes with empty file even though that should already be handled
-// TODO: fred_get_text_from_piece_table() is doing unrelated things either
-// call it get_all_text or move something out
+
 // TODO: add testing
 // TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
 // since the contents should not be touched, I think the user 
@@ -575,21 +575,12 @@ end:
 // TODO: differentiate errors for the user and internal errors. Use strerror()
 // TODO: have a separate buffer to report error messages in the 
 // bottom line of the screen
-// TODO: if i choose to do the above, change fred_get_text_from_piece_table()
-// to fred_get_all_text()
 // TODO: handle eintr on close() in open_file()
 // TODO: handle failures in render_text()
 // TODO: I probably need a flag to differentiate action 
 // such as writing, deleting etc in make_piece()
-// TODO: what if I save each '\n' as a separate piece?
-// it would make the text-retrieval for rendering much easier 
-// (i could just while-loop through d->text and step through the 
-// piece-table with a variable; i could just memcpy each text-piece 
-// without having to check for newlines).
-// but idk maybe it's a waste of space.
 // TODO: use cursor position with offset in make_piece()
 // TODO: don't use hardcoded which_buf in make_piece()
-// TODO: cursor should not move outside text in line.
 // TODO: when entering insert mode, push a SINGLE PIECE
 // and increase it's length as you type. 
 // But the thing is that when entering insert mode, 2 actions
