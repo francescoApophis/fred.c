@@ -96,6 +96,7 @@ typedef struct {
   size_t rows;
   size_t cols;
   size_t lines_to_scroll;
+  short line_num_w; // NOTE: the max width for displaying line-nums
 } TermWin;
 
 
@@ -117,14 +118,12 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
-  short line_num_w; // NOTE: the max width for displaying line-nums
-                    // TODO: this should be in TermWin dumbass
 } FredEditor;
 
 
 bool FRED_open_file(FileBuf* file_buf, const char* file_path);
 bool FRED_setup_terminal();
-bool FRED_render_text(TermWin* tw, Cursor* cursor, short spaces_for_rows_num);
+bool FRED_render_text(TermWin* tw, Cursor* cursor);
 bool fred_editor_init(FredEditor* fe, const char* file_path);
 void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);

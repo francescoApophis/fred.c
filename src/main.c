@@ -202,7 +202,6 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   }
 
   fe->cursor = (Cursor){0};
-  fe->line_num_w = 8;
 
   GOTO_END(failed);
 end:
@@ -259,7 +258,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 
   size_t last_newline_idx = 0; // 'idx' in the text constructed from the piece-table
   size_t tot_text_len = 0;
-  size_t tw_text_row_width = tw->cols - fe->line_num_w;
+  size_t tw_text_row_width = tw->cols - tw->line_num_w;
 
   size_t tot_rows = 0;
   size_t tw_lines_rows_idx = 0;
@@ -360,7 +359,7 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
   sprintf(tw->text + last_row_idx + tw->cols - 10, "%d:%d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1);
 
-  size_t tw_text_idx = fe->line_num_w;
+  size_t tw_text_idx = tw->line_num_w;
   size_t tot_lines = 0;
   int tot_text_len = 0;
   int last_newline_idx = 0;
@@ -387,35 +386,35 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
         char line_num_digits = snprintf(NULL, 0, "%d", n);
         char line_num[line_num_digits]; 
         sprintf(line_num, "%d", n);
-        int offset = tw_text_idx - fe->line_num_w / 3 - line_num_digits;
+        int offset = tw_text_idx - tw->line_num_w / 3 - line_num_digits;
         memcpy(tw->text + offset, line_num, line_num_digits);
 
         if (tot_lines == fe->cursor.row){
-          size_t tw_text_row_w = tw->cols - fe->line_num_w;
+          size_t tw_text_row_w = tw->cols - tw->line_num_w;
           fe->cursor.win_col = fe->cursor.col % tw_text_row_w;
           fe->cursor.win_row = tw_row + (fe->cursor.col - fe->cursor.col % tw_text_row_w) / tw_text_row_w;
         }
       }
 
       if (buf[buf_idx] != '\n'){
-        if (tw_col == 0) tw_text_idx += fe->line_num_w;
+        if (tw_col == 0) tw_text_idx += tw->line_num_w;
         tw->text[tw_text_idx++] = buf[buf_idx];
         continue;
       } 
 
       last_newline_idx = tot_text_len;
       tot_lines++;
-      tw_text_idx = (tw_row + 1) * tw->cols + fe->line_num_w;
+      tw_text_idx = (tw_row + 1) * tw->cols + tw->line_num_w;
     }
   }
 }
 
-bool FRED_render_text(TermWin* tw, Cursor* cursor, short line_num_w)
+bool FRED_render_text(TermWin* tw, Cursor* cursor)
 {
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
   fwrite(tw->text, sizeof(*tw->text), tw->size, stdout);
-  fprintf(stdout, "\033[%zu;%zuH", cursor->win_row + 1, line_num_w + cursor->win_col + 1);
+  fprintf(stdout, "\033[%zu;%zuH", cursor->win_row + 1, tw->line_num_w + cursor->win_col + 1);
   fflush(stdout);
   GOTO_END(failed);
 end:
@@ -469,11 +468,12 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   char key;
 
   TermWin tw = {0};
+  tw.line_num_w = 8;
   FRED_win_resize(&tw);
 
   while (running) {
     FRED_get_text_to_render(fe, &tw, insert);
-    FRED_render_text(&tw, &fe->cursor, fe->line_num_w);
+    FRED_render_text(&tw, &fe->cursor);
 
     ssize_t b_read = read(STDIN_FILENO, &key, 10);
     if (b_read == -1) {
@@ -490,8 +490,8 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (key == '\n' || (key >= ' ' && key <= '~')){
         FRED_make_piece(fe, key);
         // TODO: this should not be handled here
-        fe->cursor.col++;
-        fe->cursor.win_col++;
+        // fe->cursor.col++;
+        // fe->cursor.win_col++;
       }  
 
       if (key == '\n') {
@@ -551,12 +551,7 @@ end:
   return failed;
 }
 
-// at the moment fred is able to render text and write to an empty file.
-// You cannot navigate end edit just write, almost as in unbuffered mode.
-// GOAL: 
-//  - edit at cursor pos.
-//  - squash pieces into signle pieces. 
-//  - delete characters
+
 
 // FIXME: SIGWINCH doesn't handle resizing on zooming in/out when
 // the terminal is not full screen?
@@ -597,8 +592,6 @@ end:
 //
 //       2. the cursor position is 'after' a piece.
 //
-//    So to reach the right piece_index, i will loop through the table and 
-//    check if the length is less the cursor coordinates.
 //
 //   - then, based on the key-press (BACKSPACE/any text-key) i should 
 //   edit: decrease the piece length if deleting or pushing a new piece
