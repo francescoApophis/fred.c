@@ -87,6 +87,8 @@ typedef struct {
   size_t col; 
   size_t win_row;
   size_t win_col;
+  int last_edit_row;
+  int last_edit_col;
 } Cursor;
 
 
@@ -129,7 +131,7 @@ void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool FRED_win_resize(TermWin* term_win);
 void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
-bool FRED_make_piece(FredEditor* fe, char key);
+bool FRED_make_piece(FredEditor* fe, char text_char);
 void dump_piece_table(FredEditor* fe);
 
 

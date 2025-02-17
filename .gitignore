@@ -1,3 +1,5 @@
 build/
 utils/
+test_files/
 *.txt
+empty_file

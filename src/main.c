@@ -179,29 +179,17 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   term_and_sig_set = 1;
 
   if (fe->file_buf.size > 0){
-    // PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
-      // .which_buf = 0,
-      // .offset = 0,
-      // .len = fe->file_buf.size,
-    // }));
-    // piece_table_allocated = 1;
-
-    int d = 10;
     PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
       .which_buf = 0,
       .offset = 0,
-      .len = d,
-    }));
-
-    PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
-      .which_buf = 0,
-      .offset = d, 
-      .len = fe->file_buf.size - d,
+      .len = fe->file_buf.size,
     }));
     piece_table_allocated = 1;
   }
 
   fe->cursor = (Cursor){0};
+  fe->cursor.last_edit_row = -1;
+  fe->cursor.last_edit_col = -1;
 
   GOTO_END(failed);
 end:
@@ -256,7 +244,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
   size_t curs_up_line_len = 0;
   size_t curs_down_line_len = 0;
 
-  size_t last_newline_idx = 0; // 'idx' in the text constructed from the piece-table
+  size_t last_endline_idx = 0; // 'idx' in the text constructed from the piece-table
   size_t tot_text_len = 0;
   size_t tw_text_row_width = tw->cols - tw->line_num_w;
 
@@ -270,19 +258,21 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
     char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
 
     for (size_t i = 0; i < piece->len; i++){
-      if (buf[piece->offset + i] != '\n') continue;
-      
-      size_t newline_idx = tot_text_len + i; // NOTE+TODO: what if the newline char is at i=0?
-      size_t line_len = newline_idx - last_newline_idx + (last_newline_idx? -1 : 0);
-      last_newline_idx = newline_idx;
+      size_t buf_idx = piece->offset + i;
+      if (buf[buf_idx] != '\n' && 
+         (piece_idx < fe->piece_table.len - 1 || i < piece->len - 1)) continue;
+
+      size_t endline_idx = tot_text_len + i + 1;
+      size_t line_len = endline_idx - last_endline_idx - (buf[buf_idx] == '\n'? 1 : 0);
+      last_endline_idx = endline_idx;
 
       if (tot_lines >= tw->lines_to_scroll && tot_rows < tw->rows - 1){
-        size_t line_rows = (line_len + tw_text_row_width - line_len % (tw_text_row_width)) / tw_text_row_width; // wrapped rows
-        tot_rows += line_rows;
-        tw_lines_rows[tw_lines_rows_idx++] = line_rows;
+        size_t line_wrapped_rows = (line_len + tw_text_row_width - line_len % (tw_text_row_width)) / tw_text_row_width;
+        tot_rows += line_wrapped_rows;
+        tw_lines_rows[tw_lines_rows_idx++] = line_wrapped_rows;
       }
 
-      if (tot_lines == fe->cursor.row)          curs_line_len = line_len;
+      if (tot_lines == fe->cursor.row) curs_line_len = line_len;
       else if (tot_lines == fe->cursor.row - 1) curs_up_line_len = line_len;
       else if (tot_lines == fe->cursor.row + 1) curs_down_line_len = line_len;
 
@@ -298,8 +288,8 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
       if (fe->cursor.row + 1 >= tot_lines) return; 
 
       fe->cursor.row++;
-      if (fe->cursor.col >= curs_down_line_len){
-        fe->cursor.col = curs_down_line_len - (curs_down_line_len ? 1 : 0);
+      if (fe->cursor.col > curs_down_line_len){
+        fe->cursor.col = curs_down_line_len;
       }
 
       size_t curs_line_rows = (curs_line_len + tw_text_row_width - curs_line_len % (tw_text_row_width)) / tw_text_row_width;
@@ -325,8 +315,8 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
       size_t curs_up_line_rows = (curs_up_line_len + tw_text_row_width - 
                                   curs_up_line_len % (tw_text_row_width)) / tw_text_row_width; 
 
-      if (fe->cursor.col >= curs_up_line_len){
-        fe->cursor.col = curs_up_line_len - (curs_up_line_len ? 1 : 0);
+      if (fe->cursor.col > curs_up_line_len){
+        fe->cursor.col = curs_up_line_len;
       }
       fe->cursor.row--;
       if (fe->cursor.win_row - curs_up_line_rows < tw->rows / 2 - 5 || fe->cursor.row <= tw->rows / 2 - 5){
@@ -342,7 +332,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
     }
 
     case 'l': {
-      if (fe->cursor.col + 1 >= curs_line_len) return;
+      if (fe->cursor.col + 1 > curs_line_len) return;
       fe->cursor.col++;
       return;
     }
@@ -357,12 +347,13 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   size_t last_row_idx = (tw->rows - 1) * tw->cols + 1;
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
-  sprintf(tw->text + last_row_idx + tw->cols - 10, "%d:%d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1);
+  sprintf(tw->text + last_row_idx + tw->cols - 10, "%d:%d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1); // TODO: unsafe
 
   size_t tw_text_idx = tw->line_num_w;
   size_t tot_lines = 0;
   int tot_text_len = 0;
   int last_newline_idx = 0;
+  int win_curs_set = false;
 
   for (size_t piece_idx = 0; piece_idx < fe->piece_table.len; piece_idx++){
     Piece* piece = fe->piece_table.items + piece_idx;
@@ -388,23 +379,27 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
         sprintf(line_num, "%d", n);
         int offset = tw_text_idx - tw->line_num_w / 3 - line_num_digits;
         memcpy(tw->text + offset, line_num, line_num_digits);
-
-        if (tot_lines == fe->cursor.row){
-          size_t tw_text_row_w = tw->cols - tw->line_num_w;
-          fe->cursor.win_col = fe->cursor.col % tw_text_row_w;
-          fe->cursor.win_row = tw_row + (fe->cursor.col - fe->cursor.col % tw_text_row_w) / tw_text_row_w;
-        }
       }
 
       if (buf[buf_idx] != '\n'){
         if (tw_col == 0) tw_text_idx += tw->line_num_w;
         tw->text[tw_text_idx++] = buf[buf_idx];
-        continue;
+      } else {
+        last_newline_idx = tot_text_len;
+        tot_lines++;
+        tw_text_idx = (tw_row + 1) * tw->cols + tw->line_num_w;
       } 
 
-      last_newline_idx = tot_text_len;
-      tot_lines++;
-      tw_text_idx = (tw_row + 1) * tw->cols + tw->line_num_w;
+      if (!win_curs_set && tot_lines == fe->cursor.row){ 
+        size_t tw_text_row_w = tw->cols - tw->line_num_w;
+        fe->cursor.win_col = fe->cursor.col % tw_text_row_w;
+        // FIXME: the newline check is sus as hell, should i 
+        // recompute tw_row and check?
+        fe->cursor.win_row = tw_row + (buf[buf_idx] == '\n' ? 1 : 0) + 
+                            (fe->cursor.col - fe->cursor.col % tw_text_row_w) / tw_text_row_w;
+        win_curs_set = true;
+      }
+
     }
   }
 }
@@ -422,40 +417,52 @@ end:
 }
 
 
-bool FRED_make_piece(FredEditor* fe, char key)
+bool FRED_make_piece(FredEditor* fe, char text_char)
 {
   bool failed = 0;
-  
-  
-  size_t offset = 0;
-  if (fe->piece_table.len > 0) {
-    Piece last_piece = fe->piece_table.items[fe->piece_table.len - 1];
-    offset = last_piece.offset + last_piece.len;
-  }
 
   PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
-    .which_buf = 1, 
-    .offset = offset, 
-    .len = 1,
+    .which_buf = 1, // TODO: make it not hardcoded 
+    .offset = fe->add_buf.len, // TODO: this is only temporary as I'm handling insert after piece right now
+    .len = 0,
   }));
-
-  ADD_BUF_PUSH(&fe->add_buf, key);
 
   GOTO_END(failed);
 end:
   return failed;
 }
 
+bool FRED_insert_text(FredEditor* fe, char key)
+{
+  bool failed = 0;
+
+  ADD_BUF_PUSH(&fe->add_buf, key);
+  Piece* last_piece = &fe->piece_table.items[fe->piece_table.len - 1];
+  last_piece->len++;
+
+  if (key == '\n') {
+    fe->cursor.row++;
+    fe->cursor.col = 0;
+  } else {
+    fe->cursor.col++;
+  }
+
+  GOTO_END(failed);
+end: 
+  return failed;
+}
+
+
 
 void dump_piece_table(FredEditor* fe)
 {
   for (size_t i = 0; i < fe->piece_table.len; i++){
     Piece piece = fe->piece_table.items[i];
-    char buf = !piece.which_buf ? 
-                      fe->file_buf.text[piece.offset] : 
-                      fe->add_buf.items[piece.offset] ;
-    fprintf(stdout, "piece at [%ld] = {buf = %d, offset = %lu, len = %lu} \"%c\"\n", 
-            i, piece.which_buf, piece.offset, piece.len, buf);
+    char* buf = !piece.which_buf ? 
+                      fe->file_buf.text + piece.offset: 
+                      fe->add_buf.items + piece.offset;
+    fprintf(stdout, "piece at [%ld] = {buf = %d, offset = %lu, len = %lu}\n \"%.*s\"\n", 
+            i, piece.which_buf, piece.offset, piece.len, (int)piece.len, buf);
   }
 }
 
@@ -472,6 +479,8 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   FRED_win_resize(&tw);
 
   while (running) {
+    if (failed) GOTO_END(failed);
+
     FRED_get_text_to_render(fe, &tw, insert);
     FRED_render_text(&tw, &fe->cursor);
 
@@ -485,25 +494,30 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
     }
 
     if (insert) {
-      if (key == ESC_CH) insert = false;
+      if (key == ESC_CH){
+        if (insert){
+          fe->cursor.last_edit_row = fe->cursor.row;
+          fe->cursor.last_edit_col = fe->cursor.col;
+        }
+        insert = false;
+      }
 
-      if (key == '\n' || (key >= ' ' && key <= '~')){
-        FRED_make_piece(fe, key);
-        // TODO: this should not be handled here
-        // fe->cursor.col++;
-        // fe->cursor.win_col++;
+      if (key == '\n' || (key >= ' ' && key <= '~')){ // TODO: this should happen in FRED_insert_text
+        failed = FRED_insert_text(fe, key);
       }  
 
-      if (key == '\n') {
-        fe->cursor.row++;
-        fe->cursor.col = 0;
-        fe->cursor.win_col = 0;
-      }
     } else {
       switch(key) {
         // case 'w': { FRED_save_file(fe, file_path); break;}
         case 'q': { running = false; break;}
-        // case 'i': { insert = true; break;}
+        case 'i': { 
+          // TODO: make this into a macro
+          if ((int)fe->cursor.row != fe->cursor.last_edit_row || (int)fe->cursor.col != fe->cursor.last_edit_col){
+            FRED_make_piece(fe, key);
+          }
+          insert = true; 
+          break;
+        }
 
         case 'h': 
         case 'j': 
@@ -519,11 +533,13 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   GOTO_END(failed);
 
 end:
-  fred_editor_free(fe);
-  free(tw.text);
   tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
   sigaction(SIGWINCH, &old, NULL);
   fprintf(stdout, "\033[2J\033[H");
+  dump_piece_table(fe);
+
+  fred_editor_free(fe);
+  free(tw.text);
   return failed;
 }
 
@@ -551,17 +567,28 @@ end:
   return failed;
 }
 
+// GOAL: 
+// edit file (basically just appending new text)
 
-
+// TODO+FIXME!!!!: the lines-scrolling code should be independant
+// from the code that handles cursor_move up/down.
+// lines should be scrolled also when editing text past the screen
+// threeshold.
+// TODO: test better the edit-same-piece mechanism
 // FIXME: SIGWINCH doesn't handle resizing on zooming in/out when
 // the terminal is not full screen?
-
 // FIXME: when zooming in too much, if the cursor win_row is greater than
 // the tw->rows the the lines should get scrolled.
-
 // FIXME: fred sometimes crashes with empty file even though that should already be handled
-
+// FIXME: on empty file, the 1st line-num is not shown until you type a character. This is because 
+// i need to walk the table to get the line-num and on empty file no 
+// piece is pushed to the table.
 // TODO: add testing
+// TODO: when exiting insert mode parse the table
+// and get all the info: tot_lines, curr_line_len, curs_up_line_len and so on and so forth.
+// TODO: when scrolling down, i could save a pointer to the 
+// piece that contatins the first line to render in TermWin, so I won't have
+// to parse the entire table when rendering.
 // TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
 // since the contents should not be touched, I think the user 
 // should be prompted whether or not to write the all the edits 
