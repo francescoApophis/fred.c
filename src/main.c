@@ -346,14 +346,16 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   size_t last_row_idx = (tw->rows - 1) * tw->cols + 1;
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
-  sprintf(tw->text + last_row_idx + tw->cols - 10, "%d:%d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1); // TODO: unsafe
+  int n = snprintf(NULL, 0, "%ld:%ld", fe->cursor.row + 1,fe->cursor.col + 1);
+  sprintf(tw->text + last_row_idx + tw->cols - 1 - n, "%-ld:%-ld",  fe->cursor.row + 1,fe->cursor.col + 1);
 
   size_t tw_text_idx = tw->line_num_w;
   size_t line = 0;
-  bool win_curs_set = false;
   size_t last_newline_idx = 0;
   size_t tot_text_len = 0;
-  #define at_line_start ((tot_text_len + i - last_newline_idx) == 0 || (last_newline_idx == 0 && tw_col == (size_t)tw->line_num_w))
+  bool win_curs_set = false;
+  #define at_line_start ((tot_text_len + i - last_newline_idx) == 0 || \
+                        (last_newline_idx == 0 && tw_col == (size_t)tw->line_num_w))
 
   for (size_t piece_idx = 0; piece_idx < fe->piece_table.len; piece_idx++){
     Piece* piece = fe->piece_table.items + piece_idx;
@@ -388,8 +390,7 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
         win_curs_set = true;
         size_t tw_text_row_w = tw->cols - tw->line_num_w;
         fe->cursor.win_col = fe->cursor.col % tw_text_row_w;
-        fe->cursor.win_row = tw_row + (c == '\n') + 
-          (fe->cursor.col - fe->cursor.col % tw_text_row_w) / tw_text_row_w;
+        fe->cursor.win_row = tw_row + (c == '\n') + (fe->cursor.col - fe->cursor.col % tw_text_row_w) / tw_text_row_w;
       }
     }
     if (line >= tw->lines_to_scroll) tot_text_len += piece->len;
@@ -427,9 +428,6 @@ end:
 
 bool FRED_insert_text(FredEditor* fe, char text_char)
 {
-// #define CURSOR_AT_LAST_EDIT_POS(fe) \
-    // ((fe)->cursor.row == (fe)->last_edit.row && (fe)->cursor.col == (fe)->last_edit.col)
-
 #define CURSOR_AT_LAST_EDIT_POS(fe) \
     ((fe)->cursor.row == (fe)->last_edit.row && (fe)->cursor.col == (fe)->last_edit.col)
 
