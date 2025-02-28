@@ -7,24 +7,20 @@
 
 
 #define ADD_BUF_INIT_CAP 512
-#define PIECE_TABLE_INIT_CAP 59
-
+#define PIECE_TABLE_INIT_CAP 56
 
 #define SPACE_CH 32
 #define ESC_CH 27
-
+#define MAX_KEY_LEN 32
 
 
 #define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
-
-
 
 
 #define ERROR(msg) do { \
   fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n",  __FILE__, __LINE__, msg, errno); \
   GOTO_END(1); \
 } while (0)
-
 
 
 #define DA_PUSH(da, item, da_cap_init, da_type) do {                                  \
@@ -61,7 +57,18 @@
 
 
 
+#define NEW_PIECE(wb, os, l) ((Piece){.which_buf = wb, .offset = os, .len = l})
 
+#define KEY_IS(key, what) (strcmp((key), (what)) == 0)
+
+
+
+#define TW_WRITE_NUM_AT(tw, offset, num) do {                         \
+  char num_digits = snprintf(NULL, 0, "%ld", (num));                  \
+  char num_str[num_digits];                                           \
+  sprintf(num_str, "%ld", (num));                                     \
+  memcpy((tw)->text + ((offset) - num_digits), num_str, num_digits);  \
+} while (0)
 
 
 typedef struct termios termios;
@@ -87,8 +94,6 @@ typedef struct {
   size_t col; 
   size_t win_row;
   size_t win_col;
-  int last_edit_row;
-  int last_edit_col;
 } Cursor;
 
 
@@ -109,7 +114,7 @@ typedef struct {
 
 
 typedef struct {
-  char* items;
+  char* items; // NOTE: array of strings because it should also handle multi-byte chars
   size_t len;
   size_t cap;
 } AddBuf;
@@ -120,6 +125,7 @@ typedef struct {
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
+  Cursor last_edit;
 } FredEditor;
 
 
@@ -131,8 +137,8 @@ void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool FRED_win_resize(TermWin* term_win);
 void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
-bool FRED_make_piece(FredEditor* fe, char text_char);
+bool FRED_insert_text(FredEditor* fe, char c);
+bool FRED_make_piece(FredEditor* fe, bool which_buf, size_t offset, size_t len);
 void dump_piece_table(FredEditor* fe);
-
 
 #endif 
