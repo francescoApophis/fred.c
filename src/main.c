@@ -343,11 +343,11 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
   memset(tw->text, SPACE_CH, tw->size);
 
-  char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   size_t last_row_idx = (tw->rows - 1) * tw->cols + 1;
+  char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
-  int n = snprintf(NULL, 0, "%ld:%ld", fe->cursor.row + 1,fe->cursor.col + 1);
-  sprintf(tw->text + last_row_idx + tw->cols - 1 - n, "%-ld:%-ld",  fe->cursor.row + 1,fe->cursor.col + 1);
+  size_t offset = last_row_idx + tw->cols - 1;
+  TW_WRITE_NUM_AT(tw, offset, "%-ld:%-ld", fe->cursor.row + 1,fe->cursor.col + 1); 
 
   size_t tw_text_idx = tw->line_num_w;
   size_t line = 0;
@@ -374,7 +374,7 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 
       if (at_line_start){
         size_t offset = tw_text_idx - tw->line_num_w / 3;
-        TW_WRITE_NUM_AT(tw, offset, line + 1); // line-num
+        TW_WRITE_NUM_AT(tw, offset, "%ld", line + 1); // line-num
       }
       
       if (c != '\n'){

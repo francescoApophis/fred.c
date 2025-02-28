@@ -63,10 +63,10 @@
 
 
 
-#define TW_WRITE_NUM_AT(tw, offset, num) do {                         \
-  char num_digits = snprintf(NULL, 0, "%ld", (num));                  \
+#define TW_WRITE_NUM_AT(tw, offset, format, ...) do {                 \
+  char num_digits = snprintf(NULL, 0, format, __VA_ARGS__);           \
   char num_str[num_digits];                                           \
-  sprintf(num_str, "%ld", (num));                                     \
+  sprintf(num_str, format, __VA_ARGS__);                              \
   memcpy((tw)->text + ((offset) - num_digits), num_str, num_digits);  \
 } while (0)
 
