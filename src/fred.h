@@ -23,21 +23,27 @@
 } while (0)
 
 
-#define DA_PUSH(da, item, da_cap_init, da_type) do {                                  \
-  if ((da)->len + 1 >= (da)->cap) {                                                   \
+
+#define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
+  if ((da)->len + (elem_count) >= (da)->cap) {                                        \
     (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                       \
     void* temp = realloc((da)->items, sizeof(*(da)->items) * (da)->cap);              \
     if (temp == NULL) ERROR("not enough memory for dynamic array \"" #da_type "\"."); \
     (da)->items = temp;                                                               \
   }                                                                                   \
-  (da)->items[(da)->len++] = (item);                                                  \
+} while(0)
+
+
+#define DA_PUSH(da, item, da_cap_init, da_type) do {  \
+  DA_MAYBE_GROW((da), 1, (da_cap_init), (da_type));   \
+  (da)->items[(da)->len++] = (item);                  \
 } while (0)
 
 
 #define DA_INIT(da) do { \
-  (da)->cap = 0;                  \
-  (da)->len = 0;                  \
-  (da)->items = NULL;             \
+  (da)->cap = 0;         \
+  (da)->len = 0;         \
+  (da)->items = NULL;    \
 } while(0)
 
 #define DA_FREE(da, end) do { \
@@ -51,16 +57,30 @@
   DA_PUSH((da), (item), PIECE_TABLE_INIT_CAP, PieceTable);  \
 } while (0)
 
-#define ADD_BUF_PUSH(da, item) do { \
+
+
+
+#define PIECE_TABLE_MAKE_ROOM(piece_table, piece_ptr, dest_offset, src_offset, n_bytes) do {            \
+  if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
+  DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
+  if ((dest_offset) || (src_offset)) {                                                                  \
+    memmove((piece_ptr) + (dest_offset), (piece_ptr) + (src_offset), (n_bytes) * sizeof(Piece));        \
+  }                                                                                                     \
+} while(0)
+
+
+#define PIECE_TABLE_INSERT(piece_table, piece, wb, of, l) do {  \
+  (piece) = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
+  (piece_table)->len++;                                         \
+} while(0)
+
+
+#define ADD_BUF_PUSH(da, item) do {                 \
   DA_PUSH((da), (item), ADD_BUF_INIT_CAP, AddBuf);  \
 } while (0)
 
 
-
-#define NEW_PIECE(wb, os, l) ((Piece){.which_buf = wb, .offset = os, .len = l})
-
 #define KEY_IS(key, what) (strcmp((key), (what)) == 0)
-
 
 
 #define TW_WRITE_NUM_AT(tw, offset, format, ...) do {                 \
@@ -72,7 +92,6 @@
 
 
 typedef struct termios termios;
-
 
 
 // NOTE: using uint32_t instead of size_t could save much more memory 
