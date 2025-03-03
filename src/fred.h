@@ -139,12 +139,24 @@ typedef struct {
 } AddBuf;
 
 
+typedef enum {
+  ACT_IDLE,
+  ACT_INSERT,
+  ACT_DELETE,
+} Action;
+
+typedef struct {
+  Action action;  // NOTE: 1 = insertion, 0 = deletion
+  Cursor cursor;
+} LastEdit;
+
+
 typedef struct {
   PieceTable piece_table;
   AddBuf add_buf;
   FileBuf file_buf;
   Cursor cursor;
-  Cursor last_edit;
+  LastEdit last_edit;
 } FredEditor;
 
 

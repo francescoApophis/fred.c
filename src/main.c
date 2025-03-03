@@ -185,7 +185,7 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   }
 
   fe->cursor = (Cursor){0};
-  fe->last_edit = (Cursor){0};
+  fe->last_edit = (LastEdit){0};
 
   GOTO_END(failed);
 end:
@@ -408,7 +408,7 @@ end:
 
 bool FRED_insert_text(FredEditor* fe, char text_char)
 {
-#define CURSOR_AT_LAST_EDIT_POS (fe->cursor.row == fe->last_edit.row && fe->cursor.col == fe->last_edit.col)
+#define CURSOR_AT_LAST_EDIT_POS (fe->cursor.row == fe->last_edit.cursor.row && fe->cursor.col == fe->last_edit.cursor.col)
 
   bool failed = 0;
 
@@ -430,7 +430,6 @@ bool FRED_insert_text(FredEditor* fe, char text_char)
 
     for (size_t j = 0; j < piece->len; j++){
       char c = buf[piece->offset + j];
-
       if (line < fe->cursor.row){
         if (c == '\n') line++;
       } else if (col > 0){
@@ -445,7 +444,7 @@ bool FRED_insert_text(FredEditor* fe, char text_char)
       }
 
       if (j + 1 >= piece->len){ // insertion at end of piece
-        if (CURSOR_AT_LAST_EDIT_POS && piece->which_buf){
+        if (CURSOR_AT_LAST_EDIT_POS && piece->which_buf && fe->last_edit.action == ACT_INSERT){
           piece->len++; // TODO: just cache this piece
           goto end_loop;
         }
@@ -461,6 +460,7 @@ bool FRED_insert_text(FredEditor* fe, char text_char)
       size_t p3_offset = piece->offset + p1_len;
       size_t p3_len = piece->len - p1_len;
 
+      // TODO: it's not very clear what's going on if i pass piece-fields like this 
       piece->len = p1_len;
       PIECE_TABLE_MAKE_ROOM(pt, piece, 3, 1, pt->len - pi + 1);
       PIECE_TABLE_INSERT(pt, piece[1], 1, add_buf_len - 1, 1);
@@ -475,13 +475,75 @@ end_loop:
   } else {
     fe->cursor.col++; 
   }
-  fe->last_edit = fe->cursor;
+  fe->last_edit.cursor = fe->cursor;
+  fe->last_edit.action = ACT_INSERT;
 
   GOTO_END(failed);
 end:
   return failed;
   #undef CURSOR_AT_LAST_EDIT_POS
 }
+
+
+bool FRED_delete_text(FredEditor* fe)
+{
+  bool failed = 0;
+
+  if (fe->cursor.row == 0 && fe->cursor.col == 0) return failed;
+
+  PieceTable* pt = &fe->piece_table;
+  int col = fe->cursor.col;
+  size_t line = 0;
+  size_t curs_up_line_len = 0;
+  char deleted_char = 0;
+
+  for (size_t pi = 0; pi < pt->len; pi++){
+    Piece* piece = &pt->items[pi];
+    char* buf = !piece->which_buf? fe->file_buf.text : fe->add_buf.items;
+
+    for (size_t j = 0; j < piece->len; j++){
+      char c = buf[piece->offset + j];
+      if (line < fe->cursor.row){
+        if (c == '\n') line++;
+        else if (line == fe->cursor.row - 1) curs_up_line_len++;
+      } else if (col > 0){
+        col--;
+      }
+      if (line < fe->cursor.row || col > 0) continue;
+
+      deleted_char = c;
+
+      if (j + 1 >= piece->len){
+        if (piece->len - 1 > 0){
+          piece->len--;
+        } else {
+          memmove(piece, piece + 1, (pt->len - pi + 1) * sizeof(*piece));
+          fe->piece_table.len--;
+        }
+        goto end_loop;
+      }
+      // deletion inside a piece
+      PIECE_TABLE_MAKE_ROOM(pt, piece, 1, 0, pt->len - pi + 1);
+      PIECE_TABLE_INSERT(pt, piece[1], piece->which_buf, piece->offset + j + 1, piece->len - j - 1);
+      piece->len = j;
+      goto end_loop;
+    }
+  }
+
+end_loop:
+  if (deleted_char == '\n'){
+    fe->cursor.row--;
+    fe->cursor.col = curs_up_line_len; 
+  } else {
+    fe->cursor.col--; 
+  }
+  fe->last_edit.cursor = fe->cursor;
+  fe->last_edit.action = ACT_DELETE;
+end:
+  return failed;
+  #undef CURSOR_AT_LAST_EDIT_POS
+}
+
 
 
 void dump_piece_table(FredEditor* fe)
@@ -530,8 +592,10 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
 
     if (insert){
       if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){
-        fe->last_edit = fe->cursor;
+        fe->last_edit.cursor = fe->cursor;
         insert = false;
+      } else if (KEY_IS(key, "\x7f")){
+        FRED_delete_text(fe);
       } else{
         ASSERT_MSG(b_read == 1, "UTF-8 not supported yet. Typed: '%s'", key);
         failed = FRED_insert_text(fe, key[0]);
@@ -580,7 +644,6 @@ int main(int argc, char** argv)
   failed = FRED_start_editor(&fe, file_path);
   if (failed) GOTO_END(1);
 
-
   GOTO_END(failed);
 end:
   return failed;
@@ -594,6 +657,9 @@ end:
 // instead of writing it myself: just have an array of fred's controls,
 // get random control and random repetitions amount.
 
+
+// FIXME: it happened only once, but after pressing 'k' in 
+// normal mode some of the deleted pieces got rendered again.
 // FIXME: win_row cannot scroll back to line-1 if (file->lines < tw->rows - 1), but you're technically there 
 // and if you type some text wou will get repositioned at the correct spot.
 // TODO+FIXME!!!!: the lines-scrolling code should be independant
@@ -605,6 +671,8 @@ end:
 // FIXME: when zooming in too much, if the cursor win_row is greater than
 // the tw->rows the the lines should get scrolled.
 // FIXME: fred sometimes crashes with empty file even though that should already be handled
+//
+// TODO: can i like have a bit-flag  that says if I'm at the end or start of table/line or sum? 
 // TODO: when scrolling down, i could save a pointer to the 
 // piece that contatins the first line to render in TermWin, so I won't have
 // to parse the entire table when rendering.
