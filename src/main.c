@@ -197,10 +197,6 @@ end:
       tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
       sigaction(SIGWINCH, &old, NULL);
     }
-
-    if (piece_table_allocated){
-      DA_FREE(&fe->piece_table, true);
-    }
   }
   return failed;
 }
