@@ -40,38 +40,38 @@ bool FRED_open_file(FileBuf* file_buf, const char* file_path)
 
   struct stat sb;
   if (stat(file_path, &sb) == -1) {
-    if (errno == ENOENT) ERROR("no such file");
-    else ERROR("could not retrieve any information about given file.");
+    if (errno == ENOENT) ERROR("no such file.");
+    else ERROR("failed to retrieve any info about file '%s'. %s.", file_path, strerror(errno));
   }
 
   if ((sb.st_mode & S_IFMT) != S_IFREG) {
     if ((sb.st_mode & S_IFMT) == S_IFDIR) {
-      ERROR("given path is directory. Please provide a file-path.");
+      ERROR("path '%s' is a directory. Please provide a path to a file.", file_path);
     } 
-    ERROR("given file is not a regular file.");
+    ERROR("file '%s' is not a regular file.", file_path);
   }
 
   int fd = open(file_path, O_RDONLY);
-  if (fd == -1) ERROR("could not open given file.");
+  if (fd == -1) ERROR("failed to open file '%s'. %s.", file_path, strerror(errno));
 
   file_buf->size = sb.st_size;
   file_buf->text = malloc(sizeof(*file_buf->text) * file_buf->size);
-  if (file_buf->text == NULL) ERROR("not enough memory for file bufile_bufer.");
+  if (file_buf->text == NULL) ERROR("not enough memory for file file-buffer.");
   file_loaded = 1;
 
   ssize_t bytes_read = read(fd, file_buf->text, file_buf->size);
-  if (bytes_read == -1) ERROR("could not read file content.");
+  if (bytes_read == -1) ERROR("failed to read file '%s'. %s", file_path, strerror(errno));
 
   while ((size_t) bytes_read < file_buf->size) {
     ssize_t new_bytes_read = read(fd, file_buf->text + bytes_read, file_buf->size - bytes_read);
     if (new_bytes_read == -1) {
-      ERROR("could not read file content.");
+      ERROR("failed to read file '%s'. %s.", file_path, strerror(errno));
     }
     bytes_read += new_bytes_read;
   }
 
   if (close(fd) == -1) {
-    ERROR("could not close given file.");
+    ERROR("failed to close file '%s'. %s.", file_path, strerror(errno));
   }
   
   GOTO_END(failed);
@@ -93,7 +93,7 @@ bool FRED_save_file(FredEditor* fe, const char* file_path)
 
   FILE* f = fopen(file_path, "wb");
   if (f == NULL){
-    ERROR("could not save file: failed to open file.");
+    ERROR("failed to open '%s' while trying save it. %s.", file_path, strerror(errno));
   }
 
   if (file_size > 0){
@@ -104,7 +104,9 @@ bool FRED_save_file(FredEditor* fe, const char* file_path)
     }
   } else {
     int fd = fileno(f);
-    ftruncate(fd, 0);
+    if (-1 == ftruncate(fd, 0)) {
+      ERROR("failed to truncate file while trying to save emptied out file. %s.", strerror(errno));
+    }
   }
 
   fclose(f);
@@ -125,11 +127,11 @@ bool FRED_setup_terminal()
   bool term_set = 0;
 
   if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)){
-    ERROR("Fred editor can only be run on a terminal.");
+    ERROR("Fred editor can only be run in a terminal.");
   }
   
   if (tcgetattr(STDIN_FILENO, &term_orig) == -1){
-    ERROR("could not retrieve terminal opiece_tableions.");
+    ERROR("failed to retrieve terminal options. %s.", strerror(errno));
   }
 
   termios term_raw = term_orig;
@@ -138,15 +140,14 @@ bool FRED_setup_terminal()
   term_raw.c_cflag &= ~(CSIZE | PARENB);
   term_raw.c_cflag |= CS8;
   term_raw.c_cc[VTIME] = 5;
-  // term_raw.c_cc[VMIN] = 0;
 
   if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_raw)){
-    ERROR("could not set terminal opiece_tableions.");
+    ERROR("failed to set terminal options. %s.", strerror(errno));
   }
 
   act.sa_handler = handle_win_resize_sig;
   if (-1 == sigaction(SIGWINCH, &act, &old)){
-    ERROR("could not set the editor to detect window changes.");
+    ERROR("failed to set up the editor to detect window changes. %s.", strerror(errno));
   }
 
   GOTO_END(failed);
@@ -217,14 +218,14 @@ bool FRED_win_resize(TermWin* tw)
   bool failed = false;
   struct winsize w;
   if (-1 == ioctl(STDIN_FILENO, TIOCGWINSZ, &w)){
-    ERROR("could not retrieve terminal size.");
+    ERROR("failed to retrieve terminal size. %s.", strerror(errno));
   }
   
   tw->size = w.ws_row * w.ws_col;
   tw->rows = w.ws_row;
   tw->cols = w.ws_col;
   void* temp = realloc(tw->text, tw->size);
-  if (temp == NULL) ERROR("not enough space to get and display text.");
+  if (temp == NULL) ERROR("not enough memory to get and display text.");
   tw->text = temp;
   GOTO_END(failed);
 end:
@@ -572,11 +573,10 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
 
   TermWin tw = {0};
   tw.line_num_w = 8;
-  FRED_win_resize(&tw);
+  failed = FRED_win_resize(&tw);
+  if (failed) GOTO_END(1);
 
   while (running) {
-    if (failed) GOTO_END(failed);
-
     FRED_get_text_to_render(fe, &tw, insert);
     FRED_render_text(&tw, &fe->cursor);
 
@@ -584,21 +584,26 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
     ssize_t b_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
     if (b_read == -1) {
       if (errno == EINTR){
-        FRED_win_resize(&tw);
+        failed = FRED_win_resize(&tw);
+        if (failed) GOTO_END(1);
         continue;
       }
-      ERROR("couldn't read from stdin");
+      ERROR("failed to read from stdin");
     }
+
 
     if (insert){
       if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){
         fe->last_edit.cursor = fe->cursor;
         insert = false;
       } else if (KEY_IS(key, "\x7f")){
-        FRED_delete_text(fe);
+        failed = FRED_delete_text(fe);
+        if (failed) GOTO_END(1);
+        
       } else{
         ASSERT_MSG(b_read == 1, "UTF-8 not supported yet. Typed: '%s'", key);
         failed = FRED_insert_text(fe, key[0]);
+        if (failed) GOTO_END(1);
       }
       
     } else {
@@ -615,10 +620,13 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   GOTO_END(failed);
 
 end:
+  if (!failed) { // else the ERROR() macro has lready cleared the screen
+    fprintf(stdout, "\033[2J\033[H");
+  }
+
   tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
   sigaction(SIGWINCH, &old, NULL);
-  fprintf(stdout, "\033[2J\033[H");
-  dump_piece_table(fe);
+  // dump_piece_table(fe);
 
   fred_editor_free(fe);
   free(tw.text);
@@ -649,6 +657,7 @@ end:
   return failed;
 }
 
+
 // TODO: write test. IN neovim record all the keypresses while editing a 
 // file with only Fred's controls and write them onto a file. 
 // Feed these data to Fred's function and test if the edited file
@@ -658,6 +667,10 @@ end:
 // get random control and random repetitions amount.
 
 
+// TODO: what if i just make the test.c a module that i will call 
+// directly from main.c on when testing? I wouldn't need to separate
+// everything into modules then. Maybe in the main I can have a flag or something 
+// that i can pass to the console?
 // FIXME: it happened only once, but after pressing 'k' in 
 // normal mode some of the deleted pieces got rendered again.
 // FIXME: win_row cannot scroll back to line-1 if (file->lines < tw->rows - 1), but you're technically there 
@@ -680,9 +693,8 @@ end:
 // TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
 // since the contents should not be touched, I think the user 
 // should be prompted whether or not to write the all the edits 
-// to the file.
+// to the file. But can you actually do that? 
 // TODO: handle ftruncate error
-// TODO: differentiate errors for the user and internal errors. Use strerror()
 // TODO: have a separate buffer to report error messages in the 
 // bottom line of the screen
 // TODO: handle eintr on close() in open_file()

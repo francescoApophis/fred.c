@@ -17,8 +17,11 @@
 #define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
 
 
-#define ERROR(msg) do { \
-  fprintf(stderr, "Error [in: %s, at line: %d]: %s (errno=%d)\n",  __FILE__, __LINE__, msg, errno); \
+#define ERROR(...) do { \
+  fprintf(stderr, "\033[2J\033[H"); \
+  fprintf(stderr, "Error [in: %s, at line: %d]:\n",  __FILE__, __LINE__); \
+  fprintf(stderr, __VA_ARGS__); \
+  fprintf(stderr, "\n"); \
   GOTO_END(1); \
 } while (0)
 
