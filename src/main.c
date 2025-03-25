@@ -299,7 +299,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
         return;
       } 
 
-      // NOTE: scroll multiple lines if the next line is too long to render properly
+      // NOTE: scroll multiple lines if the next line is too long to be rendered entirely
       for (size_t i = 0, rows_to_scroll = 0; i < tw_lines_rows_idx + 1; i++){
         if (rows_to_scroll > curs_line_rows) return;
         rows_to_scroll += tw_lines_rows[i];
@@ -663,6 +663,10 @@ end:
 // get random control and random repetitions amount.
 
 
+// TODO+FIXME!!!!: the lines-scrolling code should be independant
+// from the code that handles cursor_move up/down.
+// lines should be scrolled also when editing text past the screen
+// threeshold.
 // TODO: what if i just make the test.c a module that i will call 
 // directly from main.c on when testing? I wouldn't need to separate
 // everything into modules then. Maybe in the main I can have a flag or something 
@@ -671,10 +675,6 @@ end:
 // normal mode some of the deleted pieces got rendered again.
 // FIXME: win_row cannot scroll back to line-1 if (file->lines < tw->rows - 1), but you're technically there 
 // and if you type some text wou will get repositioned at the correct spot.
-// TODO+FIXME!!!!: the lines-scrolling code should be independant
-// from the code that handles cursor_move up/down.
-// lines should be scrolled also when editing text past the screen
-// threeshold.
 // FIXME: SIGWINCH doesn't handle resizing on zooming in/out when
 // the terminal is not full screen?
 // FIXME: when zooming in too much, if the cursor win_row is greater than
