@@ -1,4 +1,23 @@
 
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- this script generates a folder:
+--
+--       fred_test_[n]/             -> it can either be a custom name or 'fred_test_n' (ordered numerically by 'n').
+--          |- keys.txt             -> keys to be fed to Fred, in ascii-int form.
+--          |- keys_readable.txt    -> the same keys but in ascii form. Optional, is more for visual debugging. 
+--          |- seed.txt             -> Random seed used by math.randomseed() to generate the current test.
+--          |- output.txt           -> contains the state of the buffer after the last key was fed to Fred.
+--                                     This can be used for a faster test (but that doesn't give much info about failures)
+--          |- screenshots.txt      -> contains the state of the buffer (screenshot) after each key got fed.  
+--                                     This is used for a much in depth (but slower) test.
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
 -- ****************** helpers ******************
 local fmt = string.format
 local rand = math.random
@@ -274,17 +293,7 @@ local function take_screenshot(bufnr, screenshots, screenshot_num, key_inserted)
                        (key_inserted == 10  and 'NEWLINE') or 
                        (key_inserted == 127 and 'BACKSPACE') or ASCII.i2a[key_inserted]
   local lines = get_lines(bufnr, 0, -1, false)
-  local str = fmt('\n[screenshot: %d, inserted: %q]\n', screenshot_num, key_inserted)
-
-  if get_tot_lines(bufnr) > 0 then
-    for i, line in ipairs(lines) do
-      str = str .. (line == '' and '\n' or line)
-      if lines[i+1] ~= nil and lines[i + 1] ~= '' then
-        str = str .. '\n'
-      end
-    end
-  end
-
+  local str = fmt('\n[screenshot: %d, inserted: %q]\n%s', screenshot_num, key_inserted, table.concat(lines, '\n'))
   screenshots = screenshots .. str
   return screenshots
 end
@@ -356,12 +365,10 @@ end
 ---@param curs_row                number      
 ---@param curs_col                number
 ---@param max_jumps_to_rand_pos   number 
+---@param max_edits_in_insert     number
+---@param screenshots             string
 ---@return nil
-local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_pos, screenshots)
-  max_jumps_to_rand_pos = max_jumps_to_rand_pos or 10 -- TODO: better name wtf does action even mean
-  
-  max_edits_in_insert = 3
-
+local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_pos, max_edits_in_insert, screenshots)
   local screenshot_num = 0
   curs_row, 
   curs_col, 
@@ -386,6 +393,7 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
     screenshots, 
     screenshot_num = insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_edits_in_insert, screenshots, screenshot_num)
   end
+
   return screenshots
 end
 
@@ -426,14 +434,17 @@ end
 ---@param test_name               (string | nil)  (Optional) Name for the folder containing the files; 
 --                                                if nil, 'fred_test_1', 'fred_test_2', ... will be used instead. 
 --                                                The number starts from the greatest 'fred_test_' found in the folder.
----@param seed                    (number | nil)  (Optional) Seed for math.randomseed(); 
---                                                if nil, os.time() will be used instead.
+---@param seed                    (number | nil)  (Optional) Seed for math.randomseed(); if nil, os.time() will be used instead.
 ---@param gen_keys_readable_file  (boolean | nil) (Optional) Generate a 'keys.txt' with chars converted back to ASCII.
+---@param max_jumps_to_rand_pos   (number | nil)  (Optional) 
+---@param max_edits_in_insert     (number | nil)  (Optional) Max num of keys to be inserted in insert mode; 
 ---@return nil
 local function gen_test(args)
   local test_name = args.test_name
   local seed = args.seed
   local gen_keys_readable_file = args.gen_keys_readable_file
+  local max_jumps_to_rand_pos = args.max_jumps_to_rand_pos
+  local max_edits_in_insert = args.max_edits_in_insert
 
   assert_type(test_name, 'test_name', {'string', 'nil'})
   assert_type(seed, 'seed', {'number', 'nil'})
@@ -442,6 +453,8 @@ local function gen_test(args)
   test_name = test_name or get_default_test_name()
   seed = seed or os.time()
   gen_keys_readable_file = gen_keys_readable_file or false
+  max_jumps_to_rand_pos = max_jumps_to_rand_pos or 10
+  max_edits_in_insert = max_edits_in_insert or 3
 
   math.randomseed(seed)
   print(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed)) -- TODO: is it even necessary since now the seed has its own file?
@@ -451,7 +464,7 @@ local function gen_test(args)
   local feed = {}
   local screenshots = ''
 
-  screenshots = edit_buffer(bufnr, feed, 0, 0, 4, screenshots)
+  screenshots = edit_buffer(bufnr, feed, 0, 0, max_jumps_to_rand_pos, max_edits_in_insert, screenshots)
   write_keys2file(feed, path, false)
   if gen_keys_readable_file then
     write_keys2file(feed, path, true)
@@ -471,5 +484,9 @@ end
 
 -- gen_test{}
 -- OR
-gen_test{gen_keys_readable_file = true}
+gen_test{
+  gen_keys_readable_file = true,
+  -- max_jumps_to_rand_pos = 10,
+  -- max_edits_in_insert =  2,
+}
 
