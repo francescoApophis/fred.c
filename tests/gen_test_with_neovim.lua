@@ -420,12 +420,12 @@ local function get_default_test_name()
 
   table.sort(dir_names, function(a, b)
     local a_num, b_num = a:match('%d+'), b:match('%d+')
-    a_num, b_num = tonumber(a_num), tonumber(b_num)
+    a_num = (type(a_num) == 'nil' and -1000) or tonumber(a_num)
+    b_num = (type(b_num) == 'nil' and -1000) or tonumber(b_num)
     return a_num < b_num 
   end)
 
   local next_test_num = tonumber(dir_names[#dir_names]:match('%d+'))
-
   return default_name .. tostring(next_test_num + 1)
 end
 
