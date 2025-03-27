@@ -163,8 +163,6 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
 {
   bool failed = 0;
   bool file_loaded = 0;
-  bool term_and_sig_set = 0;
-  bool piece_table_allocated = 0;
 
   DA_INIT(&fe->piece_table);
   DA_INIT(&fe->add_buf);
@@ -172,17 +170,12 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
   if (failed) GOTO_END(1);
   file_loaded = 1;
 
-  failed = FRED_setup_terminal(&term_orig);
-  if (failed) GOTO_END(1);
-  term_and_sig_set = 1;
-
   if (fe->file_buf.size > 0){
     PIECE_TABLE_PUSH(&fe->piece_table, ((Piece){
       .which_buf = 0,
       .offset = 0,
       .len = fe->file_buf.size,
     }));
-    piece_table_allocated = 1;
   }
 
   fe->cursor = (Cursor){0};
@@ -192,11 +185,6 @@ bool fred_editor_init(FredEditor* fe, const char* file_path)
 end:
   if (failed){
     if (file_loaded) free(fe->file_buf.text);
-
-    if (term_and_sig_set) {
-      tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
-      sigaction(SIGWINCH, &old, NULL);
-    }
   }
   return failed;
 }
@@ -616,13 +604,9 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   GOTO_END(failed);
 
 end:
-  if (!failed) { // else the ERROR() macro has lready cleared the screen
+  if (!failed) { // else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\033[2J\033[H");
   }
-
-  tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
-  sigaction(SIGWINCH, &old, NULL);
-  // dump_piece_table(fe);
 
   fred_editor_free(fe);
   free(tw.text);
@@ -641,6 +625,11 @@ int main(int argc, char** argv)
 
   char* file_path = argv[1];
 
+  bool term_and_sig_set = 0;
+  failed = FRED_setup_terminal(&term_orig);
+  if (failed) GOTO_END(1);
+  term_and_sig_set = 1;
+
   FredEditor fe = {0};
   failed = fred_editor_init(&fe, file_path);
   if (failed) GOTO_END(1);
@@ -650,6 +639,10 @@ int main(int argc, char** argv)
 
   GOTO_END(failed);
 end:
+  if (term_and_sig_set) {
+    tcsetattr(STDIN_FILENO, TCSANOW, &term_orig);
+    sigaction(SIGWINCH, &old, NULL);
+  }
   return failed;
 }
 
