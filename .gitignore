@@ -4,3 +4,5 @@ test_files/
 debug/
 *.txt
 empty_file
+tests/lua
+tests/test
