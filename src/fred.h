@@ -1,6 +1,7 @@
 #ifndef FRED_H
 #define FRED_H
 
+#include "common.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -19,12 +20,42 @@
 
 #define ERROR(...) do { \
   fprintf(stderr, "\033[2J\033[H"); \
-  fprintf(stderr, "Error [in: %s, at line: %d]:\n",  __FILE__, __LINE__); \
+  fprintf(stderr, "ERROR: ") ; \
   fprintf(stderr, __VA_ARGS__); \
   fprintf(stderr, "\n"); \
   GOTO_END(1); \
 } while (0)
 
+
+#define PRINTING(statement) do { \
+  printing(); \
+  { \
+    statement \
+  } \
+  exit(1); \
+} while (0)
+
+
+
+#define ASSERT(cond) do {                                 \
+  if (!(cond)){                                           \
+    fprintf(stdout, "\033[2J\033[H\n");                   \
+    fprintf(stderr, "ASSERTION FAILED:" #cond "\n");   \
+    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
+    exit(1);                                              \
+  }                                                       \
+} while(0)
+
+#define ASSERT_MSG(cond, format, ...) do {                \
+  if (!(cond)){                                           \
+    fprintf(stdout, "\033[2J\033[H\n");                   \
+    fprintf(stderr, "ASSERTION FAILED: " #cond "\n");   \
+    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
+    fprintf(stderr, format, __VA_ARGS__);                 \
+    fprintf(stderr, "\n");                                \
+    exit(1);                                              \
+  }                                                       \
+} while(0)
 
 
 #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
@@ -95,6 +126,7 @@
 
 
 typedef struct termios termios;
+
 
 
 // NOTE: using uint32_t instead of size_t could save much more memory 
