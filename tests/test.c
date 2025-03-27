@@ -1,7 +1,71 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdbool.h>
+#include <unistd.h>
+
 #include "./../src/fred.h"
+
+
+#define ERR(...) do { \
+  fprintf(stderr, "ERROR: "); \
+  fprintf(stderr, __VA_ARGS__); \
+  fprintf(stderr, "\n"); \
+  exit(1); \
+} while (0)
+
+#define assert(cond, ...) do { \
+  if (!(cond)){ \
+    fprintf(stderr, "[%s, line: %d] ASSERTION FAILED '" #cond "':\n", __FILE__, __LINE__); \
+    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, "\n"); \
+    exit(1); \
+  } \
+} while (0)
+
+
+
+const char* get_file_path(const char* folder_path, const char* file_name)
+{
+  size_t n = strlen(folder_path);
+  size_t m = strlen(file_name);
+  bool has_sep = folder_path[n - 1] == '/';
+  char* full_path = malloc((n + m + (!has_sep ? 2 : 1)) * sizeof(*full_path));
+
+  strncat(full_path, folder_path, n);
+  if (!has_sep) strcat(full_path, "/");
+  return strncat(full_path, file_name, m);
+}
+
+void check_test_folder(const char* folder_path)
+{
+  struct stat sb;
+  if (stat(folder_path, &sb) == -1) {
+    if (errno == ENOENT) ERR("no such test-folder '%s'.", folder_path);
+    ERR("failed to retrieve any info about test-folder '%s', %s.", folder_path, strerror(errno));
+  }
+  if ((sb.st_mode & S_IFMT) != S_IFDIR){
+    ERR("path '%s' is not a directory.", folder_path);
+  }
+}
+
+
+void check_test_file_exists(const char* file_path)
+{
+  struct stat sb;
+  if (stat(file_path, &sb) == -1) {
+    // TODO: print all files needed for the fred_tests
+    if (errno == ENOENT) ERR("no such test-file '%s'.", file_path);
+    ERR("failed to retrieve any info about test-file '%s', %s.", file_path, strerror(errno));
+  }
+  if ((sb.st_mode & S_IFMT) != S_IFREG){
+    if ((sb.st_mode & S_IFMT) == S_IFDIR) ERR("given test-file-path '%s' is a directory, not a file.", file_path);
+    ERR("given test-file-path '%s' is not a regular file.", file_path);
+  }
+}
 
 
 typedef struct {
@@ -9,7 +73,8 @@ typedef struct {
   size_t size;
 } File;
 
-File read_file(char* filename)
+
+File read_file(const char* filename)
 {
   FILE* file = fopen(filename, "rb");
   if (file == NULL){
@@ -73,26 +138,69 @@ void print_keys(char* keys, size_t keys_num)
 }
 
 
+
+void print_screenshots(File* file)
+{
+#define matches_sep(str) (0 == strncmp((str), sep, sep_len))
+
+  const char* sep = "\n[screenshot";
+  const size_t sep_len = strlen(sep);
+  const char* ft = file->text;
+  const size_t fs = file->size;
+  int last_screenshot_start = 0; // TODO: find a better name than 'screenshot' for screenshot
+
+  size_t i = 0;
+  while(i < fs){
+    if (ft[i] == '\n' && matches_sep(&ft[i])){
+      i++;
+
+      while(i < fs && ft[i] != '\n') i++;
+      i++;
+      last_screenshot_start = i;
+
+      while(i < fs && (ft[i] != '\n' || !matches_sep(&ft[i]))) i++;
+      int new_screenshot_start = i;
+
+      printf("--------------------\n");
+      if (new_screenshot_start != last_screenshot_start){ // if false, screenshot is empty,  content were deleted
+        printf("%.*s\n", new_screenshot_start - last_screenshot_start, ft + last_screenshot_start);
+      }
+      last_screenshot_start = new_screenshot_start;
+      continue;
+    }
+    i++;
+  }
+  #undef matches_sep
+}
+
+
+
+// TODO: accept a '-h' flag that explains everything, from what's needed to what is happening
+// TODO: when in the future multiple tests will be run at the same time 
+// remember to free each File struct.
 int main(int argc, char* argv[])
 {
+  // TODO: explaing that the test only accept 'fred_test_[n]'-like folders
+  if (argc > 2) ERR("ERROR: momentarily handling one test-folder at a time.");
+  else if (argc < 2) ERR( "ERROR: please provide a test-folder path."); 
   
-  if (argc > 2){
-    fprintf(stderr, "ERROR: momentarily handling only 1 file.\n");
-    exit(1);
-  } else if (arg < 2) {
-    fprintf(stderr, "ERROR: please provide a file.\n");
-    exit(1);
-  }
+  const char* folder_path = argv[1];
 
-  char* filename = argv[1];
-  File file = read_file(filename);
-  size_t keys_num = 0;
-  char* keys = get_keys(&file, &keys_num);
+  // TODO: since all fred_test_[n] folders will live inside tests/, 
+  // maybe I should attach './' to folder_path?
+  check_test_folder(folder_path);
 
-  print_keys(keys, keys_num);
+  const char* tf_output_name = get_file_path(folder_path, "output.txt"); // [t]est [f]ile
+  const char* tf_keys_name = get_file_path(folder_path, "keys.txt");
+  const char* tf_screenshots_name = get_file_path(folder_path, "screenshots.txt");
 
-  free(file.text);
-  free(keys);
+  check_test_file_exists(tf_output_name);
+  check_test_file_exists(tf_keys_name);
+  check_test_file_exists(tf_screenshots_name);
+
+  // File screenshots = read_file(tf_screenshots_name);
+  // print_screenshots(&ss);
+
 
   return 0;
 }
