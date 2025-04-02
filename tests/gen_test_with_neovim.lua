@@ -11,7 +11,7 @@
 --          |- seed.txt             -> Random seed used by math.randomseed() to generate the current test.
 --          |- output.txt           -> contains the state of the buffer after the last key was fed to Fred.
 --                                     This can be used for a faster test (but that doesn't give much info about failures)
---          |- screenshots.txt      -> contains the state of the buffer (screenshot) after each key got fed.  
+--          |- snaps.txt            -> contains the state of the buffer (snap) after each key got fed.  
 --                                     This is used for a much in depth (but slower) test.
 --
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -181,7 +181,7 @@ local FILENAMES = {
   output = '/output.txt',
   keys = '/keys.txt',
   readable = '/keys_readable.txt',
-  screenshots = '/screenshots.txt',
+  snaps = '/snaps.txt',
   seed = '/seed.txt'
 }
 
@@ -192,7 +192,7 @@ local FILENAMES = {
 local function set_files_and_buf(path, seed)
   vim.api.nvim_exec2('!mkdir -p ' .. path, {})
 
-  io.open(path .. FILENAMES.screenshots, 'w'):close() -- clear previous content
+  io.open(path .. FILENAMES.snaps, 'w'):close() -- clear previous content
   io.open(path .. FILENAMES.output, 'w'):close()
 
   local seed_file = io.open(path .. FILENAMES.seed, 'w')
@@ -282,20 +282,20 @@ end
 
 
 ---@param bufnr           number
----@param screenshots     string
----@param screenshot_num  number
+---@param snaps           string
+---@param snap_num        number
 ---@param key_inserted    number 
----@return string screenshot 
-local function take_screenshot(bufnr, screenshots, screenshot_num, key_inserted)
+---@return string snap 
+local function take_snap(bufnr, snaps, snap_num, key_inserted)
   -- NOTE: this is shown basically only for visual debugging purposes
   local key_inserted = (key_inserted == 9   and 'TAB') or 
                        (key_inserted == 27  and 'ESC') or 
                        (key_inserted == 10  and 'NEWLINE') or 
                        (key_inserted == 127 and 'BACKSPACE') or ASCII.i2a[key_inserted]
   local lines = get_lines(bufnr, 0, -1, false)
-  local str = fmt('\n[screenshot: %d, inserted: %q]\n%s', screenshot_num, key_inserted, table.concat(lines, '\n'))
-  screenshots = screenshots .. str
-  return screenshots
+  local snap = fmt('\n[snap: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
+  snaps = snaps .. snap 
+  return snaps
 end
 
 
@@ -306,11 +306,11 @@ end
 ---@param curs_row     number
 ---@param curs_col     number
 ---@param max_keys     number
----@param screenshots  string
+---@param snaps        string
 ---@return number, number, string, number   Returns the updated curs_row and curs_col, 
---                                          the updated screenshots and the number of 
---                                          taken screenshots -- TODO: better desc
-local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, screenshots, screenshot_num)
+--                                          the updated snaps and the number of 
+--                                          taken snaps -- TODO: better desc
+local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, snaps, snap_num)
   assert(type(curs_row) == 'number' and type(curs_col) == 'number', 
     fmt('received invalid cursor value type: curs_row (%s), curs_col (%s)', type(curs_row), type(curs_col)))
 
@@ -324,8 +324,8 @@ local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, scre
 
     curs_row, curs_col = text_at(bufnr, curs_row, curs_col, key)
 
-    screenshot_num = screenshot_num + 1
-    screenshots = take_screenshot(bufnr, screenshots, screenshot_num, key)
+    snap_num = snap_num + 1
+    snaps = take_snap(bufnr, snaps, snap_num, key)
 
     assert(type(curs_row) == 'number' and 
            type(curs_col) == 'number', 
@@ -333,7 +333,7 @@ local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, scre
   end
 
   table.insert(feed, 27) -- ESC
-  return curs_row, curs_col, screenshots, screenshot_num
+  return curs_row, curs_col, snaps, snap_num
 end
 
 
@@ -366,14 +366,14 @@ end
 ---@param curs_col                number
 ---@param max_jumps_to_rand_pos   number 
 ---@param max_edits_in_insert     number
----@param screenshots             string
+---@param snaps                   string
 ---@return nil
-local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_pos, max_edits_in_insert, screenshots)
-  local screenshot_num = 0
+local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_pos, max_edits_in_insert, snaps)
+  local snap_num = 0
   curs_row, 
   curs_col, 
-  screenshots, 
-  screenshot_num = insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_edits_in_insert, screenshots, screenshot_num)
+  snaps, 
+  snap_num = insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_edits_in_insert, snaps, snap_num)
 
   for i=1, max_jumps_to_rand_pos do
     local tot_lines = get_tot_lines(bufnr)
@@ -390,11 +390,11 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
 
     curs_row, 
     curs_col, 
-    screenshots, 
-    screenshot_num = insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_edits_in_insert, screenshots, screenshot_num)
+    snaps, 
+    snap_num = insert_rand_ikeys(bufnr, feed, next_curs_row, next_curs_col, max_edits_in_insert, snaps, snap_num)
   end
 
-  return screenshots
+  return snaps
 end
 
 
@@ -457,20 +457,20 @@ local function gen_test(args)
   max_edits_in_insert = max_edits_in_insert or 3
 
   math.randomseed(seed)
-  print(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed)) -- TODO: is it even necessary since now the seed has its own file?
+  vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN) -- TODO: unnecessary?
 
   local path = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
   local bufnr = set_files_and_buf(path, seed)
   local feed = {}
-  local screenshots = ''
+  local snaps = ''
 
-  screenshots = edit_buffer(bufnr, feed, 0, 0, max_jumps_to_rand_pos, max_edits_in_insert, screenshots)
+  snaps = edit_buffer(bufnr, feed, 0, 0, max_jumps_to_rand_pos, max_edits_in_insert, snaps)
   write_keys2file(feed, path, false)
   if gen_keys_readable_file then
     write_keys2file(feed, path, true)
   end
-  sf = io.open(path .. FILENAMES.screenshots, 'w')
-  sf:write(screenshots)
+  sf = io.open(path .. FILENAMES.snaps, 'w')
+  sf:write(snaps)
   sf:close()
 
   vim.api.nvim_buf_call(bufnr, function()
@@ -484,9 +484,7 @@ end
 
 -- gen_test{}
 -- OR
-gen_test{
-  gen_keys_readable_file = true,
-  -- max_jumps_to_rand_pos = 10,
-  -- max_edits_in_insert =  2,
-}
+-- gen_test{
+  -- gen_keys_readable_file = true,
+-- }
 
