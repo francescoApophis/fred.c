@@ -13,6 +13,10 @@
 --                                     This can be used for a faster test (but that doesn't give much info about failures)
 --          |- snaps.txt            -> contains the state of the buffer (snap) after each key got fed.  
 --                                     This is used for a much in depth (but slower) test.
+--                                     NOTE: in the file, snaps are called 'snapshot' because test.c will search for 
+--                                     this name to find the start of one, since it's more unlikely 
+--                                     for this script to generate 'snapshot' instead of 'snap' somewhere
+--                                     
 --
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -21,6 +25,7 @@
 -- ****************** helpers ******************
 local fmt = string.format
 local rand = math.random
+local get_text = vim.api.nvim_buf_get_text
 local set_text = vim.api.nvim_buf_set_text
 local set_lines = vim.api.nvim_buf_set_lines
 local get_lines = vim.api.nvim_buf_get_lines
@@ -178,6 +183,7 @@ local valid_keys = {
 
 
 local FILENAMES = {
+  fred_output = '/fred_output.txt', -- NOTE+TODO: this is only temporary as fred_editor_init() needs an existent file to be initialized
   output = '/output.txt',
   keys = '/keys.txt',
   readable = '/keys_readable.txt',
@@ -271,7 +277,15 @@ local function text_at(bufnr, curs_row, curs_col, key)
     end 
 
   elseif key == 10 then 
-    set_lines(bufnr, curs_row + 1, curs_row + 1, true, {''})
+    local curr_line_len = #get_lines(bufnr, curs_row, curs_row + 1, true)[1]
+    if curs_col == curr_line_len then -- TODO: check for off-by-one
+      set_lines(bufnr, curs_row + 1, curs_row + 1, true, {''})
+    else
+      local start_to_col = get_text(bufnr, curs_row, 0, curs_row, curs_col, {})[1]
+      local col_to_end   = get_text(bufnr, curs_row, curs_col, curs_row, curr_line_len + 1, {})[1] --  TODO: check for off-by-one
+      set_lines(bufnr, curs_row, curs_row + 1, true, {start_to_col, col_to_end})
+    end
+
     return curs_row + 1, 0
   else
     set_text(bufnr, curs_row, curs_col, curs_row, curs_col, {ASCII.i2a[key]})
@@ -287,13 +301,16 @@ end
 ---@param key_inserted    number 
 ---@return string snap 
 local function take_snap(bufnr, snaps, snap_num, key_inserted)
+  -- NOTE: snaps are written as 'snapshot' because test.c will search for 
+  -- this name to find the start of one, since it's more unlikely 
+  -- for the script to generate 'snapshot' instead of 'snap' somewhere
   -- NOTE: this is shown basically only for visual debugging purposes
   local key_inserted = (key_inserted == 9   and 'TAB') or 
                        (key_inserted == 27  and 'ESC') or 
                        (key_inserted == 10  and 'NEWLINE') or 
                        (key_inserted == 127 and 'BACKSPACE') or ASCII.i2a[key_inserted]
   local lines = get_lines(bufnr, 0, -1, false)
-  local snap = fmt('\n[snap: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
+  local snap = fmt('\n[snapshot: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
   snaps = snaps .. snap 
   return snaps
 end
@@ -311,6 +328,7 @@ end
 --                                          the updated snaps and the number of 
 --                                          taken snaps -- TODO: better desc
 local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, snaps, snap_num)
+  -- TODO: change name of max_keys 
   assert(type(curs_row) == 'number' and type(curs_col) == 'number', 
     fmt('received invalid cursor value type: curs_row (%s), curs_col (%s)', type(curs_row), type(curs_col)))
 
@@ -379,6 +397,7 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
     local tot_lines = get_tot_lines(bufnr)
     local next_curs_row = rand(0, (tot_lines > 0 and tot_lines - 1) or 0)
     local next_curs_col = 0
+
     if next_curs_row < 1 then
       next_curs_col = rand(0, #get_lines(bufnr, 0, 1, true)[1])
     else
@@ -391,6 +410,8 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
     curs_row, 
     curs_col, 
     snaps, 
+
+               -- insert_rand_ikeys(bufnr, feed, curs_row,      curs_col,      max_keys,            snaps, snap_num)
     snap_num = insert_rand_ikeys(bufnr, feed, next_curs_row, next_curs_col, max_edits_in_insert, snaps, snap_num)
   end
 
@@ -457,7 +478,7 @@ local function gen_test(args)
   max_edits_in_insert = max_edits_in_insert or 3
 
   math.randomseed(seed)
-  vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN) -- TODO: unnecessary?
+  vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN)
 
   local path = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
   local bufnr = set_files_and_buf(path, seed)
@@ -469,9 +490,12 @@ local function gen_test(args)
   if gen_keys_readable_file then
     write_keys2file(feed, path, true)
   end
-  sf = io.open(path .. FILENAMES.snaps, 'w')
+
+  local sf = io.open(path .. FILENAMES.snaps, 'w') 
   sf:write(snaps)
   sf:close()
+
+  io.open(path .. FILENAMES.fred_output, 'w'):close() -- NOTE+TODO: this is only temporary as fred_editor_init() needs an existent file to be initialized
 
   vim.api.nvim_buf_call(bufnr, function()
     vim.cmd('silent! write')
@@ -482,9 +506,16 @@ end
 
 
 
+-- TODO: i should also write max_jumps_to_rand_pos and max_edits_in_insert
+-- in seed.txt
+
 -- gen_test{}
 -- OR
--- gen_test{
-  -- gen_keys_readable_file = true,
--- }
+gen_test{
+  gen_keys_readable_file = true,
+  -- test_name = ,
+  -- max_jumps_to_rand_pos = ,
+  -- max_edits_in_insert = ,
+  -- seed = 
+}
 
