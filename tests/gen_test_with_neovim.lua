@@ -15,7 +15,7 @@
 --                                     This is used for a much in depth (but slower) test.
 --                                     NOTE: in the file, snaps are called 'snapshot' because test.c will search for 
 --                                     this name to find the start of one, since it's more unlikely 
---                                     for this script to generate 'snapshot' instead of 'snap' somewhere
+--                                     for this script to generate 'snapshot' than 'snap' somewhere
 --                                     
 --
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -171,14 +171,14 @@ end
 
 
 
-local valid_keys = {
-  ['ESC'] = 27,
-  ['BACKSPACE'] = 127,
-  ['h'] = 0, 
-  ['j']= 0,
-  ['k'] = 0,
-  ['l'] = 0,
-  ['i'] = 0,
+local FRED_MAPPINGS = {
+  ['escape'] = 27,
+  ['delete'] = 127,
+  ['up'] = ASCII.a2i['k'],
+  ['down'] = ASCII.a2i['j'],
+  ['left'] = ASCII.a2i['h'],
+  ['right'] = ASCII.a2i['l'],
+  ['insert'] = ASCII.a2i['i'],
 }
 
 
@@ -254,7 +254,7 @@ local function get_rand_ikey()
 end
 
 
----@param bufnr     number
+---@param bufnr     number  Number of the to-be-edited buffer
 ---@param curs_row  number 
 ---@param curs_col  number 
 ---@param key       number 
@@ -294,15 +294,15 @@ end
 
 
 
----@param bufnr           number
----@param snaps           string
+---@param bufnr           number Number of the to-be-edited buffer
+---@param snaps           string 
 ---@param snap_num        number
 ---@param key_inserted    number 
 ---@return string snap 
 local function take_snap(bufnr, snaps, snap_num, key_inserted)
   -- NOTE: snaps are written as 'snapshot' because test.c will search for 
   -- this name to find the start of one, since it's more unlikely 
-  -- for the script to generate 'snapshot' instead of 'snap' somewhere
+  -- for the script to generate 'snapshot' than 'snap' somewhere
   -- NOTE: this is shown basically only for visual debugging purposes
   local key_inserted = (key_inserted == 9   and 'TAB') or 
                        (key_inserted == 27  and 'ESC') or 
@@ -317,7 +317,7 @@ end
 
 
 
----@param bufnr        number
+---@param bufnr        number   Number of the to-be-edited buffer
 ---@param feed         number[]
 ---@param curs_row     number
 ---@param curs_col     number
@@ -354,37 +354,45 @@ local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, snap
 end
 
 
----@param feed  number[] Array of ascii-ints to be fed to Fred
----@param prev  number   Previous cursor coordinate, row or col
----@param next  number   Next cursor coordinate, row or col
----@param key_a string   Key to generate when 'next' is before 'prev'
----@param key_b string   Key to generate when 'next' is after 'prev'
+---@param feed     number[] Array of ascii-ints to be fed to Fred
+---@param bufnr    number   Number of the to-be-edited buffer
+---@param prev_row number   
+---@param prev_col number   
+---@param next_row number   
+---@param next_col number   
 ---@return nil
-local function gen_keys_to_next_curs_pos(feed, prev, next, key_a, key_b, curr_row, bufnr) -- TODO: this function should handle keys-gen of both rows/cols privately
-  if curr_row ~= nil then
-    local line_at_row = get_lines(bufnr, curr_row, curr_row + 1, true)[1]
-    if prev > #line_at_row then
-      prev = #line_at_row
+local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_row, next_col)
+  local function gen(prev, next, dir_a, dir_b)
+    assert_type(dir_a, 'dir_a', {'string'})
+    assert_type(dir_b, 'dir_b', {'string'})
+
+    local diff = (next > prev and next - prev) or (next < prev and prev - next) or 0
+    if diff > 0 then
+      local dir = (next < prev and dir_a) or dir_b 
+      for i=1,diff do
+        table.insert(feed, FRED_MAPPINGS[dir])
+      end
     end
   end
 
-  local diff = (next > prev and next - prev) or 
-               (next < prev and prev - next) or 0
+  gen(prev_row, next_row, 'up', 'down')
 
-  if diff > 0 then
-    for i=1,diff do
-      table.insert(feed, ASCII.a2i[(next < prev and key_a) or key_b])
-    end
-  end
+  local line_at_row = get_lines(bufnr, next_row, next_row + 1, true)[1]
+  prev_col = (prev_col > #line_at_row and #line_at_row) or prev_col
+  gen(prev_col, next_col, 'left', 'right')
 end
+
+
+
 
 
 -- desc:
 -- Edit buffer at 'bufnr' by generating: a random position in the buffer, the 
--- motion keys to reach it, and random insert-mode keys-char to be inserted in
+-- motion keys to reach it, and random insert-mode-keys characters to be inserted in
 -- the buffer. All these keys are saved in 'feed' array as ASCII-int, and will 
--- be fed to Fred when running the test.
----@param bufnr                   number
+-- be fed to Fred through 'test.c'.
+--
+---@param bufnr                   number   Number of the to-be-edited buffer
 ---@param feed                    number[] Array of ascii-ints to be fed to Fred
 ---@param curs_row                number      
 ---@param curs_col                number
@@ -410,9 +418,7 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
       next_curs_col = rand(0, #get_lines(bufnr, next_curs_row, next_curs_row + 1, true)[1])
     end
 
-
-    gen_keys_to_next_curs_pos(feed, curs_row, next_curs_row, 'k', 'j')
-    gen_keys_to_next_curs_pos(feed, curs_col, next_curs_col, 'h', 'l', next_curs_row, bufnr)
+    gen_keys_to_next_curs_pos(feed, bufnr, curs_row, curs_col, next_curs_row, next_curs_col)
 
     curs_row, 
     curs_col, 
@@ -519,7 +525,7 @@ end
 -- OR
 gen_test{
   gen_keys_readable_file = true,
-  -- test_name = '',
+  -- test_name = ,
   -- max_jumps_to_rand_pos = ,
   -- max_edits_in_insert = ,
   -- seed = , 
