@@ -278,14 +278,13 @@ local function text_at(bufnr, curs_row, curs_col, key)
 
   elseif key == 10 then 
     local curr_line_len = #get_lines(bufnr, curs_row, curs_row + 1, true)[1]
-    if curs_col == curr_line_len then -- TODO: check for off-by-one
+    if curs_col == curr_line_len then
       set_lines(bufnr, curs_row + 1, curs_row + 1, true, {''})
     else
       local start_to_col = get_text(bufnr, curs_row, 0, curs_row, curs_col, {})[1]
-      local col_to_end   = get_text(bufnr, curs_row, curs_col, curs_row, curr_line_len + 1, {})[1] --  TODO: check for off-by-one
+      local col_to_end = get_text(bufnr, curs_row, curs_col, curs_row, curr_line_len + 1, {})[1]
       set_lines(bufnr, curs_row, curs_row + 1, true, {start_to_col, col_to_end})
     end
-
     return curs_row + 1, 0
   else
     set_text(bufnr, curs_row, curs_col, curs_row, curs_col, {ASCII.i2a[key]})
@@ -361,7 +360,14 @@ end
 ---@param key_a string   Key to generate when 'next' is before 'prev'
 ---@param key_b string   Key to generate when 'next' is after 'prev'
 ---@return nil
-local function gen_keys_to_next_curs_pos(feed, prev, next, key_a, key_b)
+local function gen_keys_to_next_curs_pos(feed, prev, next, key_a, key_b, curr_row, bufnr) -- TODO: this function should handle keys-gen of both rows/cols privately
+  if curr_row ~= nil then
+    local line_at_row = get_lines(bufnr, curr_row, curr_row + 1, true)[1]
+    if prev > #line_at_row then
+      prev = #line_at_row
+    end
+  end
+
   local diff = (next > prev and next - prev) or 
                (next < prev and prev - next) or 0
 
@@ -404,14 +410,13 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
       next_curs_col = rand(0, #get_lines(bufnr, next_curs_row, next_curs_row + 1, true)[1])
     end
 
+
     gen_keys_to_next_curs_pos(feed, curs_row, next_curs_row, 'k', 'j')
-    gen_keys_to_next_curs_pos(feed, curs_col, next_curs_col, 'h', 'l')
+    gen_keys_to_next_curs_pos(feed, curs_col, next_curs_col, 'h', 'l', next_curs_row, bufnr)
 
     curs_row, 
     curs_col, 
     snaps, 
-
-               -- insert_rand_ikeys(bufnr, feed, curs_row,      curs_col,      max_keys,            snaps, snap_num)
     snap_num = insert_rand_ikeys(bufnr, feed, next_curs_row, next_curs_col, max_edits_in_insert, snaps, snap_num)
   end
 
@@ -446,7 +451,9 @@ local function get_default_test_name()
     return a_num < b_num 
   end)
 
-  local next_test_num = tonumber(dir_names[#dir_names]:match('%d+'))
+  -- in case there are no numbered 'fred_test' folders like 'fred_test_delete' etc.
+  local last_test_num_str = dir_names[#dir_names]:match('%d+')
+  local next_test_num = (last_test_num_str == nil and 0) or tonumber(last_test_num_str)
   return default_name .. tostring(next_test_num + 1)
 end
 
@@ -505,7 +512,6 @@ local function gen_test(args)
 end
 
 
-
 -- TODO: i should also write max_jumps_to_rand_pos and max_edits_in_insert
 -- in seed.txt
 
@@ -513,9 +519,8 @@ end
 -- OR
 gen_test{
   gen_keys_readable_file = true,
-  -- test_name = ,
+  -- test_name = '',
   -- max_jumps_to_rand_pos = ,
   -- max_edits_in_insert = ,
-  -- seed = 
+  -- seed = , 
 }
-
