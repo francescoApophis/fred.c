@@ -204,7 +204,8 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool FRED_win_resize(TermWin* term_win);
 void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
 bool FRED_insert_text(FredEditor* fe, char c);
-bool FRED_make_piece(FredEditor* fe, bool which_buf, size_t offset, size_t len);
 void dump_piece_table(FredEditor* fe);
+void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key);
+bool FRED_delete_text(FredEditor* fe);
 
 #endif 
