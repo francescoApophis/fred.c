@@ -270,7 +270,7 @@ local function text_at(bufnr, curs_row, curs_col, key)
       local line_up_len = #get_lines(bufnr, curs_row - 1, curs_row, true)[1]
       set_lines(bufnr, curs_row, curs_row + 1, true, {})
       set_text(bufnr, curs_row - 1, line_up_len, curs_row - 1, line_up_len , curr_line)
-      return curs_row - 1, line_up_len + #curr_line[1]
+      return curs_row - 1, line_up_len
     else
       set_text(bufnr, curs_row, curs_col - 1, curs_row, curs_col, {})
       return curs_row, curs_col - 1
@@ -363,10 +363,13 @@ end
 ---@return nil
 local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_row, next_col)
   local function gen(prev, next, dir_a, dir_b)
+    assert_type(prev, 'prev', {'number'})
+    assert_type(next, 'next', {'number'})
     assert_type(dir_a, 'dir_a', {'string'})
     assert_type(dir_b, 'dir_b', {'string'})
 
     local diff = (next > prev and next - prev) or (next < prev and prev - next) or 0
+
     if diff > 0 then
       local dir = (next < prev and dir_a) or dir_b 
       for i=1,diff do
@@ -379,6 +382,7 @@ local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_r
 
   local line_at_row = get_lines(bufnr, next_row, next_row + 1, true)[1]
   prev_col = (prev_col > #line_at_row and #line_at_row) or prev_col
+
   gen(prev_col, next_col, 'left', 'right')
 end
 
@@ -410,19 +414,12 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_po
   for i=1, max_jumps_to_rand_pos do
     local tot_lines = get_tot_lines(bufnr)
     local next_curs_row = rand(0, (tot_lines > 0 and tot_lines - 1) or 0)
-    local next_curs_col = 0
-
-    if next_curs_row < 1 then
-      next_curs_col = rand(0, #get_lines(bufnr, 0, 1, true)[1])
-    else
-      next_curs_col = rand(0, #get_lines(bufnr, next_curs_row, next_curs_row + 1, true)[1])
-    end
-
+    local next_curs_col = rand(0, #get_lines(bufnr, next_curs_row, next_curs_row + 1, true)[1])
     gen_keys_to_next_curs_pos(feed, bufnr, curs_row, curs_col, next_curs_row, next_curs_col)
 
-    curs_row, 
-    curs_col, 
-    snaps, 
+    curs_row,
+    curs_col,
+    snaps,
     snap_num = insert_rand_ikeys(bufnr, feed, next_curs_row, next_curs_col, max_edits_in_insert, snaps, snap_num)
   end
 
@@ -525,8 +522,8 @@ end
 -- OR
 gen_test{
   gen_keys_readable_file = true,
-  -- test_name = ,
+  -- test_name = '',
+  -- seed = , 
   -- max_jumps_to_rand_pos = ,
   -- max_edits_in_insert = ,
-  -- seed = , 
 }
