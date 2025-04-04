@@ -62,7 +62,7 @@ int main(int argc, char** argv)
   char* file_path = argv[1];
 
   bool term_and_sig_set = 0;
-  failed = setup_terminal(&term_orig);
+  failed = setup_terminal();
   if (failed) GOTO_END(1);
   term_and_sig_set = 1;
 
@@ -82,6 +82,9 @@ end:
   return failed;
 }
 
+
+// TODO: asserts do not reset the terminal back. Instead of 
+// exiting right away, make it behave like errors
 
 // TODO: write test. IN neovim record all the keypresses while editing a 
 // file with only Fred's controls and write them onto a file. 
