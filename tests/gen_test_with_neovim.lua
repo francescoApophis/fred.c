@@ -199,7 +199,7 @@ local FILENAMES = {
 
 ---@param path                  string
 ---@param seed                  number The current seed used by math.randomseed(); it will be written into its own file.
----@param max_places_to_edit number
+---@param max_places_to_edit    number
 ---@param max_edits_in_insert   number
 ---@return number Returns bufnr of the to-be-edited buffer
 local function set_files_and_buf(path, seed, max_places_to_edit, max_edits_in_insert)
@@ -408,7 +408,7 @@ end
 ---@param feed                    number[] Array of ascii-ints to be fed to Fred
 ---@param curs_row                number      
 ---@param curs_col                number
----@param max_places_to_edit   number 
+---@param max_places_to_edit      number 
 ---@param max_edits_in_insert     number
 ---@param snaps                   string
 ---@return nil
