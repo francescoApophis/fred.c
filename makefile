@@ -6,6 +6,7 @@ BUILD_DIR = ./build
 DEBUG_DIR = ./debug
 
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/fred.o
+
 DEBUG_OBJS = $(DEBUG_DIR)/main.o  $(DEBUG_DIR)/fred.o
 
 .PHONY = all clean clean_debug $(DEBUG_DIR)/fred
@@ -14,8 +15,7 @@ all: $(BUILD_DIR)/$(EXE)
 
 
 $(BUILD_DIR)/$(EXE) : $(OBJS)
-	$(CC) -o $@ $? $(CFLAGS) 
-
+	$(CC) -o $@ $^ $(CFLAGS) 
 
 $(BUILD_DIR)/main.o : src/main.c src/fred.h src/common.h | $(BUILD_DIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -30,7 +30,7 @@ $(BUILD_DIR):
 
 
 $(DEBUG_DIR)/$(EXE): $(DEBUG_OBJS)
-	$(CC) -g -o $@ $? $(CFLAGS) 
+	$(CC) -g -o $@ $^ $(CFLAGS) 
 
 $(DEBUG_DIR)/main.o : src/main.c src/fred.h src/common.h | $(DEBUG_DIR)
 	$(CC) -g -c -o $@ $< $(CFLAGS)
