@@ -1,0 +1,48 @@
+
+[snapshot: 1, inserted: "|"]
+|
+[snapshot: 2, inserted: "`"]
+|`
+[snapshot: 3, inserted: "\\"]
+|`\
+[snapshot: 4, inserted: "U"]
+|`\U
+[snapshot: 5, inserted: "BACKSPACE"]
+|\U
+[snapshot: 6, inserted: "BACKSPACE"]
+\U
+[snapshot: 7, inserted: "a"]
+\Ua
+[snapshot: 8, inserted: "l"]
+\Ual
+[snapshot: 9, inserted: "NEWLINE"]
+\Ua
+l
+[snapshot: 10, inserted: "BACKSPACE"]
+\Ual
+[snapshot: 11, inserted: "Y"]
+\UaYl
+[snapshot: 12, inserted: "w"]
+w\UaYl
+[snapshot: 13, inserted: "TAB"]
+w	\UaYl
+[snapshot: 14, inserted: "M"]
+w	M\UaYl
+[snapshot: 15, inserted: "]"]
+w	M\]UaYl
+[snapshot: 16, inserted: "Z"]
+w	M\]ZUaYl
+[snapshot: 17, inserted: "i"]
+w	M\]ZiUaYl
+[snapshot: 18, inserted: "I"]
+w	MI\]ZiUaYl
+[snapshot: 19, inserted: "~"]
+w	MI\]ZiUaY~l
+[snapshot: 20, inserted: "BACKSPACE"]
+w	MI\]ZiUaYl
+[snapshot: 21, inserted: "t"]
+w	MIt\]ZiUaYl
+[snapshot: 22, inserted: "d"]
+w	MItd\]ZiUaYl
+[snapshot: 23, inserted: "\\"]
+w	MItd\\]ZiUaYl

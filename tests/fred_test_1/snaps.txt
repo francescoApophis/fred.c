@@ -1,0 +1,43 @@
+
+[snapshot: 1, inserted: "7"]
+7
+[snapshot: 2, inserted: "5"]
+75
+[snapshot: 3, inserted: "N"]
+75N
+[snapshot: 4, inserted: "BACKSPACE"]
+75
+[snapshot: 5, inserted: "3"]
+753
+[snapshot: 6, inserted: "j"]
+753j
+[snapshot: 7, inserted: "i"]
+7i53j
+[snapshot: 8, inserted: "}"]
+7i53j}
+[snapshot: 9, inserted: "BACKSPACE"]
+7i5j}
+[snapshot: 10, inserted: "r"]
+7i5rj}
+[snapshot: 11, inserted: "V"]
+7Vi5rj}
+[snapshot: 12, inserted: " "]
+7V i5rj}
+[snapshot: 13, inserted: "k"]
+7V ki5rj}
+[snapshot: 14, inserted: "z"]
+7zV ki5rj}
+[snapshot: 15, inserted: "l"]
+7zlV ki5rj}
+[snapshot: 16, inserted: ","]
+7zlV ki5rj},
+[snapshot: 17, inserted: "P"]
+7zlV ki5rj},P
+[snapshot: 18, inserted: "z"]
+z7zlV ki5rj},P
+[snapshot: 19, inserted: "?"]
+z?7zlV ki5rj},P
+[snapshot: 20, inserted: "5"]
+z?57zlV ki5rj},P
+[snapshot: 21, inserted: "BACKSPACE"]
+z?57zl ki5rj},P

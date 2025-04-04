@@ -6,6 +6,5 @@ build_manual/
 empty_file
 tests/lua
 tests/test
-tests/fred_test*
 notes/
-*.txt
+./*.txt

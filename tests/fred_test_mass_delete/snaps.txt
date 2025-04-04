@@ -1,0 +1,21 @@
+
+[snapshot: 1, inserted: "a"]
+a
+[snapshot: 2, inserted: "b"]
+ab
+[snapshot: 3, inserted: "c"]
+abc
+[snapshot: 4, inserted: "NEWLINE"]
+abc
+
+[snapshot: 5, inserted: "BACKSPACE"]
+abc
+[snapshot: 6, inserted: "BACKSPACE"]
+ab
+[snapshot: 7, inserted: "BACKSPACE"]
+a
+[snapshot: 8, inserted: "BACKSPACE"]
+
+[snapshot: 9, inserted: "BACKSPACE"]
+
+[snapshot: 10, inserted: "BACKSPACE"]
