@@ -148,6 +148,9 @@ end:
 
 void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
 {
+  // TODO: I should cash the line info so that the next 
+  // time, if im it's doing horizontal movement I dont need 
+  // to do all of this 
   // TODO: maybe binary search the piece-table
   size_t tot_lines = 0;
   size_t curs_line_len = 0;
@@ -201,7 +204,7 @@ void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key)
   
   switch (key){
     case 'j': {
-      if (fe->cursor.row + 1 >= tot_lines) return; 
+      if (fe->cursor.row + 1 > tot_lines) return; 
 
       fe->cursor.row++;
       if (fe->cursor.col > curs_down_line_len){
@@ -536,6 +539,9 @@ end:
   if (!failed) { // else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\033[2J\033[H");
   }
+
+  dump_piece_table(fe);
+  
 
   fred_editor_free(fe);
   free(tw.text);
