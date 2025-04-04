@@ -23,23 +23,28 @@
 
 
 -- ****************** helpers ******************
-local fmt = string.format
-local rand = math.random
-local get_text = vim.api.nvim_buf_get_text
-local set_text = vim.api.nvim_buf_set_text
+local fmt       = string.format
+local rand      = math.random
+local get_text  = vim.api.nvim_buf_get_text
+local set_text  = vim.api.nvim_buf_set_text
 local set_lines = vim.api.nvim_buf_set_lines
 local get_lines = vim.api.nvim_buf_get_lines
 local rand_bool = function() return ((rand(1,2) - 1) == 1 and true) or false end
-local _print = function(i) print((type(i) ~= 'table' and i) or vim.inspect(i)) end
+local _print    = function(i) print((type(i) ~= 'table' and i) or vim.inspect(i)) end
 
 
-local assert_type = function(var, var_name, expected_types)
+local assert_type = function(var, expected_types)
+  local pretty_types = vim.inspect(expected_types):gsub('[{}]', ''):gsub(',%s("%w+")%s$', ' or %1')
+
   for _, _type in ipairs(expected_types) do
     if type(var) == _type then
-      return
+      if _type == 'string' and var == '' then
+        error(fmt('invalid value: expected%s, got %q', pretty_types, 'empty string'))
+      end
+      return var
     end
   end
-  error(fmt('invalid %q, expected %s, got %q', var_name, vim.inspect(expected_types), type(var)))
+  error(fmt('invalid value: expected%s, got %q', pretty_types, type(var)))
 end
 
 
@@ -60,76 +65,76 @@ end
 local ASCII = {}
 
 ASCII.i2a = {
-  [9] = '\t',
-  [10] = '\n',
-  [32] = ' ',
-  [33] = '!',
-  [34] = '"',
-  [35] = '#',
-  [36] = '$',
-  [37] = '%',
-  [38] = '&',
-  [39] = '\'',
-  [40] = '(',
-  [41] = ')',
-  [42] = '*',
-  [43] = '+',
-  [44] = ',',
-  [45] = '-',
-  [46] = '.',
-  [47] = '/',
-  [48] = '0',
-  [49] = '1',
-  [50] = '2',
-  [51] = '3',
-  [52] = '4',
-  [53] = '5',
-  [54] = '6',
-  [55] = '7',
-  [56] = '8',
-  [57] = '9',
-  [58] = ':',
-  [59] = ';',
-  [60] = '<',
-  [61] = '=',
-  [62] = '>',
-  [63] = '?',
-  [64] = '@',
-  [65] = 'A',
-  [66] = 'B',
-  [67] = 'C',
-  [68] = 'D',
-  [69] = 'E',
-  [70] = 'F',
-  [71] = 'G',
-  [72] = 'H',
-  [73] = 'I',
-  [74] = 'J',
-  [75] = 'K',
-  [76] = 'L',
-  [77] = 'M',
-  [78] = 'N',
-  [79] = 'O',
-  [80] = 'P',
-  [81] = 'Q',
-  [82] = 'R',
-  [83] = 'S',
-  [84] = 'T',
-  [85] = 'U',
-  [86] = 'V',
-  [87] = 'W',
-  [88] = 'X',
-  [89] = 'Y',
-  [90] = 'Z',
-  [91] = '[',
-  [92] = '\\',
-  [93] = ']',
-  [94] = '^',
-  [95] = '_',
-  [96] = '`',
-  [97] = 'a',
-  [98] = 'b',
-  [99] = 'c',
+  [9]   = '\t',
+  [10]  = '\n',
+  [32]  = ' ',
+  [33]  = '!',
+  [34]  = '"',
+  [35]  = '#',
+  [36]  = '$',
+  [37]  = '%',
+  [38]  = '&',
+  [39]  = '\'',
+  [40]  = '(',
+  [41]  = ')',
+  [42]  = '*',
+  [43]  = '+',
+  [44]  = ',',
+  [45]  = '-',
+  [46]  = '.',
+  [47]  = '/',
+  [48]  = '0',
+  [49]  = '1',
+  [50]  = '2',
+  [51]  = '3',
+  [52]  = '4',
+  [53]  = '5',
+  [54]  = '6',
+  [55]  = '7',
+  [56]  = '8',
+  [57]  = '9',
+  [58]  = ':',
+  [59]  = ';',
+  [60]  = '<',
+  [61]  = '=',
+  [62]  = '>',
+  [63]  = '?',
+  [64]  = '@',
+  [65]  = 'A',
+  [66]  = 'B',
+  [67]  = 'C',
+  [68]  = 'D',
+  [69]  = 'E',
+  [70]  = 'F',
+  [71]  = 'G',
+  [72]  = 'H',
+  [73]  = 'I',
+  [74]  = 'J',
+  [75]  = 'K',
+  [76]  = 'L',
+  [77]  = 'M',
+  [78]  = 'N',
+  [79]  = 'O',
+  [80]  = 'P',
+  [81]  = 'Q',
+  [82]  = 'R',
+  [83]  = 'S',
+  [84]  = 'T',
+  [85]  = 'U',
+  [86]  = 'V',
+  [87]  = 'W',
+  [88]  = 'X',
+  [89]  = 'Y',
+  [90]  = 'Z',
+  [91]  = '[',
+  [92]  = '\\',
+  [93]  = ']',
+  [94]  = '^',
+  [95]  = '_',
+  [96]  = '`',
+  [97]  = 'a',
+  [98]  = 'b',
+  [99]  = 'c',
   [100] = 'd',
   [101] = 'e',
   [102] = 'f',
@@ -174,21 +179,21 @@ end
 local FRED_MAPPINGS = {
   ['escape'] = 27,
   ['delete'] = 127,
-  ['up'] = ASCII.a2i['k'],
-  ['down'] = ASCII.a2i['j'],
-  ['left'] = ASCII.a2i['h'],
-  ['right'] = ASCII.a2i['l'],
+  ['up']     = ASCII.a2i['k'],
+  ['down']   = ASCII.a2i['j'],
+  ['left']   = ASCII.a2i['h'],
+  ['right']  = ASCII.a2i['l'],
   ['insert'] = ASCII.a2i['i'],
 }
 
 
 local FILENAMES = {
   fred_output = '/fred_output.txt', -- NOTE+TODO: this is only temporary as fred_editor_init() needs an existent file to be initialized
-  output = '/output.txt',
-  keys = '/keys.txt',
-  readable = '/keys_readable.txt',
-  snaps = '/snaps.txt',
-  seed = '/seed.txt'
+  output      = '/output.txt',
+  keys        = '/keys.txt',
+  readable    = '/keys_readable.txt',
+  snaps       = '/snaps.txt',
+  seed        = '/seed.txt'
 }
 
 
@@ -309,7 +314,7 @@ local function take_snap(bufnr, snaps, snap_num, key_inserted)
                        (key_inserted == 10  and 'NEWLINE') or 
                        (key_inserted == 127 and 'BACKSPACE') or ASCII.i2a[key_inserted]
   local lines = get_lines(bufnr, 0, -1, false)
-  local snap = fmt('\n[snapshot: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
+  local snap  = fmt('\n[snapshot: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
   snaps = snaps .. snap 
   return snaps
 end
@@ -363,10 +368,10 @@ end
 ---@return nil
 local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_row, next_col)
   local function gen(prev, next, dir_a, dir_b)
-    assert_type(prev, 'prev', {'number'})
-    assert_type(next, 'next', {'number'})
-    assert_type(dir_a, 'dir_a', {'string'})
-    assert_type(dir_b, 'dir_b', {'string'})
+    assert_type(prev,  {'number'})
+    assert_type(next,  {'number'})
+    assert_type(dir_a, {'string'})
+    assert_type(dir_b, {'string'})
 
     local diff = (next > prev and next - prev) or (next < prev and prev - next) or 0
 
@@ -471,28 +476,18 @@ end
 ---@param max_edits_in_insert     (number | nil)  (Optional) Max num of keys to be inserted in insert mode; 
 ---@return nil
 local function gen_test(args)
-  local test_name = args.test_name
-  local seed = args.seed
-  local gen_keys_readable_file = args.gen_keys_readable_file
-  local max_jumps_to_rand_pos = args.max_jumps_to_rand_pos
-  local max_edits_in_insert = args.max_edits_in_insert
-
-  assert_type(test_name, 'test_name', {'string', 'nil'})
-  assert_type(seed, 'seed', {'number', 'nil'})
-  assert_type(gen_keys_readable_file, 'gen_keys_readable_file', {'boolean', 'nil'})
-
-  test_name = test_name or get_default_test_name()
-  seed = seed or os.time()
-  gen_keys_readable_file = gen_keys_readable_file or false
-  max_jumps_to_rand_pos = max_jumps_to_rand_pos or 10
-  max_edits_in_insert = max_edits_in_insert or 3
+  local test_name              = assert_type(args.test_name, {'string', 'nil'}) or get_default_test_name()
+  local seed                   = assert_type(args.seed, {'number', 'nil'}) or os.time()
+  local gen_keys_readable_file = assert_type(args.gen_keys_readable_file, {'boolean', 'nil'}) or false
+  local max_jumps_to_rand_pos  = assert_type(args.max_jumps_to_rand_pos, {'number', 'nil'}) or 10
+  local max_edits_in_insert    = assert_type(args.max_edits_in_insert, {'number', 'nil'}) or 3
 
   math.randomseed(seed)
   vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN)
 
-  local path = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
+  local path  = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
   local bufnr = set_files_and_buf(path, seed)
-  local feed = {}
+  local feed  = {}
   local snaps = ''
 
   snaps = edit_buffer(bufnr, feed, 0, 0, max_jumps_to_rand_pos, max_edits_in_insert, snaps)
@@ -523,7 +518,7 @@ end
 gen_test{
   gen_keys_readable_file = true,
   -- test_name = '',
-  -- seed = , 
-  -- max_jumps_to_rand_pos = ,
+  -- seed = ,
+  -- max_jumps_to_rand_pos =  ,
   -- max_edits_in_insert = ,
 }
