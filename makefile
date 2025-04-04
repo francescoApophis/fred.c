@@ -1,6 +1,6 @@
 
 EXE = fred
-CC = gcc
+CC = gcc 
 CFLAGS = -Wall -Wextra -Wpedantic
 BUILD_DIR = ./build
 DEBUG_DIR = ./debug
@@ -44,10 +44,10 @@ $(DEBUG_DIR):
 
 
 clean:
-	$(RM) $(BUILD_DIR)/*
+	rm -r $(BUILD_DIR)/*
 
 clean_debug:
-	$(RM) $(DEBUG_DIR)/*
+	rm -r $(DEBUG_DIR)/*
 
 
 
