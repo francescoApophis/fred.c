@@ -197,17 +197,20 @@ local FILENAMES = {
 }
 
 
----@param path string
----@param seed number The current seed used by math.randomseed(); it will be written into its own file.
+---@param path                  string
+---@param seed                  number The current seed used by math.randomseed(); it will be written into its own file.
+---@param max_places_to_edit number
+---@param max_edits_in_insert   number
 ---@return number Returns bufnr of the to-be-edited buffer
-local function set_files_and_buf(path, seed)
+local function set_files_and_buf(path, seed, max_places_to_edit, max_edits_in_insert)
   vim.api.nvim_exec2('!mkdir -p ' .. path, {})
 
   io.open(path .. FILENAMES.snaps, 'w'):close() -- clear previous content
   io.open(path .. FILENAMES.output, 'w'):close()
 
   local seed_file = io.open(path .. FILENAMES.seed, 'w')
-  seed_file:write(tostring(seed))
+  -- seed_file:write(tostring(seed))
+  seed_file:write(fmt('seed: %d\nmax_places_to_edit: %d\nmax_edits_in_insert: %d\n', seed, max_places_to_edit, max_edits_in_insert))
   seed_file:close()
 
   local bufnr = vim.fn.bufadd(path .. FILENAMES.output)
@@ -405,18 +408,18 @@ end
 ---@param feed                    number[] Array of ascii-ints to be fed to Fred
 ---@param curs_row                number      
 ---@param curs_col                number
----@param max_jumps_to_rand_pos   number 
+---@param max_places_to_edit   number 
 ---@param max_edits_in_insert     number
 ---@param snaps                   string
 ---@return nil
-local function edit_buffer(bufnr, feed, curs_row, curs_col, max_jumps_to_rand_pos, max_edits_in_insert, snaps)
+local function edit_buffer(bufnr, feed, curs_row, curs_col, max_places_to_edit, max_edits_in_insert, snaps)
   local snap_num = 0
   curs_row, 
   curs_col, 
   snaps, 
   snap_num = insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_edits_in_insert, snaps, snap_num)
 
-  for i=1, max_jumps_to_rand_pos do
+  for i=1, max_places_to_edit do
     local tot_lines = get_tot_lines(bufnr)
     local next_curs_row = rand(0, (tot_lines > 0 and tot_lines - 1) or 0)
     local next_curs_col = rand(0, #get_lines(bufnr, next_curs_row, next_curs_row + 1, true)[1])
@@ -472,25 +475,25 @@ end
 --                                                The number starts from the greatest 'fred_test_' found in the folder.
 ---@param seed                    (number | nil)  (Optional) Seed for math.randomseed(); if nil, os.time() will be used instead.
 ---@param gen_keys_readable_file  (boolean | nil) (Optional) Generate a 'keys.txt' with chars converted back to ASCII.
----@param max_jumps_to_rand_pos   (number | nil)  (Optional) 
+---@param max_places_to_edit      (number | nil)  (Optional) 
 ---@param max_edits_in_insert     (number | nil)  (Optional) Max num of keys to be inserted in insert mode; 
 ---@return nil
 local function gen_test(args)
   local test_name              = assert_type(args.test_name, {'string', 'nil'}) or get_default_test_name()
   local seed                   = assert_type(args.seed, {'number', 'nil'}) or os.time()
   local gen_keys_readable_file = assert_type(args.gen_keys_readable_file, {'boolean', 'nil'}) or false
-  local max_jumps_to_rand_pos  = assert_type(args.max_jumps_to_rand_pos, {'number', 'nil'}) or 10
+  local max_places_to_edit     = assert_type(args.max_places_to_edit, {'number', 'nil'}) or 10
   local max_edits_in_insert    = assert_type(args.max_edits_in_insert, {'number', 'nil'}) or 3
 
   math.randomseed(seed)
   vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN)
 
   local path  = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
-  local bufnr = set_files_and_buf(path, seed)
-  local feed  = {}
+  local bufnr = set_files_and_buf(path, seed, max_places_to_edit, max_edits_in_insert)
+  local feed  = {}                           
   local snaps = ''
 
-  snaps = edit_buffer(bufnr, feed, 0, 0, max_jumps_to_rand_pos, max_edits_in_insert, snaps)
+  snaps = edit_buffer(bufnr, feed, 0, 0, max_places_to_edit, max_edits_in_insert, snaps)
   write_keys2file(feed, path, false)
   if gen_keys_readable_file then
     write_keys2file(feed, path, true)
@@ -510,15 +513,12 @@ local function gen_test(args)
 end
 
 
--- TODO: i should also write max_jumps_to_rand_pos and max_edits_in_insert
--- in seed.txt
-
 -- gen_test{}
 -- OR
 gen_test{
   gen_keys_readable_file = true,
   -- test_name = '',
   -- seed = ,
-  -- max_jumps_to_rand_pos =  ,
+  -- max_places_to_edit = ,
   -- max_edits_in_insert = ,
 }
