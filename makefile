@@ -1,15 +1,19 @@
 
 EXE = fred
 CC = gcc 
-CFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic -Wno-comment
 BUILD_DIR = ./build
 DEBUG_DIR = ./debug
+TEST_DIR = ./tests
 
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/fred.o
-
 DEBUG_OBJS = $(DEBUG_DIR)/main.o  $(DEBUG_DIR)/fred.o
 
-.PHONY = all clean clean_debug $(DEBUG_DIR)/fred
+.PHONY = all                \
+         clean              \
+         clean_debug        \
+         $(DEBUG_DIR)/fred  \
+				 $(TEST_DIR)/test 
 
 all: $(BUILD_DIR)/$(EXE)
 
@@ -42,6 +46,11 @@ $(DEBUG_DIR):
 	mkdir $(DEBUG_DIR)
 
 
+$(TEST_DIR)/test : $(TEST_DIR)/test.o $(BUILD_DIR)/fred.o
+	$(CC) -o $@ $^ $(CFLAGS) 
+
+$(TEST_DIR)/test.o : $(TEST_DIR)/test.c
+	$(CC) -c -o $@ $? $(CFLAGS) 
 
 clean:
 	rm -r $(BUILD_DIR)/*

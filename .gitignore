@@ -8,3 +8,5 @@ tests/lua
 tests/test
 notes/
 ./*.txt
+tests/test.o
+tests/test
