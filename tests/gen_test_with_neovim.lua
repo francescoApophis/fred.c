@@ -258,7 +258,8 @@ local function get_rand_ikey()
   return (rand(20) % 2  == 0 and rand(32, 126)) or 
          (rand(20) % 4  == 0 and 127) or 
          (rand(20) % 14 == 0 and 9) or 
-         (rand(20) % 12 == 0 and 10) or rand(32, 126)
+         -- (rand(20) % 12 == 0 and 10) or rand(32, 126)
+         (rand(20) % 8 == 0 and 10) or rand(32, 126)
 end
 
 
@@ -306,8 +307,12 @@ end
 ---@param snaps           string 
 ---@param snap_num        number
 ---@param key_inserted    number 
+---@param curs_row        number Cursor row after key got inserted 
+---@param curs_col        number Cursor col after key got inserted
 ---@return string snap 
-local function take_snap(bufnr, snaps, snap_num, key_inserted)
+local function take_snap(bufnr, snaps, snap_num, key_inserted, curs_row, curs_col)
+  assert_type(curs_row, {"number"})
+  assert_type(curs_col, {"number"})
   -- NOTE: snaps are written as 'snapshot' because test.c will search for 
   -- this name to find the start of one, since it's more unlikely 
   -- for the script to generate 'snapshot' than 'snap' somewhere
@@ -317,7 +322,11 @@ local function take_snap(bufnr, snaps, snap_num, key_inserted)
                        (key_inserted == 10  and 'NEWLINE') or 
                        (key_inserted == 127 and 'BACKSPACE') or ASCII.i2a[key_inserted]
   local lines = get_lines(bufnr, 0, -1, false)
-  local snap  = fmt('\n[snapshot: %d, inserted: %q]\n%s', snap_num, key_inserted, table.concat(lines, '\n'))
+  local snap  = fmt('\n[snapshot: %d, inserted: %q, %d:%d]\n%s', 
+                    snap_num,
+                    key_inserted, 
+                    curs_row + 1, curs_col + 1,
+                    table.concat(lines, '\n'))
   snaps = snaps .. snap 
   return snaps
 end
@@ -346,11 +355,12 @@ local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, snap
   for i=1,n do
     local key = (maybe_mass_delete and 127) or get_rand_ikey()
     table.insert(feed, key)
-
+    
     curs_row, curs_col = text_at(bufnr, curs_row, curs_col, key)
+    local prev_curs_row, prev_curs_col = curs_row, curs_col
 
     snap_num = snap_num + 1
-    snaps = take_snap(bufnr, snaps, snap_num, key)
+    snaps = take_snap(bufnr, snaps, snap_num, key, prev_curs_row, prev_curs_col)
 
     assert(type(curs_row) == 'number' and 
            type(curs_col) == 'number', 
