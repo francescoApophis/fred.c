@@ -8,7 +8,7 @@
 
 
 #define ADD_BUF_INIT_CAP 512
-#define PIECE_TABLE_INIT_CAP 56
+#define PIECE_TABLE_INIT_CAP 8 
 
 #define SPACE_CH 32
 #define ESC_CH 27
@@ -40,7 +40,7 @@
 #define ASSERT(cond) do {                                 \
   if (!(cond)){                                           \
     fprintf(stdout, "\033[2J\033[H\n");                   \
-    fprintf(stderr, "ASSERTION FAILED:" #cond "\n");   \
+    fprintf(stderr, "ASSERTION FAILED:" #cond "\n");      \
     fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
     exit(1);                                              \
   }                                                       \
@@ -49,7 +49,7 @@
 #define ASSERT_MSG(cond, format, ...) do {                \
   if (!(cond)){                                           \
     fprintf(stdout, "\033[2J\033[H\n");                   \
-    fprintf(stderr, "ASSERTION FAILED: " #cond "\n");   \
+    fprintf(stderr, "ASSERTION FAILED: " #cond "\n");     \
     fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
     fprintf(stderr, format, __VA_ARGS__);                 \
     fprintf(stderr, "\n");                                \
@@ -57,11 +57,24 @@
   }                                                       \
 } while(0)
 
+// #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
+  // if ((da)->len + (elem_count) > (da)->cap) {                                         \
+    // fprintf(stderr, "-----------------------\n"); \
+    // while ((da)->cap <= (da)->len + (elem_count)) {                                   \
+      // fprintf(stderr, "" #da_type ", cap: %ld, needed at least: %ld\n", (da)->cap, (da)->len + (elem_count)); \
+      // (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                     \
+    // }                                                                                 \
+    // fprintf(stderr, "" #da_type ", final cap: %ld, needed at least: %ld\n", (da)->cap, (da)->len + (elem_count)); \
+    // void* temp = realloc((da)->items, (da)->cap * sizeof(*(da)->items));              \
+    // if (temp == NULL) ERROR("not enough memory for dynamic array \"" #da_type "\"."); \
+    // (da)->items = temp;                                                               \
+  // }                                                                                   \
+// } while(0)
 
 #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
-  if ((da)->len + (elem_count) >= (da)->cap) {                                        \
-    (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                       \
-    void* temp = realloc((da)->items, sizeof(*(da)->items) * (da)->cap);              \
+  if ((da)->len + (elem_count) > (da)->cap) {                                   \
+    (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                     \
+    void* temp = realloc((da)->items, (da)->cap * sizeof(*(da)->items));              \
     if (temp == NULL) ERROR("not enough memory for dynamic array \"" #da_type "\"."); \
     (da)->items = temp;                                                               \
   }                                                                                   \
@@ -92,21 +105,57 @@
 } while (0)
 
 
+  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
 
-
-#define PIECE_TABLE_MAKE_ROOM(piece_table, piece_ptr, dest_offset, src_offset, n_bytes) do {            \
-  if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
+#define PIECE_TABLE_MAKE_ROOM(piece_table,  src_offset, dest_offset, n_bytes) do {            \
   DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
   if ((dest_offset) || (src_offset)) {                                                                  \
-    memmove((piece_ptr) + (dest_offset), (piece_ptr) + (src_offset), (n_bytes) * sizeof(Piece));        \
+    memmove((piece_table)->items + (dest_offset),                                                       \
+            (piece_table)->items + (src_offset),                                                        \
+            (n_bytes) * sizeof(Piece));                                                                 \
   }                                                                                                     \
 } while(0)
 
-
-#define PIECE_TABLE_INSERT(piece_table, piece, wb, of, l) do {  \
-  (piece) = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
+#define PIECE_TABLE_INSERT(piece_table, piece_idx, piece) do {  \
+  (piece_table)->items[(piece_idx)] = (piece);                  \
   (piece_table)->len++;                                         \
 } while(0)
+
+
+
+
+// #define PIECE_TABLE_MAKE_ROOM(piece_table, piece_ptr, dest_offset, src_offset, n_bytes) do {            \
+  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
+  // DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
+  // if ((dest_offset) || (src_offset)) {                                                                  \
+    // memmove((piece_ptr) + (dest_offset), (piece_ptr) + (src_offset), (n_bytes) * sizeof(Piece));        \
+  // }                                                                                                     \
+// } while(0)
+
+// #define PIECE_TABLE_INSERT(piece_table, piece, wb, of, l) do {  \
+  // (piece) = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
+  // (piece_table)->len++;                                         \
+// } while(0)
+
+
+
+// #define PIECE_TABLE_MAKE_ROOM(piece_table, piece_idx, dest_offset, src_offset, n_bytes) do {            \
+  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
+  // DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
+  // if ((dest_offset) || (src_offset)) {                                                                  \
+    // memmove((piece_table)->items + (piece_idx) + (dest_offset),  \
+            // (piece_table)->items + (piece_idx) + (src_offset),  \
+            // (n_bytes) * sizeof(Piece));        \
+  // }                                                                                                     \
+// } while(0)
+
+// #define PIECE_TABLE_INSERT(piece_table, piece_idx, wb, of, l) do {  \
+  // (piece_table)->items[(piece_idx)] = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
+  // (piece_table)->len++;                                         \
+// } while(0)
+
+
+
 
 
 #define ADD_BUF_PUSH(da, item) do {                 \
@@ -204,7 +253,7 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool FRED_win_resize(TermWin* term_win);
 void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
 bool FRED_insert_text(FredEditor* fe, char c);
-void dump_piece_table(FredEditor* fe);
+void dump_piece_table(FredEditor* fe, FILE* stream);
 void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key);
 bool FRED_delete_text(FredEditor* fe);
 
