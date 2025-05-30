@@ -27,8 +27,8 @@
 } while (0)
 
 
-#define PRINTING(statement) do { \
-  printing(); \
+#define PRINT(statement) do { \
+  fprintf(stdout, "\033[2J\033[H"); \
   { \
     statement \
   } \
@@ -37,39 +37,18 @@
 
 
 
-#define ASSERT(cond) do {                                 \
-  if (!(cond)){                                           \
-    fprintf(stdout, "\033[2J\033[H\n");                   \
-    fprintf(stderr, "ASSERTION FAILED:" #cond "\n");      \
-    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
-    exit(1);                                              \
-  }                                                       \
+#define ASSERT(cond, ...) do {                       \
+  if (!(cond)){                                      \
+    fprintf(stderr, "\033[2J\033[H");              \
+    fprintf(stderr, "ASSERTION FAILED:" #cond "\n"); \
+    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__); \
+    fprintf(stderr, __VA_ARGS__);                    \
+    fprintf(stderr, "\n");                           \
+    exit(1);                                         \
+  }                                                  \
 } while(0)
 
-#define ASSERT_MSG(cond, format, ...) do {                \
-  if (!(cond)){                                           \
-    fprintf(stdout, "\033[2J\033[H\n");                   \
-    fprintf(stderr, "ASSERTION FAILED: " #cond "\n");     \
-    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__);      \
-    fprintf(stderr, format, __VA_ARGS__);                 \
-    fprintf(stderr, "\n");                                \
-    exit(1);                                              \
-  }                                                       \
-} while(0)
 
-// #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
-  // if ((da)->len + (elem_count) > (da)->cap) {                                         \
-    // fprintf(stderr, "-----------------------\n"); \
-    // while ((da)->cap <= (da)->len + (elem_count)) {                                   \
-      // fprintf(stderr, "" #da_type ", cap: %ld, needed at least: %ld\n", (da)->cap, (da)->len + (elem_count)); \
-      // (da)->cap = (da)->cap == 0 ? (da_cap_init) : (da)->cap * 2;                     \
-    // }                                                                                 \
-    // fprintf(stderr, "" #da_type ", final cap: %ld, needed at least: %ld\n", (da)->cap, (da)->len + (elem_count)); \
-    // void* temp = realloc((da)->items, (da)->cap * sizeof(*(da)->items));              \
-    // if (temp == NULL) ERROR("not enough memory for dynamic array \"" #da_type "\"."); \
-    // (da)->items = temp;                                                               \
-  // }                                                                                   \
-// } while(0)
 
 #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
   if ((da)->len + (elem_count) > (da)->cap) {                                   \
@@ -193,8 +172,16 @@ typedef struct {
 
 
 typedef struct {
+  uint16_t* items;
+  size_t len; // total lines in piece-table
+  size_t cap;
+} LinesLen;
+
+typedef struct {
   size_t row; 
   size_t col; 
+  size_t prev_row; 
+  size_t prev_col; 
   size_t win_row;
   size_t win_col;
 } Cursor;
@@ -239,6 +226,7 @@ typedef struct {
   PieceTable piece_table;
   AddBuf add_buf;
   FileBuf file_buf;
+  LinesLen lines_len;
   Cursor cursor;
   LastEdit last_edit;
 } FredEditor;
@@ -254,7 +242,8 @@ bool FRED_win_resize(TermWin* term_win);
 void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
 bool FRED_insert_text(FredEditor* fe, char c);
 void dump_piece_table(FredEditor* fe, FILE* stream);
-void FRED_move_cursor(FredEditor* fe, TermWin* tw, char key);
+void FRED_move_cursor(FredEditor* fe, char key);
 bool FRED_delete_text(FredEditor* fe);
+bool FRED_get_lines_len(FredEditor* fe);
 
 #endif 
