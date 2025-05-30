@@ -517,6 +517,39 @@ void update_win_cursor(FredEditor* fe, TermWin* tw)
 }
 
 
+
+bool FRED_handle_input(FredEditor* fe, bool* running, bool* insert, char* key, ssize_t bytes_read)
+{
+  bool failed = 0;
+
+  fe->cursor.prev_row = fe->cursor.row;
+  fe->cursor.prev_col = fe->cursor.col;
+
+  if (*insert){
+    if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){ // escape
+      fe->last_edit.cursor = fe->cursor;
+      *insert = false;
+    } else if (KEY_IS(key, "\x7f")){
+      if (FRED_delete_text(fe)) GOTO_END(1);
+    } else if (bytes_read == 1) {
+      if (FRED_insert_text(fe, key[0])) GOTO_END(1);
+    }
+    FRED_get_lines_len(fe);
+  } else {
+    if (KEY_IS(key, "h") || KEY_IS(key, "j") || KEY_IS(key, "k") || KEY_IS(key, "l"))  {
+      FRED_move_cursor(fe, key[0]);
+    } else if (KEY_IS(key, "q")) {
+      *running = false;
+    } else if (KEY_IS(key, "i")) {
+      *insert = true;
+    } else if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")) {
+      *insert = false;
+    }
+  }
+end:
+  return failed;
+}
+
 bool FRED_start_editor(FredEditor* fe, const char* file_path)
 {
   bool failed = 0;
@@ -535,52 +568,23 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
     FRED_render_text(&tw, &fe->cursor);
 
     char key[MAX_KEY_LEN] = {0};
-    ssize_t b_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
-    if (b_read == -1) {
+    ssize_t bytes_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
+
+    if (bytes_read == -1) {
       if (errno == EINTR){
-        failed = FRED_win_resize(&tw);
-        if (failed) GOTO_END(1);
+        if (FRED_win_resize(&tw)) GOTO_END(1);
         update_win_cursor(fe, &tw);
         continue;
       }
       ERROR("failed to read from stdin");
     }
 
-    if (insert){
-      fe->cursor.prev_row = fe->cursor.row;
-      fe->cursor.prev_col = fe->cursor.col;
-
-      if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){ // escape
-        fe->last_edit.cursor = fe->cursor;
-        insert = false;
-      } else if (KEY_IS(key, "\x7f")){
-        failed = FRED_delete_text(fe);
-        if (failed) GOTO_END(1);
-        
-      } else{
-        // ASSERT_MSG(b_read == 1, "UTF-8 not supported yet. Typed: '%s'", key);
-        if (b_read == 1) {
-          failed = FRED_insert_text(fe, key[0]);
-          if (failed) GOTO_END(1);
-        }
-      }
-
-      FRED_get_lines_len(fe);
+    if (bytes_read > 0) {
+      if (FRED_handle_input(fe, &running, &insert, key, bytes_read)) GOTO_END(1);
       update_win_cursor(fe, &tw);
-
-    } else {
-      if (KEY_IS(key, "h") || KEY_IS(key, "j") || 
-          KEY_IS(key, "k") || KEY_IS(key, "l"))  {
-        FRED_move_cursor(fe, key[0]);
-        update_win_cursor(fe, &tw);
-
-      } else if (KEY_IS(key, "q")) running = false;
-        else if (KEY_IS(key, "i")) insert = true;
-        else if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")) insert = false;
     }
   }
   GOTO_END(failed);
-
 end:
   if (!failed) { // else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\033[2J\033[H");

@@ -244,6 +244,7 @@ bool FRED_insert_text(FredEditor* fe, char c);
 void dump_piece_table(FredEditor* fe, FILE* stream);
 void FRED_move_cursor(FredEditor* fe, char key);
 bool FRED_delete_text(FredEditor* fe);
+bool FRED_handle_input(FredEditor* fe, bool* running, bool* insert, char* key, ssize_t bytes_read);
 bool FRED_get_lines_len(FredEditor* fe);
 
 #endif 
