@@ -28,42 +28,42 @@
 
 
 
-char* get_file_path(const char* folder_path, const char* file_name)
+char* make_path(const char* dir_path, const char* file_name)
 {
-  size_t n = strlen(folder_path);
+  size_t n = strlen(dir_path);
   size_t m = strlen(file_name);
-  bool has_sep = folder_path[n - 1] == '/';
+  bool has_sep = dir_path[n - 1] == '/';
   char* full_path = malloc((n + m + (!has_sep ? 2 : 1)) * sizeof(*full_path));
 
-  strncat(full_path, folder_path, n);
+  strncat(full_path, dir_path, n);
   if (!has_sep) strcat(full_path, "/");
   return strncat(full_path, file_name, m);
 }
 
-void assert_is_folder(const char* folder_path)
+void assert_is_dir(const char* path)
 {
   struct stat sb;
-  if (stat(folder_path, &sb) == -1) {
-    if (errno == ENOENT) ERR("no such test-folder '%s'.", folder_path); // FIXME:  this should say 'ERROR on 'filepath', no such ...'
-    ERR("failed to retrieve any info about test-folder '%s', %s.", folder_path, strerror(errno));
+  if (stat(path, &sb) == -1) {
+    if (errno == ENOENT) ERR("no such test-dir '%s'.", path); // FIXME:  this should say 'ERROR on 'filepath', no such ...'
+    ERR("failed to retrieve any info about test-dir '%s', %s.", path, strerror(errno));
   }
   if ((sb.st_mode & S_IFMT) != S_IFDIR){
-    ERR("path '%s' is not a directory.", folder_path);
+    ERR("path '%s' is not a directory.", path);
   }
 }
 
 
-void assert_file_exists(const char* file_path)
+void assert_file_exists(const char* path)
 {
   struct stat sb;
-  if (stat(file_path, &sb) == -1) {
+  if (stat(path, &sb) == -1) {
     // TODO: print all files needed for the fred_tests
-    if (errno == ENOENT) ERR("no such test-file '%s'.", file_path);
-    ERR("failed to retrieve any info about test-file '%s', %s.", file_path, strerror(errno));
+    if (errno == ENOENT) ERR("no such test-file '%s'.", path);
+    ERR("failed to retrieve any info about test-file '%s', %s.", path, strerror(errno));
   }
   if ((sb.st_mode & S_IFMT) != S_IFREG){
-    if ((sb.st_mode & S_IFMT) == S_IFDIR) ERR("given test-file-path '%s' is a directory, not a file.", file_path);
-    ERR("given test-file-path '%s' is not a regular file.", file_path);
+    if ((sb.st_mode & S_IFMT) == S_IFDIR) ERR("given test-file-path '%s' is a directory, not a file.", path);
+    ERR("given test-file-path '%s' is not a regular file.", path);
   }
 }
 
@@ -100,7 +100,7 @@ File read_file(const char* filename)
 }
 
 
-char* get_keys_from_file(const char* file_name, size_t* keys_count) 
+char* get_keys(const char* file_name, size_t* keys_count) 
 {
   File file = read_file(file_name);
 
@@ -143,6 +143,8 @@ void print_keys(char* keys, size_t keys_num)
 }
 
 
+// NOTE: curs_coords is a 1d array, for each snap two slots 
+// contain the row and column of the cursor 
 void get_cursor_pos(char* snaps_file, size_t end_sep_idx, size_t* curs_coords, size_t* curs_coords_idx, size_t max_curs_coords)
 {
   int semicolon_idx = 0;
@@ -162,6 +164,8 @@ void get_cursor_pos(char* snaps_file, size_t end_sep_idx, size_t* curs_coords, s
 }
 
 
+// NOTE: snaps_offsets is a 1d array, for each snap two slots 
+// contain the snap-start-offset and the snap-length of the 
 size_t get_snaps_offsets(File* snaps_file, size_t** snaps_offsets, size_t** curs_coords)
 {
 #define matches_sep(ch) ((ch) == '\n' && 0 == strncmp(&(ch), sep, sep_len))
@@ -212,49 +216,15 @@ size_t get_snaps_offsets(File* snaps_file, size_t** snaps_offsets, size_t** curs
 }
 
 
-bool feed_key(FredEditor* fe, TermWin* tw, char* key, bool* insert)
-{
-  bool failed = 0;
-
-  if (*insert){
-    if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){
-      fe->last_edit.cursor = fe->cursor;
-      *insert = false;
-    } else if (KEY_IS(key, "\x7f")){
-      failed = FRED_delete_text(fe);
-      if (failed) GOTO_END(1);
-
-    } else{
-      failed = FRED_insert_text(fe, key[0]);
-      if (failed) GOTO_END(1);
-    }
-
-  } else {
-    if (KEY_IS(key, "h") || 
-      KEY_IS(key, "j") || 
-      KEY_IS(key, "k") || 
-      KEY_IS(key, "l")) FRED_move_cursor(fe, tw, key[0]);
-
-    // else if (KEY_IS(key, "q")) *running = false; // NOTE: the tests don't need to test for quitting
-    else if (KEY_IS(key, "i")) *insert = true;
-    else if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")) *insert = false;
-    else printf("no match\n"); // TODO: not enough info 
-  }
-
-  GOTO_END(failed);
-
-end:
-  return failed;
-}
 
 
-
-void test_failure(FredEditor* fe, const char* folder_path, const char* key, int snap_num,
+void test_failure(FredEditor* fe, const char* dir_path, const char* key, int snap_num,
                   char* fred_output, size_t fred_output_len,
                   const char* snap, size_t snap_len)
 {
+  // TODO: when we will test in batches, this should at the start of the text
   fprintf(stderr, "TEST FAILED:\n");
-  fprintf(stderr, "name test: %s\n", folder_path);
+  fprintf(stderr, "name test: %s\n", dir_path);
   fprintf(stderr, "inserting char: '%c' (%d)\n", key[0], key[0]);
   fprintf(stderr, "\n");
   fprintf(stderr, "[snapshot: %d, length: %ld]\n", snap_num, snap_len);
@@ -274,7 +244,6 @@ void test_failure(FredEditor* fe, const char* folder_path, const char* key, int 
 
 
 
-// stores the output in a stack variable declared before before the call
 void build_fred_output(FredEditor* fe, char* dest)
 {
   size_t offset = 0;
@@ -286,7 +255,7 @@ void build_fred_output(FredEditor* fe, char* dest)
   }
 }
 
-void compare_to_snap(FredEditor* fe, const char* folder_path, char* key_str, char* snaps, size_t* snaps_offsets, size_t snap_num)
+void compare_to_snap(FredEditor* fe, const char* dir_path, char* key_str, char* snaps, size_t* snaps_offsets, size_t snap_num)
 {
 
   size_t fred_output_len = 0;
@@ -302,10 +271,10 @@ void compare_to_snap(FredEditor* fe, const char* folder_path, char* key_str, cha
     if (fred_output_len > 0) {
       char fred_output[fred_output_len];
       build_fred_output(fe, fred_output);
-      test_failure(fe, folder_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
+      test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
     }
     char fred_output[1] = {'\0'};
-    test_failure(fe, folder_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
+    test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
   }
 
   if (snap_len == 0) return;
@@ -314,62 +283,59 @@ void compare_to_snap(FredEditor* fe, const char* folder_path, char* key_str, cha
   build_fred_output(fe, fred_output);
 
   if (0 != strncmp(fred_output, snap, snap_len)) {
-    test_failure(fe, folder_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
+    test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
   }
 }
 
 int main(int argc, char* argv[])
 {
   // TODO: explaing that the test only accept 'fred_test_[n]'-like folders
+  // and that it only tests the piece-table
   if (argc > 2) ERR("momentarily handling one test-folder at a time.");
   else if (argc < 2) ERR("please provide a test-folder path."); 
   
-  const char* folder_path = argv[1];
+  const char* dir_path = argv[1];
 
-  // TODO: since all fred_test_[n] folders will live inside tests/, 
-  // maybe I should attach './' to folder_path? just use get_file_path("./", folder_path)
-  assert_is_folder(folder_path);
+  // TODO: all fred_test_[n] folders live inside tests/. Attach './' to path?
+  assert_is_dir(dir_path);
 
   // TODO: fred_editor_init needs exisising-path-file, piece-table shouldn't
-  char* fred_output_name = get_file_path(folder_path, "fred_output.txt");
-  char* output_name = get_file_path(folder_path, "output.txt"); // [t]est [f]ile
-  char* keys_name = get_file_path(folder_path, "keys.txt");
-  char* snaps_name = get_file_path(folder_path, "snaps.txt");
+  char* fred_output_path = make_path(dir_path, "fred_output.txt");
+  char* output_path = make_path(dir_path, "output.txt");
+  char* keys_path = make_path(dir_path, "keys.txt");
+  char* snaps_path = make_path(dir_path, "snaps.txt");
 
-  assert_file_exists(fred_output_name);
-  assert_file_exists(output_name);
-  assert_file_exists(keys_name);
-  assert_file_exists(snaps_name);
-
+  // TODO: func could use variadic args?
+  assert_file_exists(fred_output_path);
+  assert_file_exists(output_path);
+  assert_file_exists(keys_path);
+  assert_file_exists(snaps_path);
 
   // TODO: fred_editor_init needs exisising-path-file, piece-table shouldn't
   FredEditor fe = {0};
-  if (fred_editor_init(&fe, fred_output_name)) exit(1);
-
-  // NOTE+TODO: FRED_move_cursor() also handles 
-  // win_cursor movement; needs de-coupling
-  TermWin tw = {0};
-  if (FRED_win_resize(&tw)) exit(1);
+  if (fred_editor_init(&fe, fred_output_path)) exit(1);
 
   size_t keys_count = 0;
-  char* keys = get_keys_from_file(keys_name, &keys_count);
+  char* keys = get_keys(keys_path, &keys_count);
 
-  File snaps = read_file(snaps_name);
+  File snaps = read_file(snaps_path);
   size_t* curs_coords = NULL;
   size_t* snaps_offsets = NULL;
   size_t snaps_count = get_snaps_offsets(&snaps, &snaps_offsets, &curs_coords);
-  size_t snap_num = 0; 
 
+  bool _running = true; // NOTE: dummy flag, the tests never generate 'q' for quitting
   bool insert_mode = false;
 
-  for (size_t i = 0; i < keys_count; i++) {
-    char key_str[2] = {keys[i], '\0'}; // NOTE+TODO: feed_key() emulates FRED_start_editor which uses strings, useless i know
+  for (size_t i = 0, snap_num = 0; i < keys_count; i++) {
+    char key_str[2] = {keys[i], '\0'};
     bool just_entered_insert_mode = KEY_IS(key_str, "i") && !insert_mode;
 
-    if (1 == feed_key(&fe, &tw, key_str, &insert_mode)) exit(1);
+    if (FRED_handle_input(&fe, &_running, &insert_mode, key_str, 1)){
+      exit(1);
+    }
 
     if (!just_entered_insert_mode && insert_mode){
-      compare_to_snap(&fe, folder_path, key_str, snaps.text, snaps_offsets, snap_num);
+      compare_to_snap(&fe, dir_path, key_str, snaps.text, snaps_offsets, snap_num);
       snap_num++;
     }
   }
@@ -379,10 +345,10 @@ int main(int argc, char* argv[])
   // Doing it here makes no sense
   fred_editor_free(&fe);
   free(keys);
-  free(fred_output_name);
-  free(output_name);
-  free(keys_name);
-  free(snaps_name);
+  free(fred_output_path);
+  free(output_path);
+  free(keys_path);
+  free(snaps_path);
   free(curs_coords);
   free(snaps_offsets);
 
