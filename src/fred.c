@@ -28,6 +28,8 @@ bool FRED_open_file(FileBuf* file_buf, const char* file_path)
   if (file_buf->text == NULL) ERROR("not enough memory for file file-buffer.");
   file_loaded = 1;
 
+  // TODO: just use fread?
+
   ssize_t bytes_read = read(fd, file_buf->text, file_buf->size);
   if (bytes_read == -1) ERROR("failed to read file '%s'. %s", file_path, strerror(errno));
 
@@ -211,167 +213,215 @@ end:
   return failed;
 }
 
+bool insert_at_table_start(FredEditor* fe)
+{
+  bool failed = 0;
+  PieceTable* table = &fe->piece_table;
+  DA_MAYBE_GROW(table, 1, PIECE_TABLE_INIT_CAP, PieceTable);
+  memmove(table->items + 1, table->items, table->len * sizeof(*table->items));
+  table->items[0] = (Piece) {
+    .which_buf = 1,
+    .offset = fe->add_buf.len - 1,
+    .len = 1,
+  };
+  table->len++;
+end:
+  return failed;
+}
+
+
+bool insert_after_piece(FredEditor* fe, size_t piece_idx)
+{
+#define AT_LAST_EDIT_POS (fe->cursor.row == fe->last_edit.cursor.row && fe->cursor.col == fe->last_edit.cursor.col)
+#define LAST_ACT_WAS_INSERT (fe->last_edit.action == ACT_INSERT)
+#define IS_ADD_BUF_PIECE (table->items[piece_idx].which_buf)
+
+  bool failed = 0;
+  PieceTable* table = &fe->piece_table;
+
+  if (AT_LAST_EDIT_POS && LAST_ACT_WAS_INSERT && IS_ADD_BUF_PIECE) {
+    table->items[piece_idx].len++;
+  } else {
+    DA_MAYBE_GROW(table, 1, PIECE_TABLE_INIT_CAP, PieceTable);
+    size_t n = (table->len - (piece_idx + 1)) * sizeof(*table->items);
+    memmove(&table->items[piece_idx+2], &table->items[piece_idx+1], n);
+    table->items[piece_idx + 1] = (Piece) {
+      .which_buf = 1,
+      .offset = fe->add_buf.len - 1,
+      .len = 1,
+    };
+    table->len++;
+  }
+end:
+  return failed;
+
+#undef AT_LAST_EDIT_POS
+#undef LAST_ACT_WAS_INSERT
+#undef IS_ADD_BUF_PIECE
+}
+
+bool insert_inside_piece(FredEditor* fe, size_t piece_idx, size_t edit_offset) 
+{
+  bool failed = 0;
+
+  PieceTable* table = &fe->piece_table;
+  Piece curr_piece = table->items[piece_idx];
+  size_t piece_1_len = edit_offset; 
+  size_t piece_3_offset = curr_piece.offset + piece_1_len;
+  size_t piece_3_len = curr_piece.len - piece_1_len;
+ 
+  DA_MAYBE_GROW(table, 2, PIECE_TABLE_INIT_CAP, PieceTable);
+  size_t n = (table->len - (piece_idx + 1)) * sizeof(*table->items);
+  memmove(&table->items[piece_idx + 3], &table->items[piece_idx + 1], n);
+
+  table->items[piece_idx + 1] = (Piece){ 1, fe->add_buf.len - 1, 1};
+  table->items[piece_idx + 2] = (Piece){ curr_piece.which_buf, piece_3_offset, piece_3_len};
+  table->items[piece_idx].len = piece_1_len;
+  table->len += 2;
+end:
+  return failed;
+}
 
 
 bool FRED_insert_text(FredEditor* fe, char text_char)
 {
-#define CURSOR_AT_LAST_EDIT_POS (fe->cursor.row == fe->last_edit.cursor.row && fe->cursor.col == fe->last_edit.cursor.col)
-
+#define LAST_ACT_WAS_INSERT (fe->last_edit.action == ACT_INSERT)
   bool failed = 0;
 
+  PieceTable* table = &fe->piece_table;
+  LinesLen* ll = &fe->lines_len;
+  Cursor* cr = &fe->cursor;
+
   ADD_BUF_PUSH(&fe->add_buf, text_char);
-  int col = fe->cursor.col;
-  size_t add_buf_len = fe->add_buf.len;
-  size_t line = 0;
-  PieceTable* pt = &fe->piece_table;
 
-  if (pt->len == 0){
-    Piece new_piece = {.which_buf = 1, .offset = add_buf_len - 1, .len = 1};
-    PIECE_TABLE_PUSH(pt, new_piece);
-    goto end_loop;
+  if (table->len == 0 || (!LAST_ACT_WAS_INSERT && cr->row == ll->len - 1 && cr->col == ll->items[cr->row])) {
+    PIECE_TABLE_PUSH(table, ((Piece){1, fe->add_buf.len - 1, 1}));
+    GOTO_END(failed);
+  } else if (cr->row == 0 && cr->col == 0) {
+    failed = insert_at_table_start(fe);
+    GOTO_END(failed);
   }
 
-  if (fe->cursor.row == 0 && fe->cursor.col == 0){ // add at table-start
-    Piece new_piece = {.which_buf = 1, .offset = add_buf_len - 1, .len = 1};
-    PIECE_TABLE_MAKE_ROOM(pt, 0, 1, pt->len);
-    PIECE_TABLE_INSERT(pt, 0, new_piece);
-    goto end_loop;
+  size_t place_to_edit_offset = 0; // NOTE: offset in the fully built text
+  for ( size_t i = 0; i < cr->row; i++) {
+    // NOTE: no NULL-check needed for 'll' cause the loop 
+    // would be unreachable, since cr->row would be 0
+    place_to_edit_offset += ll->items[i] + 1; // NOTE: '+1' is for '\n' 
   }
+  place_to_edit_offset += cr->col;
 
-  for (size_t piece_idx = 0; piece_idx < pt->len; piece_idx++){
-    Piece* piece = &pt->items[piece_idx];
-    char* buf = !piece->which_buf? fe->file_buf.text : fe->add_buf.items;
-
-    for (size_t j = 0; j < piece->len; j++){
-      char c = buf[piece->offset + j];
-      if (line < fe->cursor.row){
-        if (c == '\n') line++;
-      } else if (col > 0){
-        col--;
-      } 
-      if (line < fe->cursor.row || col > 0) continue;
-
-      if (j + 1 >= piece->len){ // insertion at end of piece
-        if (CURSOR_AT_LAST_EDIT_POS && piece->which_buf && fe->last_edit.action == ACT_INSERT){
-          piece->len++;
-          goto end_loop;
-        }
-        if (piece_idx + 1 >= pt->len){
-          Piece new_piece = {.which_buf = 1, .offset = add_buf_len - 1, .len = 1};
-          DA_MAYBE_GROW(pt, 1, PIECE_TABLE_INIT_CAP, PieceTable);
-          PIECE_TABLE_INSERT(pt, pt->len, new_piece);
-          goto end_loop;
-        }
-        Piece new_piece = {.which_buf = 1, .offset = add_buf_len - 1, .len = 1};
-        PIECE_TABLE_MAKE_ROOM(pt, piece_idx + 1, piece_idx + 2, pt->len - (piece_idx + 1));
-        PIECE_TABLE_INSERT(pt, piece_idx + 1, new_piece);
-        goto end_loop;
-      }
-
-      // insertion in the middle of a piece
-      size_t p1_len = j + 1; // because 'j' is 0-indexed
-      size_t p3_offset = piece->offset + p1_len;
-      size_t p3_len = piece->len - p1_len;
-      
-      PIECE_TABLE_MAKE_ROOM(pt, piece_idx + 1, piece_idx + 3, pt->len - (piece_idx + 1));
-
-      PIECE_TABLE_INSERT(pt, piece_idx + 1, ((Piece){ 
-        .which_buf = 1, 
-        .offset = add_buf_len - 1,
-        .len = 1 
-      }));
-
-      PIECE_TABLE_INSERT(pt, piece_idx + 2, ((Piece){ 
-        .which_buf = piece->which_buf, 
-        .offset = p3_offset, 
-        .len = p3_len,
-      }));
-      piece->len = p1_len;
-      goto end_loop;
+  for (size_t i = 0, pieces_len = 0; i < table->len; i++) {
+    pieces_len += table->items[i].len;
+    if (place_to_edit_offset == pieces_len) {
+      failed = insert_after_piece(fe, i);
+      GOTO_END(failed);
+    } else if (pieces_len > place_to_edit_offset) {
+      size_t edit_offset = table->items[i].len - (pieces_len - place_to_edit_offset);
+      failed = insert_inside_piece(fe, i, edit_offset);
+      GOTO_END(failed);
     }
   }
-end_loop:
-  if (text_char == '\n'){
-    fe->cursor.row++;
-    fe->cursor.col = 0; 
-  } else {
-    fe->cursor.col++; 
-  }
-  fe->last_edit.cursor = fe->cursor;
-  fe->last_edit.action = ACT_INSERT;
 
-  GOTO_END(failed);
 end:
+  // FIXME: end lable should only handle clean-up logic
+  if (!failed) {
+    if (text_char == '\n'){
+      fe->cursor.row++;
+      fe->cursor.col = 0; 
+    } else {
+      fe->cursor.col++; 
+    }
+    fe->last_edit.cursor = fe->cursor;
+    fe->last_edit.action = ACT_INSERT;
+  }
   return failed;
-  #undef CURSOR_AT_LAST_EDIT_POS
+#undef LAST_ACT_WAS_INSERT
 }
 
+
+void delete_at_piece_end(PieceTable* table, size_t piece_idx)
+{
+  bool failed = 0;
+  Piece* p = &table->items[piece_idx];
+  if (p->len - 1 > 0){
+    p->len--;
+  } else {
+    // NOTE: otherwise garbage might get copied over
+    if (table->len > 1) memmove(p, p + 1, (table->len - (piece_idx + 1)) * sizeof(*p));
+    if (table->len) table->len--;
+  }
+}
+
+bool delete_inside_piece(PieceTable* table, size_t piece_idx, size_t char_offset, FredEditor* fe)
+{
+  bool failed = 0;
+  // FIXME+CHECK: i think char_offset HAS to be less than p->len, otherwise
+  // it would point to some other piece's character. In that case, 
+  // should it point to the next piece?
+  DA_MAYBE_GROW(table, 1, PIECE_TABLE_INIT_CAP, PieceTable);
+  Piece* p = &table->items[piece_idx];
+  memmove(p + 2, p + 1, (table->len - (piece_idx + 1)) * sizeof(*p));
+  p[1] = (Piece){p->which_buf, p->offset + char_offset + 1, p->len - (char_offset + 1)};
+  p->len = char_offset;
+  table->len++;
+end:
+  return failed;
+}
 
 
 bool FRED_delete_text(FredEditor* fe)
 {
+#define buf(offset)((!p->which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+
   bool failed = 0;
 
-  if (fe->cursor.row == 0 && fe->cursor.col == 0) return failed;
+  PieceTable* table = &fe->piece_table;
+  LinesLen* ll = &fe->lines_len;
+  Cursor* cr = &fe->cursor;
 
-  PieceTable* pt = &fe->piece_table;
-  int col = fe->cursor.col;
-  size_t line = 0;
-  size_t curs_up_line_len = 0;
-  char deleted_char = 0;
+  if (table->len == 0 || (cr->row == 0 && cr->col == 0)) {
+    return failed;
+  }
+  
+  if (cr->row == ll->len - 1 && cr->col == ll->items[cr->row]) {
+    delete_at_piece_end(table, table->len - 1);
+    GOTO_END(0);
+  }
 
-  for (size_t pi = 0; pi < pt->len; pi++){
-    Piece* piece = &pt->items[pi];
-    char* buf = !piece->which_buf? fe->file_buf.text : fe->add_buf.items;
-
-    for (size_t j = 0; j < piece->len; j++){
-      char c = buf[piece->offset + j];
-      if (line < fe->cursor.row){
-        if (c == '\n') line++;
-        else if (line == fe->cursor.row - 1) curs_up_line_len++;
-      } else if (col > 0){
-        col--;
-      }
-      if (line < fe->cursor.row || col > 0) continue;
-
-      deleted_char = c;
-
-      if (j + 1 >= piece->len){
-        if (piece->len - 1 > 0){ // FIXME: just check if (piece->len)
-          piece->len--;
-        } else {
-          memmove(piece, piece + 1, (pt->len - (pi + 1)) * sizeof(*piece));
-          fe->piece_table.len--;
-        }
-        goto end_loop;
-      }
-      // deletion inside a piece
-      PIECE_TABLE_MAKE_ROOM(pt, pi + 1, pi + 2, pt->len - (pi + 1));
-
-      Piece new_piece = {
-        .which_buf = piece->which_buf, 
-        .offset = piece->offset + j + 1, 
-        .len = piece->len - j - 1,
-      };
-      PIECE_TABLE_INSERT(pt, pi + 1, new_piece);
-
-      piece->len = j;
-      goto end_loop;
+  size_t place_to_edit_offset = 0;
+  for (size_t i = 0; i < cr->row; i++) {
+    place_to_edit_offset += ll->items[i] + 1; 
+  }
+  place_to_edit_offset += cr->col; // NOTE: col is on the char after
+  
+  char del_char = 0;
+  for (size_t i = 0, pieces_len = 0; i < table->len; i++) {
+    Piece* p = &table->items[i];
+    pieces_len += p->len;
+    if (pieces_len == place_to_edit_offset) {
+      del_char = buf(p->offset + p->len - 1);
+      delete_at_piece_end(table, i);
+      GOTO_END(0);
+    } else if (pieces_len > place_to_edit_offset){
+      size_t char_offset = p->len - 1 - (pieces_len - place_to_edit_offset);
+      del_char = buf(p->offset + char_offset);
+      failed = delete_inside_piece(table, i, char_offset, fe);
+      GOTO_END(failed);
     }
   }
-
-end_loop:
-  if (deleted_char == '\n'){
-    fe->cursor.row--;
-    fe->cursor.col = curs_up_line_len; 
-  } else {
-    fe->cursor.col--; 
-  }
-  fe->last_edit.cursor = fe->cursor;
-  fe->last_edit.action = ACT_DELETE;
 end:
+  if (!failed) {
+    if (del_char == '\n') {
+      if (cr->row) cr->row--;
+      cr->col = ll->items[cr->row];
+    } else {
+      if (cr->col) cr->col--;
+    }
+    fe->last_edit.cursor = fe->cursor;
+    fe->last_edit.action = ACT_DELETE;
+  }
   return failed;
-  #undef CURSOR_AT_LAST_EDIT_POS
+  #undef buf
 }
 
 
@@ -380,11 +430,12 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
 {
 
   fprintf(stream, "LINES-LENGHTS:\n");
+  fprintf(stream, "arr-len: %ld\n", fe->lines_len.len );
   for (size_t i = 0; i < fe->lines_len.len; i++){
     fprintf(stream, "[%ld] = %d:\n", i + 1, fe->lines_len.items[i]);
   }
 
-  fprintf(stream, "TABLE:\n");
+  fprintf(stream, "TABLE (len: %ld, cap: %ld):\n", fe->piece_table.len, fe->piece_table.cap);
   for (size_t i = 0; i < fe->piece_table.len; i++){
     Piece piece = fe->piece_table.items[i];
     char* buf = (!piece.which_buf ? fe->file_buf.text : fe->add_buf.items) + piece.offset;
@@ -392,9 +443,11 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
             i, piece.which_buf, piece.offset, piece.len);
 
     fprintf(stream, "%.*s\n", (int)piece.len, buf);
-
     fprintf(stream, "----------------------------------------------------------------------\n");
   }
+  fprintf(stream, "ADD-BUF:\n");
+  fprintf(stream, "%.*s\n", (int)fe->add_buf.len, fe->add_buf.items);
+  fprintf(stream, "----------------------------------------------------------------------\n");
 }
 
 
@@ -415,16 +468,17 @@ bool FRED_get_lines_len(FredEditor* fe)
 
   for (size_t i = 0; i < t->len; i++) {
     Piece* p = &t->items[i];
-    char* buf = p->offset + (!p->which_buf ? fe->file_buf.text : fe->add_buf.items);
+    char* buf = !p->which_buf ? fe->file_buf.text : fe->add_buf.items;
 
     for (size_t j = 0; j < p->len; j++) {
-      char c = buf[j];
+      char c = buf[p->offset + j];
       if (c == '\n' || is_last_char(t, p, i, j)) {
         // NOTE: we count the length from +1 past the end of the string
         size_t line_end = tot_text_len + j + (is_last_char(t, p, i, j) && c != '\n');
-        ASSERT(line_end - line_start <= UINT16_MAX, 
+        assert(line_end - line_start <= UINT16_MAX, 
                "line-length overflow (max is UINT16_MAX, 65535), length cannot be stored for later usage");
-        DA_PUSH(ll, (uint16_t)(line_end - line_start), 8, LinesLen);
+        uint16_t line_len = line_end - line_start;
+        DA_PUSH(ll, line_len, 8, LinesLen);
         line_start = line_end + 1;
       }
     }
@@ -478,6 +532,9 @@ void FRED_move_cursor(FredEditor* fe, char key)
   }
 }
 
+
+
+
 void update_win_cursor(FredEditor* fe, TermWin* tw)
 {
   LinesLen* ll = &fe->lines_len;
@@ -515,6 +572,8 @@ void update_win_cursor(FredEditor* fe, TermWin* tw)
   }
   cr->win_row = win_row + cr->col / tw_row_w;
 }
+
+
 
 
 
@@ -558,11 +617,11 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
 
   TermWin tw = {0};
   tw.line_num_w = 8;
-  failed = FRED_win_resize(&tw);
-  if (failed) GOTO_END(1);
+  if (FRED_win_resize(&tw)) GOTO_END(1);
 
   FRED_get_lines_len(fe);
 
+#if 1
   while (running) {
     FRED_get_text_to_render(fe, &tw, insert);
     FRED_render_text(&tw, &fe->cursor);
@@ -584,11 +643,15 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       update_win_cursor(fe, &tw);
     }
   }
+#endif 
   GOTO_END(failed);
 end:
   if (!failed) { // else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\033[2J\033[H");
   }
+  // for (size_t i = 0; i < fe->lines_len.len; i++) {
+    // fprintf(stdout, "%d\n", fe->lines_len.items[i]);
+  // }
 
   dump_piece_table(fe, stdout);
   fred_editor_free(fe);

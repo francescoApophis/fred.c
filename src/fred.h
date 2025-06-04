@@ -37,14 +37,14 @@
 
 
 
-#define ASSERT(cond, ...) do {                       \
+#define assert(cond, ...) do {                       \
   if (!(cond)){                                      \
     fprintf(stderr, "\033[2J\033[H");              \
     fprintf(stderr, "ASSERTION FAILED:" #cond "\n"); \
     fprintf(stderr, "%s, %d\n", __FILE__, __LINE__); \
     fprintf(stderr, __VA_ARGS__);                    \
     fprintf(stderr, "\n");                           \
-    exit(1);                                         \
+    GOTO_END(1); \
   }                                                  \
 } while(0)
 
