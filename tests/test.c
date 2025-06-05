@@ -17,7 +17,7 @@
   exit(1); \
 } while (0)
 
-#define assert(cond, ...) do { \
+#define assert_(cond, ...) do { \
   if (!(cond)){ \
     fprintf(stderr, "[%s, line: %d] ASSERTION FAILED '" #cond "':\n", __FILE__, __LINE__); \
     fprintf(stderr, __VA_ARGS__); \
@@ -131,14 +131,21 @@ char* get_keys(const char* file_name, size_t* keys_count)
   return keys;
 }
 
+
+void print_key(FILE* stream, char c) {
+  switch(c) {
+    case 127: { fprintf(stream, "BACKSPACE"); return; }
+    case 27:  { fprintf(stream, "ESC"); return; }
+    case 10:  { fprintf(stream, "NEWLINE"); return; }
+    case 9:   { fprintf(stream, "TAB"); return; }
+    default:  { fprintf(stream, "%c", c); return; }
+  }
+}
+
 void print_keys(char* keys, size_t keys_num)
 {
   for (size_t i = 0; i < keys_num; i++){
-    if (keys[i] == 127) printf("BACKSPACE\n");
-    else if (keys[i] == 10) printf("NEWLINE\n");
-    else if (keys[i] == 9) printf("TAB\n");
-    else if (keys[i] == 27) printf("ESC\n");
-    else printf("%c\n", keys[i]);
+    print_key(stdout, keys[i]);
   }
 }
 
@@ -155,7 +162,7 @@ void get_cursor_pos(char* snaps_file, size_t end_sep_idx, size_t* curs_coords, s
   int row = strtol(snaps_file + end_sep_idx, NULL, 10);
   int col = strtol(snaps_file + semicolon_idx + 1, NULL, 10);
 
-  assert(*curs_coords_idx < max_curs_coords + 1, 
+  assert_(*curs_coords_idx < max_curs_coords + 1, 
          "curs_cords_idx: %ld, max_curs_coords: %ld", *curs_coords_idx, max_curs_coords);
 
   curs_coords[*curs_coords_idx] = row;
@@ -218,28 +225,88 @@ size_t get_snaps_offsets(File* snaps_file, size_t** snaps_offsets, size_t** curs
 
 
 
-void test_failure(FredEditor* fe, const char* dir_path, const char* key, int snap_num,
+void test_failure(FredEditor* fe, const char* dir_path, const char* key, size_t snap_num,
                   char* fred_output, size_t fred_output_len,
                   const char* snap, size_t snap_len)
 {
-  // TODO: when we will test in batches, this should at the start of the text
-  fprintf(stderr, "TEST FAILED:\n");
-  fprintf(stderr, "name test: %s\n", dir_path);
-  fprintf(stderr, "inserting char: '%c' (%d)\n", key[0], key[0]);
-  fprintf(stderr, "\n");
-  fprintf(stderr, "[snapshot: %d, length: %ld]\n", snap_num, snap_len);
-  if (snap_len > 0) {
-    fprintf(stderr, "%.*s", (int)snap_len, snap);
+#define print(...)   do { fprintf(stderr, __VA_ARGS__);} while(0)
+#define sep_end(...) do { print(__VA_ARGS__ "--------------------------------------------\n\n\n"); } while(0)
+#define sep_start()  do { print("--------------------------------------------\n"); } while(0)
+#define set_red()    do { print("\033[1m\033[38:5:196m"); } while (0)
+#define set_green()  do { print("\033[1m\033[38:5:48m"); } while (0)
+#define reset()      do { print("\033[0m"); } while (0)
+#define fred_label() do { \
+  set_red(); print("[fred-output, length: %ld]\n", fred_output_len); reset(); sep_start(); } while(0)
+#define snap_label() do { \
+  set_green(); print("[snapshot: %ld, length: %ld]\n", snap_num, snap_len); reset(); sep_start(); } while(0)
+
+  print("\033[48:5:160mTEST FAILED\033[0m: %s\n", dir_path);
+  print("inserting char: '");
+  print_key(stderr, key[0]);
+  print("' (%d);\n", key[0]);
+
+  // FIXME: on non-visible char there is a chance that other 
+  // or no chars at all will get highlighted
+  
+  if (fred_output_len > snap_len) {
+    fred_label();
+    for (size_t i = 0; i < fred_output_len; i++) {
+      if (i >= snap_len) set_red();
+      print("%c", fred_output[i]);
+    }
+    reset();
+    sep_end("\n");
+    snap_label();
+    if (snap_len) print("%.*s\n", (int)snap_len, snap);
+    sep_end();
+
+  } else if (fred_output_len < snap_len) {
+    fred_label();
+    if (fred_output_len) print("%.*s\n", (int)fred_output_len, fred_output);
+    sep_end();
+    snap_label();
+    for (size_t i = 0; i < snap_len; i++) {
+      if (i >= fred_output_len) set_green();
+      print("%c", snap[i]);
+    }
+    reset();
+    sep_end("\n");
+
+  } else {
+    fred_label();
+    for (size_t i = 0; i < fred_output_len; i++) {
+      if (fred_output[i] == snap[i]) {
+        print("%c", fred_output[i]);
+      } else {
+        set_red();
+        print("%c", fred_output[i]);
+        reset();
+      }
+    }
+    sep_end("\n");
+    snap_label();
+    for (size_t i = 0; i < snap_len; i++) {
+      if (fred_output[i] == snap[i]) {
+        print("%c", snap[i]);
+      } else {
+        set_green();
+        print("%c", snap[i]);
+        reset();
+      }
+    }
+    sep_end("\n");
   }
-  fprintf(stderr, "\n\n\n");
-  fprintf(stderr, "[fred output, length: %ld]\n", fred_output_len);
-  if (fred_output_len > 0) {
-    fprintf(stderr, "%.*s", (int)fred_output_len, fred_output);
-  }
-  fprintf(stderr, "\n\n");
-  bool dump = false;
-  if (dump) dump_piece_table(fe, stderr); // NOTE+TODO: making warning shut up
+
   exit(1);
+
+#undef print
+#undef sep
+#undef sep2
+#undef set_red
+#undef set_green
+#undef reset
+#undef fred_label
+#undef snap_label
 }
 
 
@@ -257,7 +324,6 @@ void build_fred_output(FredEditor* fe, char* dest)
 
 void compare_to_snap(FredEditor* fe, const char* dir_path, char* key_str, char* snaps, size_t* snaps_offsets, size_t snap_num)
 {
-
   size_t fred_output_len = 0;
   for (size_t j = 0; j < fe->piece_table.len; j++) {
     fred_output_len += fe->piece_table.items[j].len;
@@ -305,7 +371,6 @@ int main(int argc, char* argv[])
   char* keys_path = make_path(dir_path, "keys.txt");
   char* snaps_path = make_path(dir_path, "snaps.txt");
 
-  // TODO: func could use variadic args?
   assert_file_exists(fred_output_path);
   assert_file_exists(output_path);
   assert_file_exists(keys_path);
@@ -325,7 +390,6 @@ int main(int argc, char* argv[])
 
   bool _running = true; // NOTE: dummy flag, the tests never generate 'q' for quitting
   bool insert_mode = false;
-
   for (size_t i = 0, snap_num = 0; i < keys_count; i++) {
     char key_str[2] = {keys[i], '\0'};
     bool just_entered_insert_mode = KEY_IS(key_str, "i") && !insert_mode;
@@ -339,10 +403,12 @@ int main(int argc, char* argv[])
       snap_num++;
     }
   }
-  printf("TEST PASSED\n");
+  printf("\033[48:5:48mTEST PASSED\033[0m\n");
 
+  // dump_piece_table(&fe, stderr);
   // TODO: we exit right away on text-failure and don't free anything.
   // Doing it here makes no sense
+  // dump_piece_table(&fe, stdout);
   fred_editor_free(&fe);
   free(keys);
   free(fred_output_path);
@@ -356,13 +422,8 @@ int main(int argc, char* argv[])
 }
 
 
-
-// TODO: on test failure, print just 10-12 
-// characters of screenshot-difference, the line:col 
-// (with the actual line:col in the snaps file), squiggly lines
-// under the culprit-char
- 
 // TODO: print the position of the fred-cursor and test-cursor
+
 // TODO: better naming for everything
 
 
@@ -372,8 +433,5 @@ int main(int argc, char* argv[])
 // TODO: when in the future multiple tests will be run at the same time 
 // remember to free each File struct.
 
-// TODO: better diagnostics?
-//
 // TODO: make test to check for eventual 0-len pieces
 // TODO: accept only files named with 'test' and that are '.txt'
-// TODO: File struct is useless
