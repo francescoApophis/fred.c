@@ -1,6 +1,3 @@
-
-
-
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- this script generates a folder:
@@ -258,8 +255,8 @@ local function get_rand_ikey()
   return (rand(20) % 2  == 0 and rand(32, 126)) or 
          (rand(20) % 4  == 0 and 127) or 
          (rand(20) % 14 == 0 and 9) or 
+         (rand(20) % 8  == 0 and 10) or rand(32, 126)
          -- (rand(20) % 12 == 0 and 10) or rand(32, 126)
-         (rand(20) % 8 == 0 and 10) or rand(32, 126)
 end
 
 
@@ -356,8 +353,8 @@ local function insert_rand_ikeys(bufnr, feed, curs_row, curs_col, max_keys, snap
     local key = (maybe_mass_delete and 127) or get_rand_ikey()
     table.insert(feed, key)
     
-    curs_row, curs_col = text_at(bufnr, curs_row, curs_col, key)
     local prev_curs_row, prev_curs_col = curs_row, curs_col
+    curs_row, curs_col = text_at(bufnr, curs_row, curs_col, key)
 
     snap_num = snap_num + 1
     snaps = take_snap(bufnr, snaps, snap_num, key, prev_curs_row, prev_curs_col)
@@ -380,13 +377,15 @@ end
 ---@param next_col number   
 ---@return nil
 local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_row, next_col)
+
   local function gen(prev, next, dir_a, dir_b)
     assert_type(prev,  {'number'})
     assert_type(next,  {'number'})
     assert_type(dir_a, {'string'})
     assert_type(dir_b, {'string'})
 
-    local diff = (next > prev and next - prev) or (next < prev and prev - next) or 0
+    -- local diff = (next > prev and next - prev) or (next < prev and prev - next) or 0
+    local diff = (next > prev and next - prev) or prev - next
 
     if diff > 0 then
       local dir = (next < prev and dir_a) or dir_b 
@@ -398,12 +397,29 @@ local function gen_keys_to_next_curs_pos(feed, bufnr, prev_row, prev_col, next_r
 
   gen(prev_row, next_row, 'up', 'down')
 
+  -- NOTE: when scrolling in fred, if next-line-len > cursor-col,
+  -- we set cursor-col to be next-line-len. Here we're doing the same
+  -- thing so we can generate the right hor-keys to reach the edit destination
+  if next_row ~= prev_row then
+    local diff = (next_row > prev_row and next_row - prev_row) or (prev_row - next_row)
+    for i=1,diff-1 do 
+      local line_at_row = nil
+      if next_row > prev_row then
+        line_at_row = get_lines(bufnr, prev_row + i, prev_row + i + 1, true)[1]
+      else
+        line_at_row = get_lines(bufnr, prev_row - i, prev_row - i + 1, true)[1]
+      end
+      if prev_col > #line_at_row then
+        prev_col = #line_at_row
+      end
+    end
+  end
+
   local line_at_row = get_lines(bufnr, next_row, next_row + 1, true)[1]
   prev_col = (prev_col > #line_at_row and #line_at_row) or prev_col
-
   gen(prev_col, next_col, 'left', 'right')
-end
 
+end
 
 
 
@@ -443,6 +459,7 @@ local function edit_buffer(bufnr, feed, curs_row, curs_col, max_places_to_edit, 
 
   return snaps
 end
+
 
 
 -- desc: 
@@ -528,7 +545,6 @@ end
 gen_test{
   gen_keys_readable_file = true,
   -- test_name = '',
-  -- seed = ,
-  -- max_places_to_edit = ,
-  -- max_edits_in_insert = ,
+  -- max_places_to_edit= ,
+  -- max_edits_in_insert= ,
 }
