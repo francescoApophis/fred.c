@@ -495,7 +495,7 @@ end
 local function get_default_test_name()
   local default_name = 'fred_test_'
 
-  local cmd = fmt('!find . -type d -name "%s*"', default_name)
+  local cmd = fmt('!find ./tests/ -type d -name "%s*"', default_name)
   local out = vim.api.nvim_exec2(cmd, {output = true}).output:sub(#cmd + 5, -2)
   local dir_names = {}
 
@@ -576,7 +576,7 @@ end
 -- OR
 gen_test{
   gen_keys_readable_file = true,
-  test_name = '',
+  -- test_name = '',
   -- seed = ,
   -- max_places_to_edit = ,
   -- max_edits_in_insert= ,
