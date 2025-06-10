@@ -5,7 +5,6 @@
 --       fred_test_[n]/             -> it can either be a custom name or 'fred_test_n' (ordered numerically by 'n').
 --          |- keys.txt             -> keys to be fed to Fred, in ascii-int form.
 --          |- keys_readable.txt    -> the same keys but in ascii form. Optional, is more for visual debugging. 
---          |- seed.txt             -> Random seed used by math.randomseed() to generate the current test.
 --          |- output.txt           -> contains the state of the buffer after the last key was fed to Fred.
 --                                     This can be used for a faster test (but that doesn't give much info about failures)
 --          |- snaps.txt            -> contains the state of the buffer (snap) after each key got fed.  
@@ -13,6 +12,8 @@
 --                                     NOTE: in the file, snaps are called 'snapshot' because test.c will search for 
 --                                     this name to find the start of one, since it's more unlikely 
 --                                     for this script to generate 'snapshot' than 'snap' somewhere
+--          |- seed.txt             -> Contains all the args passed to gen_test() in table format to remake
+--                                     tests from scratch as they were originally.
 --                                     
 --
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -49,6 +50,7 @@ local line_len = function(bufnr, row)
   if row == 0 then return #(get_lines(bufnr, 0, 1, false)[1]) end
   return #(get_lines(bufnr, row - 1, row, false)[1])
 end
+
 
 local get_tot_lines = function(bufnr)
   local l = get_lines(bufnr, 0, -1, true)
@@ -172,6 +174,14 @@ end
 -- ******************     ******************
 
 
+local RAND_IKEYS_TWEAKS = {
+   ['rand-num'] = 20,
+   ['text-chars'] = 2,
+   ['newlines'] = 8,
+   ['tabs'] = 14,
+   ['deletes'] = 4,
+}
+
 
 local FRED_MAPPINGS = {
   ['escape'] = 27,
@@ -194,20 +204,18 @@ local FILENAMES = {
 }
 
 
----@param path                  string
----@param seed                  number The current seed used by math.randomseed(); it will be written into its own file.
----@param max_places_to_edit    number
----@param max_edits_in_insert   number
+---@param path          string 
+---@param gen_test_args table  Argument-table passed to gen_test()
 ---@return number Returns bufnr of the to-be-edited buffer
-local function set_files_and_buf(path, seed, max_places_to_edit, max_edits_in_insert)
+local function set_files_and_buf(path, gen_test_args)
   vim.api.nvim_exec2('!mkdir -p ' .. path, {})
 
   io.open(path .. FILENAMES.snaps, 'w'):close() -- clear previous content
   io.open(path .. FILENAMES.output, 'w'):close()
 
   local seed_file = io.open(path .. FILENAMES.seed, 'w')
-  -- seed_file:write(tostring(seed))
-  seed_file:write(fmt('seed: %d\nmax_places_to_edit: %d\nmax_edits_in_insert: %d\n', seed, max_places_to_edit, max_edits_in_insert))
+  seed_file:write(vim.inspect(gen_test_args))
+  -- seed_file:write(fmt('seed: %d\nmax_places_to_edit: %d\nmax_edits_in_insert: %d\n', seed, max_places_to_edit, max_edits_in_insert))
   seed_file:close()
 
   local bufnr = vim.fn.bufadd(path .. FILENAMES.output)
@@ -249,15 +257,32 @@ local function write_keys2file(feed, path, readable)
 end
 
 
+-- local RAND_IKEYS_TWEAKS = {
+   -- ['rand-num'] = 20,
+   -- ['text-chars'] = 2,
+   -- ['newlines'] = 8,
+   -- ['tabs'] = 14,
+   -- ['deletes'] = 4,
+-- }
 
 ---@return number ascii-integer
 local function get_rand_ikey()
-  return (rand(20) % 2  == 0 and rand(32, 126)) or 
-         (rand(20) % 4  == 0 and 127) or 
-         (rand(20) % 14 == 0 and 9) or 
-         (rand(20) % 8  == 0 and 10) or rand(32, 126)
+  -- return (rand(20) % 2  == 0 and rand(32, 126)) or 
+         -- (rand(20) % 4  == 0 and 127) or 
+         -- (rand(20) % 14 == 0 and 9) or 
+         -- (rand(20) % 8  == 0 and 10) or rand(32, 126)
          -- (rand(20) % 12 == 0 and 10) or rand(32, 126)
+  
+  local t = RAND_IKEYS_TWEAKS
+  return (rand(t['rand-num']) % t['text-chars'] == 0 and rand(32, 126)) or 
+         (rand(t['rand-num']) % t['deletes']  == 0 and 127) or 
+         (rand(t['rand-num']) % t['tabs']  == 0 and 9) or 
+         (rand(t['rand-num']) % t['newlines']  == 0 and 10) or rand(32, 126)
+          
 end
+
+
+
 
 
 ---@param bufnr     number  Number of the to-be-edited buffer
@@ -497,32 +522,39 @@ end
 
 
 
----@param test_name               (string | nil)  (Optional) Name for the folder containing the files; 
---                                                if nil, 'fred_test_1', 'fred_test_2', ... will be used instead. 
---                                                The number starts from the greatest 'fred_test_' found in the folder.
----@param seed                    (number | nil)  (Optional) Seed for math.randomseed(); if nil, os.time() will be used instead.
----@param gen_keys_readable_file  (boolean | nil) (Optional) Generate a 'keys.txt' with chars converted back to ASCII.
----@param max_places_to_edit      (number | nil)  (Optional) 
----@param max_edits_in_insert     (number | nil)  (Optional) Max num of keys to be inserted in insert mode; 
+---@param test_name              (string | nil)  Name for the folder containing the files; if nil, 'fred_test_1', 
+--                                               'fred_test_2', ... will be used instead. 
+--                                               The number starts from the greatest 'fred_test_' found in the folder.
+---@param seed                   (number | nil)  Seed for math.randomseed(); if nil, os.time() will be used instead.
+---@param gen_keys_readable_file (boolean | nil) Generate a 'keys.txt' with chars converted back to ASCII.
+---@param max_places_to_edit     (number | nil)   
+---@param max_edits_in_insert    (number | nil)  Max num of keys to be inserted in insert mode; 
+---@param rand_ikeys_tweaks      ({['string']:number} | nil) For tweaking the insert-keys's 'ratio', the closer to 1, the more 
+--                                                           there will be.
 ---@return nil
 local function gen_test(args)
-  local test_name              = assert_type(args.test_name, {'string', 'nil'}) or get_default_test_name()
-  local seed                   = assert_type(args.seed, {'number', 'nil'}) or os.time()
-  local gen_keys_readable_file = assert_type(args.gen_keys_readable_file, {'boolean', 'nil'}) or false
-  local max_places_to_edit     = assert_type(args.max_places_to_edit, {'number', 'nil'}) or 10
-  local max_edits_in_insert    = assert_type(args.max_edits_in_insert, {'number', 'nil'}) or 3
+  -- NOTE: we're reassigning it so that we can write the 
+  -- table on seed.txt directly with inspect() for easy copy-paste
+  args.test_name              = assert_type(args.test_name, {'string', 'nil'}) or get_default_test_name()
+  args.seed                   = assert_type(args.seed, {'number', 'nil'}) or os.time()
+  args.gen_keys_readable_file = assert_type(args.gen_keys_readable_file, {'boolean', 'nil'}) or false
+  args.max_places_to_edit     = assert_type(args.max_places_to_edit, {'number', 'nil'}) or 10
+  args.max_edits_in_insert    = assert_type(args.max_edits_in_insert, {'number', 'nil'}) or 3
+  args.rand_ikeys_tweaks      = assert_type(args.rand_ikeys_tweaks, {'table', 'nil'}) or RAND_IKEYS_TWEAKS
 
-  math.randomseed(seed)
-  vim.notify(fmt('Generating Fred-test: %s, current seed: %d', test_name, seed), vim.log.levels.WARN)
+  RAND_IKEYS_TWEAKS = args.rand_ikeys_tweaks
 
-  local path  = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. test_name
-  local bufnr = set_files_and_buf(path, seed, max_places_to_edit, max_edits_in_insert)
+  math.randomseed(args.seed)
+  vim.notify(fmt('Generating Fred-test: %s, current seed: %d', args.test_name, args.seed), vim.log.levels.WARN)
+
+  local path  = vim.fn.expand(vim.fn.expand('%:p:h')) .. '/' .. args.test_name
+  local bufnr = set_files_and_buf(path, args)
   local feed  = {}                           
   local snaps = ''
 
-  snaps = edit_buffer(bufnr, feed, 0, 0, max_places_to_edit, max_edits_in_insert, snaps)
+  snaps = edit_buffer(bufnr, feed, 0, 0, args.max_places_to_edit, args.max_edits_in_insert, snaps)
   write_keys2file(feed, path, false)
-  if gen_keys_readable_file then
+  if args.gen_keys_readable_file then
     write_keys2file(feed, path, true)
   end
 
@@ -544,7 +576,16 @@ end
 -- OR
 gen_test{
   gen_keys_readable_file = true,
-  -- test_name = '',
-  -- max_places_to_edit= ,
+  test_name = '',
+  -- seed = ,
+  -- max_places_to_edit = ,
   -- max_edits_in_insert= ,
+  -- rand_ikeys_tweaks = { -- the closer to 1, the more there will be 
+   -- ['rand-num'] = 20,
+   -- ['text-chars'] = 0,
+   -- ['newlines'] = 0,
+   -- ['tabs'] = 0,
+   -- ['deletes'] = 0,
+  -- }
 }
+
