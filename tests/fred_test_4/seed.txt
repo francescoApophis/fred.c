@@ -1,3 +1,0 @@
-seed: 1743802830
-max_places_to_edit: 10
-max_edits_in_insert: 3
