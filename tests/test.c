@@ -10,6 +10,22 @@
 #include "./../src/fred.h"
 
 
+typedef struct {
+  char* txt;
+  size_t size;
+} File;
+
+
+char* test_dir_path = NULL; 
+size_t keys_count = 0;
+char* keys = NULL;
+File snaps_file = {0};
+size_t snaps_count = 0;
+size_t* snaps_offsets = NULL; 
+size_t* curs_coords = NULL; // FIXME: no need for it to be size_t
+
+
+
 #define ERR(...) do { \
   fprintf(stderr, "ERROR: "); \
   fprintf(stderr, __VA_ARGS__); \
@@ -28,50 +44,33 @@
 
 
 
-char* make_path(const char* dir_path, const char* file_name)
+
+// DESC: makes a file-path from 'test_dir_path' and asserts it's valid 
+char* make_path(const char* file_name)
 {
-  size_t n = strlen(dir_path);
+  size_t n = strlen(test_dir_path);
   size_t m = strlen(file_name);
-  bool has_sep = dir_path[n - 1] == '/';
+  bool has_sep = test_dir_path[n - 1] == '/';
   char* full_path = malloc((n + m + (!has_sep ? 2 : 1)) * sizeof(*full_path));
+  assert_(full_path != NULL, "not enough memory");
 
-  strncat(full_path, dir_path, n);
+  strncat(full_path, test_dir_path, n);
   if (!has_sep) strcat(full_path, "/");
-  return strncat(full_path, file_name, m);
-}
+  strncat(full_path, file_name, m);
 
-void assert_is_dir(const char* path)
-{
   struct stat sb;
-  if (stat(path, &sb) == -1) {
-    if (errno == ENOENT) ERR("no such test-dir '%s'.", path); // FIXME:  this should say 'ERROR on 'filepath', no such ...'
-    ERR("failed to retrieve any info about test-dir '%s', %s.", path, strerror(errno));
-  }
-  if ((sb.st_mode & S_IFMT) != S_IFDIR){
-    ERR("path '%s' is not a directory.", path);
-  }
-}
-
-
-void assert_file_exists(const char* path)
-{
-  struct stat sb;
-  if (stat(path, &sb) == -1) {
+  if (stat(full_path, &sb) == -1) {
     // TODO: print all files needed for the fred_tests
-    if (errno == ENOENT) ERR("no such test-file '%s'.", path);
-    ERR("failed to retrieve any info about test-file '%s', %s.", path, strerror(errno));
+    if (errno == ENOENT) ERR("no such test-file '%s'.", full_path);
+    ERR("failed to retrieve any info about test-file '%s', %s.", full_path, strerror(errno));
   }
   if ((sb.st_mode & S_IFMT) != S_IFREG){
-    if ((sb.st_mode & S_IFMT) == S_IFDIR) ERR("given test-file-path '%s' is a directory, not a file.", path);
-    ERR("given test-file-path '%s' is not a regular file.", path);
+    if ((sb.st_mode & S_IFMT) == S_IFDIR) ERR("given test-file-path '%s' is a directory, not a file.", full_path);
+    ERR("given test-file-path '%s' is not a regular file.", full_path);
   }
+
+  return full_path;
 }
-
-
-typedef struct {
-  char* text;
-  size_t size;
-} File;
 
 
 File read_file(const char* filename)
@@ -87,6 +86,8 @@ File read_file(const char* filename)
   rewind(file);
 
   char* buffer = malloc(sizeof(*buffer) * (filesize + 1));
+  assert_(buffer != NULL, "not enough memory");
+
   size_t n = fread(buffer, sizeof(char), filesize, file);
   if (n < filesize) {
     fprintf(stderr, "ERROR: could not read file '%s'.\n", filename);
@@ -95,301 +96,320 @@ File read_file(const char* filename)
   buffer[n] = '\0';
   fclose(file);
 
-  File f = {.text = buffer, .size = filesize};
+  File f = {.txt = buffer, .size = filesize};
   return f;
 }
 
 
-char* get_keys(const char* file_name, size_t* keys_count) 
+// DESC: convert content of keys.txt from ascii-int to chars and 
+// save it in a buffer
+char* get_keys(const char* file_name) 
 {
   File file = read_file(file_name);
 
   for (size_t i = 0; i < file.size; i++){
-    if (file.text[i] == '\n') (*keys_count)++;
+    if (file.txt[i] == '\n') keys_count++;
   }
+  keys = malloc(keys_count * sizeof(*keys));
+  assert_(keys != NULL, "not enough memory");
 
-  // TODO: should make room for a '\0'? I already have keys_count tho
-  char* keys = malloc(sizeof(*keys) * (*keys_count));
-  memset(keys, 0, (*keys_count) * sizeof(*keys));
-
-  int keys_idx = 0;
-  char curr_key[3] = {0};
-  char* curr_key_digit = curr_key;
-  for (size_t i = 0; i < file.size; i++){
-    // TODO: i could use strtol
-    if (file.text[i] == '\n'){
-      keys[keys_idx++] = (char)atoi(curr_key);
-      memset(curr_key, 0, 3 * sizeof(*curr_key));
-      curr_key_digit = curr_key;
-      continue;
-    }
-    *(curr_key_digit++) = file.text[i];
+  int idx = 0;
+  char* curr = file.txt;
+  char* end = curr;
+  while (curr < file.txt + file.size) {
+    keys[idx++] = (char)strtol(curr, &end, 10);
+    curr = end + 1;
   }
-
-  free(file.text);
-  
+  free(file.txt);
   return keys;
 }
-
-
-void print_key(FILE* stream, char c) {
+ 
+void print_key(FILE* stream, char c, bool end_newline) {
+  fprintf(stream, "'");
   switch(c) {
-    case 127: { fprintf(stream, "BACKSPACE"); return; }
-    case 27:  { fprintf(stream, "ESC"); return; }
-    case 10:  { fprintf(stream, "NEWLINE"); return; }
-    case 9:   { fprintf(stream, "TAB"); return; }
-    default:  { fprintf(stream, "%c", c); return; }
+    case 127: { fprintf(stream, "BACKSPACE"); break; }
+    case 27:  { fprintf(stream, "ESC"); break; }
+    case 10:  { fprintf(stream, "NEWLINE"); break; }
+    case 9:   { fprintf(stream, "TAB"); break; }
+    default:  { fprintf(stream, "%c", c); break; }
   }
+  fprintf(stream, "'");
+  fprintf(stream, " (ASCII %d)", c);
+  if (end_newline) fprintf(stream, "\n");
 }
 
-void print_keys(char* keys, size_t keys_num)
+void print_keys()
 {
-  for (size_t i = 0; i < keys_num; i++){
-    print_key(stdout, keys[i]);
+  for (size_t i = 0; i < keys_count; i++){
+    print_key(stdout, keys[i], true);
   }
 }
 
 
-// NOTE: curs_coords is a 1d array, for each snap two slots 
-// contain the row and column of the cursor 
-void get_cursor_pos(char* snaps_file, size_t end_sep_idx, size_t* curs_coords, size_t* curs_coords_idx, size_t max_curs_coords)
+// DESC: gets and stores cursor coordinates from the end of a snapshot's label
+// into a 1d array -> [snap1_row, snap1_col, snap2_row, snap2_col, ...].
+// They can be easily accessed with the currently tested snap_num
+size_t get_cursor_coords(size_t end_label_idx, size_t curs_coords_idx)
 {
   int semicolon_idx = 0;
-  while (snaps_file[end_sep_idx] != ' ') {
-    if (snaps_file[end_sep_idx] == ':') semicolon_idx = end_sep_idx;
-    end_sep_idx--;
+  while (snaps_file.txt[end_label_idx] != ' ') {
+    if (snaps_file.txt[end_label_idx] == ':') semicolon_idx = end_label_idx;
+    end_label_idx--;
   }
-  int row = strtol(snaps_file + end_sep_idx, NULL, 10);
-  int col = strtol(snaps_file + semicolon_idx + 1, NULL, 10);
-
-  assert_(*curs_coords_idx < max_curs_coords + 1, 
-         "curs_cords_idx: %ld, max_curs_coords: %ld", *curs_coords_idx, max_curs_coords);
-
-  curs_coords[*curs_coords_idx] = row;
-  curs_coords[*curs_coords_idx + 1] = col;
-  (*curs_coords_idx) += 2;
+  int row = strtol(snaps_file.txt + end_label_idx, NULL, 10);
+  int col = strtol(snaps_file.txt + semicolon_idx + 1, NULL, 10);
+  assert_(curs_coords_idx < snaps_count * 2,
+         "curs_cords_idx: %ld, max_curs_coords: %ld", curs_coords_idx, snaps_count * 2);
+  curs_coords[curs_coords_idx] = row;
+  curs_coords[curs_coords_idx + 1] = col;
+  return curs_coords_idx + 2;
 }
 
-
-// NOTE: snaps_offsets is a 1d array, for each snap two slots 
-// contain the snap-start-offset and the snap-length of the 
-size_t get_snaps_offsets(File* snaps_file, size_t** snaps_offsets, size_t** curs_coords)
+// DESC: gets and stores the snapshots offsets (start and length of a snapshot 
+// in the file) into a 1d array -> [snap1_start, snap1_len, snap2_start, snap2_len, ...].
+// They can be easily accessed with the currently tested 'snap_num'
+void parse_snaps()
 {
-#define matches_sep(ch) ((ch) == '\n' && 0 == strncmp(&(ch), sep, sep_len))
+#define matches_label(ch) ((ch) == '\n' && 0 == strncmp(&(ch), label, label_len))
 
-  const char* sep = "\n[snapshot: ";
-  const size_t sep_len = strlen(sep);
-  size_t snaps_count = 0;
+  const char* label = "\n[snapshot: ";
+  const size_t label_len = strlen(label);
   
-  for (int i = snaps_file->size; i >= 0 ; i--){
-    if (matches_sep(snaps_file->text[i])){
-      char* count_str = &snaps_file->text[(size_t)i + sep_len];
+  for (int i = snaps_file.size; i >= 0 ; i--){
+    if (matches_label(snaps_file.txt[i])){
+      char* count_str = &snaps_file.txt[(size_t)i + label_len];
       snaps_count = (size_t)strtol(count_str, NULL, 10);
       break;
     }
   }
 
   size_t curs_coords_idx = 0;
-  *curs_coords = malloc(snaps_count * 2 * sizeof(*curs_coords));
+  curs_coords = malloc(snaps_count * 2 * sizeof(*curs_coords));
+  assert_(curs_coords != NULL, "not enough memory");
 
   size_t snaps_offsets_idx = 0;
-  *snaps_offsets = malloc(snaps_count * 2 * sizeof(**snaps_offsets));
+  snaps_offsets = malloc(snaps_count * 2 * sizeof(*snaps_offsets));
+  assert_(snaps_offsets != NULL, "not enough memory");
 
   size_t i = 0;
   size_t last_snap_start = 0; 
-  bool parsing_sep = false;
-  while(i < snaps_file->size){
-    if (parsing_sep && snaps_file->text[i] == '\n') { // reached end of sep
-      
-      // get_cursor_pos(snaps_file->text, i, *curs_coords, &curs_coords_idx, snaps_count * 2);
-      
-      parsing_sep = false;
+  bool parsing_label = false;
+  while(i < snaps_file.size){
+    if (parsing_label && snaps_file.txt[i] == '\n') { // reached label's end
+      curs_coords_idx = get_cursor_coords(i, curs_coords_idx);
+      parsing_label = false;
       last_snap_start = i + 1;
-      (*snaps_offsets)[snaps_offsets_idx++] = last_snap_start;
+      snaps_offsets[snaps_offsets_idx++] = last_snap_start;
     }
 
-    if (matches_sep(snaps_file->text[i]) || i + 1 >= snaps_file->size){
-      parsing_sep = true;
+    if (matches_label(snaps_file.txt[i]) || i + 1 >= snaps_file.size){
+      parsing_label = true;
       if (i > 0) { 
-        // save snap-length; ignore newline at start of first sep 
-        (*snaps_offsets)[snaps_offsets_idx++] =  (i - last_snap_start) + (i + 1 >= snaps_file->size); 
+        // saving snap-length; ignoring newline at start of the first label 
+        snaps_offsets[snaps_offsets_idx++] =  (i - last_snap_start) + (i + 1 >= snaps_file.size); 
       }
     }
     i++;
   }
-  return snaps_count;
+#undef matches_label
+}
 
-#undef matches_sep
+
+
+char* build_fred_output(PieceTable* table, FileBuf* fb, AddBuf* ab, size_t output_len)
+{
+  char* output_buf = malloc((output_len ? output_len : 1) * sizeof(*output_buf));
+  assert_(output_buf != NULL, "not enough memory");
+
+  if (!output_len) {
+    output_buf[0] = '\0'; 
+    // NOTE: not returning a string literal cause 
+    // we would need an extra check when freeing it
+  } else {
+    size_t offset = 0;
+    for (size_t i = 0; i < table->len; i++) {
+      Piece* p = &table->items[i];
+      char* buf = !p->which_buf ? fb->text : ab->items;
+      strncpy(output_buf + offset, buf + p->offset, p->len);
+      offset += p->len;
+    }
+  }
+  return output_buf;
 }
 
 
 
 
-void test_failure(FredEditor* fe, const char* dir_path, const char* key, size_t snap_num,
-                  char* fred_output, size_t fred_output_len,
-                  const char* snap, size_t snap_len)
+// DESC: print info and highlight differences between 
+// fred's output and given snapshot
+void test_failure(FredEditor* fe, size_t key_num, char* key, size_t snap_num,
+  char* fred_output, size_t fred_output_len,
+  char* snap, size_t snap_len, char* msg)
 {
-#define print(...)   do { fprintf(stderr, __VA_ARGS__);} while(0)
-#define sep_end(...) do { print(__VA_ARGS__ "--------------------------------------------\n\n\n"); } while(0)
-#define sep_start()  do { print("--------------------------------------------\n"); } while(0)
-#define set_red()    do { print("\033[1m\033[38:5:196m"); } while (0)
-#define set_green()  do { print("\033[1m\033[38:5:48m"); } while (0)
-#define reset()      do { print("\033[0m"); } while (0)
+#define SEP "------------------------------------------------\n"
+#define SEP2 "------------------------------------------------\n\n"
+#define RED "\x1b[38:5:196m"
+#define RED_BG "\x1b[48:5:196m"
+#define GREEN "\x1b[38:5:48m"
+#define YELLOW "\x1b[38:5:220m"
+#define LILAC "\x1b[38:5:183m"
+#define RESET "\x1b[0m"
+#define print(...) do { fprintf(stderr, __VA_ARGS__);} while(0)
 #define fred_label() do { \
-  set_red(); print("[fred-output, length: %ld]\n", fred_output_len); reset(); sep_start(); } while(0)
+  print(RED "[fred_output; length: %ld; cursor: %ld,%ld]\n" RESET SEP, \
+        fred_output_len, cr->prev_row + 1, cr->prev_col + 1); \
+} while (0)
 #define snap_label() do { \
-  set_green(); print("[snapshot: %ld, length: %ld]\n", snap_num, snap_len); reset(); sep_start(); } while(0)
+  print(GREEN "[snapshot: %ld; length: %ld; cursor: %ld,%ld]\n" RESET SEP, \
+        snap_num + 1, snap_len, snap_cr_row, snap_cr_col); \
+} while (0)
 
-  print("\033[48:5:160mTEST FAILED\033[0m: %s\n", dir_path);
-  print("inserting char: '");
-  print_key(stderr, key[0]);
-  print("' (%d);\n", key[0]);
 
-  // FIXME: on non-visible char there is a chance that other 
-  // or no chars at all will get highlighted
-  
+  Cursor* cr = &fe->cursor;
+  size_t snap_cr_row = curs_coords[snap_num * 2];
+  size_t snap_cr_col = curs_coords[snap_num * 2 + 1];
+
+  print(RED_BG "TEST FAILED" RESET ": %s\n\n", test_dir_path);
+  print(LILAC 
+        "NOTE: we are reporting the cursor coordinates\n"
+        "      BEFORE the edit. So if 'a' is typed at '1,1',\n"
+        "      the test reports 'cursor: 1,1', even tho\n"
+        "      now it's at '1,2'.\n\n" RESET);
+  print(LILAC 
+        "NOTE: on empty snap/output (length 0), a newline\n"
+        "      gets still printed between the separators.\n\n" RESET);
+  print(LILAC 
+        "NOTE: non readable chars like newline and tabs are\n"
+        "      are not highlighted.\n\n" RESET);
+
+  print("%s.\n\n", msg);
+  print("Inserting key (num: %ld): ", key_num);
+  print_key(stderr, key[0], true);
+  print("\n");
+
   if (fred_output_len > snap_len) {
+    size_t diff = fred_output_len - snap_len; 
     fred_label();
-    for (size_t i = 0; i < fred_output_len; i++) {
-      if (i >= snap_len) set_red();
-      print("%c", fred_output[i]);
-    }
-    reset();
-    sep_end("\n");
+    print("%.*s", (int)(fred_output_len - diff), fred_output);
+    print(RED "%.*s\n" RESET SEP2, (int)(diff), fred_output + (fred_output_len - diff));
     snap_label();
-    if (snap_len) print("%.*s\n", (int)snap_len, snap);
-    sep_end();
-
+    print("%.*s\n" SEP2, (int)snap_len, snap);
   } else if (fred_output_len < snap_len) {
     fred_label();
-    if (fred_output_len) print("%.*s\n", (int)fred_output_len, fred_output);
-    sep_end();
+    print("%.*s\n" SEP2, (int)fred_output_len, fred_output);
+    size_t diff = snap_len - fred_output_len;
     snap_label();
-    for (size_t i = 0; i < snap_len; i++) {
-      if (i >= fred_output_len) set_green();
-      print("%c", snap[i]);
-    }
-    reset();
-    sep_end("\n");
-
+    print("%.*s", (int)(snap_len - diff), snap);
+    print(GREEN "%.*s\n" RESET SEP2, (int)(diff), snap + (snap_len - diff));
   } else {
     fred_label();
     for (size_t i = 0; i < fred_output_len; i++) {
-      if (fred_output[i] == snap[i]) {
-        print("%c", fred_output[i]);
-      } else {
-        set_red();
-        print("%c", fred_output[i]);
-        reset();
-      }
+      if (fred_output[i] != snap[i]) print(RED);
+      print("%c" RESET, fred_output[i]);
     }
-    sep_end("\n");
+    print("\n" SEP2);
     snap_label();
-    for (size_t i = 0; i < snap_len; i++) {
-      if (fred_output[i] == snap[i]) {
-        print("%c", snap[i]);
-      } else {
-        set_green();
-        print("%c", snap[i]);
-        reset();
-      }
+    for (size_t i = 0; i < fred_output_len; i++) {
+      if (fred_output[i] != snap[i]) print(GREEN);
+      print("%c" RESET, snap[i]);
     }
-    sep_end("\n");
+    print("\n" SEP2);
+  }
+
+  if (snap_num > 0) { // NOTE: 'ps' -> previous snapshot
+    snap_num--;
+    size_t ps_start = snaps_offsets[snap_num * 2];
+    size_t ps_len = snaps_offsets[snap_num * 2 + 1];
+    char* ps = snaps_file.txt + ps_start;
+    size_t ps_cr_row = curs_coords[snap_num * 2];
+    size_t ps_cr_col = curs_coords[snap_num * 2 + 1];
+    print(YELLOW "[previous snapshot: %ld (successful); length: %ld; cursor: %ld,%ld] \n" RESET SEP, 
+          snap_num + 1, ps_len, ps_cr_row, ps_cr_col);
+    print("%.*s\n" SEP2, (int)ps_len, ps);
   }
 
   exit(1);
 
+#undef SEP
+#undef SEP2
+#undef RED
+#undef RED_BG
+#undef GREEN
+#undef YELLOW
+#undef LILAC
+#undef RESET
 #undef print
-#undef sep
-#undef sep2
-#undef set_red
-#undef set_green
-#undef reset
 #undef fred_label
 #undef snap_label
 }
 
 
 
-void build_fred_output(FredEditor* fe, char* dest)
-{
-  size_t offset = 0;
-  for (size_t i = 0; i < fe->piece_table.len; i++) {
-    Piece* p = &fe->piece_table.items[i];
-    char* buf = !p->which_buf ? fe->file_buf.text : fe->add_buf.items;
-    strncpy(dest + offset, buf + p->offset, p->len);
-    offset += p->len;
-  }
-}
 
-void compare_to_snap(FredEditor* fe, const char* dir_path, char* key_str, char* snaps, size_t* snaps_offsets, size_t snap_num)
+// DESC: check if edit happen at the same cursor coordinates, 
+// output have the same length and their content is match
+void compare_to_snap(FredEditor* fe, size_t key_num, char* key_str, size_t snap_num)
 {
   size_t fred_output_len = 0;
-  for (size_t j = 0; j < fe->piece_table.len; j++) {
-    fred_output_len += fe->piece_table.items[j].len;
+  for (size_t i = 0; i < fe->piece_table.len; i++) {
+    fred_output_len += fe->piece_table.items[i].len;
   }
 
   size_t snap_start = snaps_offsets[snap_num * 2];
   size_t snap_len = snaps_offsets[snap_num * 2 + 1];
-  char* snap = snaps + snap_start;
+  char* snap = snaps_file.txt + snap_start;
+  size_t snap_row = curs_coords[snap_num * 2];
+  size_t snap_col = curs_coords[snap_num * 2 + 1];
+  Cursor* cr = &fe->cursor; 
+
+  if (snap_row != (cr->prev_row + 1) || snap_col != (cr->prev_col + 1)) {
+    char* fred_output = build_fred_output(&fe->piece_table, &fe->file_buf, &fe->add_buf, fred_output_len);
+    char* msg = "Mismatched cursors: edit happened in different places";
+    test_failure(fe, key_num, key_str, snap_num, fred_output, fred_output_len, snap, snap_len, msg);
+  }
 
   if (snap_len != fred_output_len) {
-    if (fred_output_len > 0) {
-      char fred_output[fred_output_len];
-      build_fred_output(fe, fred_output);
-      test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
-    }
-    char fred_output[1] = {'\0'};
-    test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
+    char* fred_output = build_fred_output(&fe->piece_table, &fe->file_buf, &fe->add_buf, fred_output_len);
+    char* msg = "Mismatched lengths";
+    test_failure(fe, key_num, key_str, snap_num, fred_output, fred_output_len, snap, snap_len, msg);
   }
 
   if (snap_len == 0) return;
 
-  char fred_output[fred_output_len];
-  build_fred_output(fe, fred_output);
-
+  char* fred_output = build_fred_output(&fe->piece_table, &fe->file_buf, &fe->add_buf, fred_output_len);
   if (0 != strncmp(fred_output, snap, snap_len)) {
-    test_failure(fe, dir_path, key_str, snap_num + 1, fred_output, fred_output_len, snap, snap_len);
+    char* msg = "Mismatched characters";
+    test_failure(fe, key_num, key_str, snap_num, fred_output, fred_output_len, snap, snap_len, msg);
   }
+
+  free(fred_output);
 }
+
+
+
 
 int main(int argc, char* argv[])
 {
-  // TODO: explaing that the test only accept 'fred_test_[n]'-like folders
-  // and that it only tests the piece-table
   if (argc > 2) ERR("momentarily handling one test-folder at a time.");
   else if (argc < 2) ERR("please provide a test-folder path."); 
-  
-  const char* dir_path = argv[1];
 
-  // TODO: all fred_test_[n] folders live inside tests/. Attach './' to path?
-  assert_is_dir(dir_path);
+  test_dir_path = argv[1];
 
-  // TODO: fred_editor_init needs exisising-path-file, piece-table shouldn't
-  char* fred_output_path = make_path(dir_path, "fred_output.txt");
-  char* output_path = make_path(dir_path, "output.txt");
-  char* keys_path = make_path(dir_path, "keys.txt");
-  char* snaps_path = make_path(dir_path, "snaps.txt");
+  char* fred_output_path = make_path("fred_output.txt");
+  char* output_path = make_path("output.txt");
+  char* keys_path = make_path("keys.txt");
+  char* snaps_path = make_path("snaps.txt");
 
-  assert_file_exists(fred_output_path);
-  assert_file_exists(output_path);
-  assert_file_exists(keys_path);
-  assert_file_exists(snaps_path);
-
-  // TODO: fred_editor_init needs exisising-path-file, piece-table shouldn't
   FredEditor fe = {0};
   if (fred_editor_init(&fe, fred_output_path)) exit(1);
 
-  size_t keys_count = 0;
-  char* keys = get_keys(keys_path, &keys_count);
-
-  File snaps = read_file(snaps_path);
-  size_t* curs_coords = NULL;
-  size_t* snaps_offsets = NULL;
-  size_t snaps_count = get_snaps_offsets(&snaps, &snaps_offsets, &curs_coords);
+  keys = get_keys(keys_path);
+  snaps_file = read_file(snaps_path);
+  parse_snaps();
 
   bool _running = true; // NOTE: dummy flag, the tests never generate 'q' for quitting
   bool insert_mode = false;
+
   for (size_t i = 0, snap_num = 0; i < keys_count; i++) {
     char key_str[2] = {keys[i], '\0'};
     bool just_entered_insert_mode = KEY_IS(key_str, "i") && !insert_mode;
@@ -399,39 +419,13 @@ int main(int argc, char* argv[])
     }
 
     if (!just_entered_insert_mode && insert_mode){
-      compare_to_snap(&fe, dir_path, key_str, snaps.text, snaps_offsets, snap_num);
+      compare_to_snap(&fe, i + 1, key_str, snap_num);
       snap_num++;
     }
   }
+  // TODO: time spent, snaps compared 
   printf("\033[48:5:48mTEST PASSED\033[0m\n");
-
-  // dump_piece_table(&fe, stderr);
-  // TODO: we exit right away on text-failure and don't free anything.
-  // Doing it here makes no sense
-  // dump_piece_table(&fe, stdout);
-  fred_editor_free(&fe);
-  free(keys);
-  free(fred_output_path);
-  free(output_path);
-  free(keys_path);
-  free(snaps_path);
-  free(curs_coords);
-  free(snaps_offsets);
 
   return 0;
 }
 
-
-// TODO: print the position of the fred-cursor and test-cursor
-
-// TODO: better naming for everything
-
-
-// TODOOOOOOOOOOOOOOOOOOOOOOOOOOOO: check if every malloc has been freed
-
-// TODO: accept a '-h' flag that explains everything, from what's needed to what is happening
-// TODO: when in the future multiple tests will be run at the same time 
-// remember to free each File struct.
-
-// TODO: make test to check for eventual 0-len pieces
-// TODO: accept only files named with 'test' and that are '.txt'
