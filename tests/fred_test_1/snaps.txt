@@ -1,0 +1,33 @@
+
+[snapshot: 1, inserted: "f", 1:1]
+f
+[snapshot: 2, inserted: "BACKSPACE", 1:2]
+
+[snapshot: 3, inserted: "F", 1:1]
+F
+[snapshot: 4, inserted: "w", 1:1]
+wF
+[snapshot: 5, inserted: "!", 1:2]
+w!F
+[snapshot: 6, inserted: "G", 1:3]
+w!GF
+[snapshot: 7, inserted: "V", 1:3]
+w!VGF
+[snapshot: 8, inserted: "|", 1:4]
+w!V|GF
+[snapshot: 9, inserted: "BACKSPACE", 1:5]
+w!VGF
+[snapshot: 10, inserted: "r", 1:4]
+w!VrGF
+[snapshot: 11, inserted: "J", 1:7]
+w!VrGFJ
+[snapshot: 12, inserted: "$", 1:1]
+$w!VrGFJ
+[snapshot: 13, inserted: "/", 1:9]
+$w!VrGFJ/
+[snapshot: 14, inserted: "_", 1:9]
+$w!VrGFJ_/
+[snapshot: 15, inserted: "BACKSPACE", 1:10]
+$w!VrGFJ/
+[snapshot: 16, inserted: "A", 1:6]
+$w!VrAGFJ/

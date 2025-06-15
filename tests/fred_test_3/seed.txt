@@ -1,0 +1,14 @@
+{
+  gen_keys_readable_file = true,
+  max_edits_in_insert = 3,
+  max_places_to_edit = 10,
+  rand_ikeys_tweaks = {
+    deletes = 4,
+    newlines = 8,
+    ["rand-num"] = 20,
+    tabs = 14,
+    ["text-chars"] = 2
+  },
+  seed = 1749556027,
+  test_name = "fred_test_3"
+}

@@ -1,0 +1,49 @@
+
+[snapshot: 1, inserted: "5", 1:1]
+5
+[snapshot: 2, inserted: "7", 1:2]
+57
+[snapshot: 3, inserted: "BACKSPACE", 1:3]
+5
+[snapshot: 4, inserted: "BACKSPACE", 1:2]
+
+[snapshot: 5, inserted: "}", 1:1]
+}
+[snapshot: 6, inserted: "6", 1:2]
+}6
+[snapshot: 7, inserted: "w", 1:2]
+}w6
+[snapshot: 8, inserted: "+", 1:3]
+}w+6
+[snapshot: 9, inserted: "f", 1:4]
+}w+f6
+[snapshot: 10, inserted: "N", 1:4]
+}w+Nf6
+[snapshot: 11, inserted: "w", 1:5]
+}w+Nwf6
+[snapshot: 12, inserted: "T", 1:6]
+}w+NwTf6
+[snapshot: 13, inserted: "BACKSPACE", 1:3]
+}+NwTf6
+[snapshot: 14, inserted: "BACKSPACE", 1:2]
++NwTf6
+[snapshot: 15, inserted: "}", 1:5]
++NwT}f6
+[snapshot: 16, inserted: "G", 1:6]
++NwT}Gf6
+[snapshot: 17, inserted: "-", 1:3]
++N-wT}Gf6
+[snapshot: 18, inserted: "n", 1:4]
++N-nwT}Gf6
+[snapshot: 19, inserted: "NEWLINE", 1:5]
++N-n
+wT}Gf6
+[snapshot: 20, inserted: ";", 2:1]
++N-n
+;wT}Gf6
+[snapshot: 21, inserted: "TAB", 1:1]
+	+N-n
+;wT}Gf6
+[snapshot: 22, inserted: "*", 1:2]
+	*+N-n
+;wT}Gf6

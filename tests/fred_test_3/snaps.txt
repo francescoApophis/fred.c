@@ -1,0 +1,64 @@
+
+[snapshot: 1, inserted: "`", 1:1]
+`
+[snapshot: 2, inserted: "J", 1:1]
+J`
+[snapshot: 3, inserted: "v", 1:1]
+vJ`
+[snapshot: 4, inserted: "H", 1:2]
+vHJ`
+[snapshot: 5, inserted: "s", 1:3]
+vHsJ`
+[snapshot: 6, inserted: "k", 1:2]
+vkHsJ`
+[snapshot: 7, inserted: "G", 1:3]
+vkGHsJ`
+[snapshot: 8, inserted: "j", 1:4]
+vkGjHsJ`
+[snapshot: 9, inserted: "h", 1:2]
+vhkGjHsJ`
+[snapshot: 10, inserted: "Y", 1:3]
+vhYkGjHsJ`
+[snapshot: 11, inserted: "g", 1:4]
+vhYgkGjHsJ`
+[snapshot: 12, inserted: "W", 1:9]
+vhYgkGjHWsJ`
+[snapshot: 13, inserted: "7", 1:10]
+vhYgkGjHW7sJ`
+[snapshot: 14, inserted: "w", 1:9]
+vhYgkGjHwW7sJ`
+[snapshot: 15, inserted: "{", 1:10]
+vhYgkGjHw{W7sJ`
+[snapshot: 16, inserted: "G", 1:9]
+vhYgkGjHGw{W7sJ`
+[snapshot: 17, inserted: ";", 1:10]
+vhYgkGjHG;w{W7sJ`
+[snapshot: 18, inserted: "v", 1:11]
+vhYgkGjHG;vw{W7sJ`
+[snapshot: 19, inserted: "NEWLINE", 1:2]
+v
+hYgkGjHG;vw{W7sJ`
+[snapshot: 20, inserted: "&", 2:1]
+v
+&hYgkGjHG;vw{W7sJ`
+[snapshot: 21, inserted: "{", 2:2]
+v
+&{hYgkGjHG;vw{W7sJ`
+[snapshot: 22, inserted: "@", 2:3]
+v
+&{@hYgkGjHG;vw{W7sJ`
+[snapshot: 23, inserted: "\\", 2:4]
+v
+&{@\hYgkGjHG;vw{W7sJ`
+[snapshot: 24, inserted: "w", 2:5]
+v
+&{@\whYgkGjHG;vw{W7sJ`
+[snapshot: 25, inserted: "t", 1:2]
+vt
+&{@\whYgkGjHG;vw{W7sJ`
+[snapshot: 26, inserted: "i", 1:3]
+vti
+&{@\whYgkGjHG;vw{W7sJ`
+[snapshot: 27, inserted: "Q", 1:4]
+vtiQ
+&{@\whYgkGjHG;vw{W7sJ`
