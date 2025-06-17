@@ -43,14 +43,17 @@ $(DEBUG_DIR)/fred.o : src/fred.c src/fred.h src/common.h | $(DEBUG_DIR)
 	$(CC) -g -c -o $@ $< $(CFLAGS)
 
 $(DEBUG_DIR): 
-	mkdir $(DEBUG_DIR)
+	mkdir -p $(DEBUG_DIR)
 
 
-$(TEST_DIR)/test : $(TEST_DIR)/test.o $(BUILD_DIR)/fred.o
-	$(CC) -o $@ $^ $(CFLAGS) 
+$(TEST_DIR)/test : $(TEST_DIR)/test.o $(DEBUG_DIR)/fred.o
+	$(CC) -g -o $@ $^ $(CFLAGS) 
 
 $(TEST_DIR)/test.o : $(TEST_DIR)/test.c
-	$(CC) -c -o $@ $? $(CFLAGS) 
+	$(CC) -g -c -o $@ $? $(CFLAGS) 
+
+
+
 
 clean:
 	rm -r $(BUILD_DIR)/*
