@@ -165,7 +165,6 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 
   size_t tw_text_idx = tw->line_num_w;
   size_t line = 0;
-  bool win_curs_set = false;
   #define IS_NOT_EOF_NEWLINE (!(!piece->which_buf && piece_idx == fe->piece_table.len - 1 && i == piece->len - 1))
 
   for (size_t piece_idx = 0; piece_idx < fe->piece_table.len; piece_idx++){
@@ -286,6 +285,7 @@ end:
 bool FRED_insert_text(FredEditor* fe, char text_char)
 {
 #define LAST_ACT_WAS_INSERT (fe->last_edit.action == ACT_INSERT)
+#define AT_LAST_LINE_END (cr->row == ll->len - 1 && cr->col == (size_t)ll->items[cr->row])
   bool failed = 0;
 
   PieceTable* table = &fe->piece_table;
@@ -294,7 +294,7 @@ bool FRED_insert_text(FredEditor* fe, char text_char)
 
   ADD_BUF_PUSH(&fe->add_buf, text_char);
 
-  if (table->len == 0 || (!LAST_ACT_WAS_INSERT && cr->row == ll->len - 1 && cr->col == ll->items[cr->row])) {
+  if (table->len == 0 || (!LAST_ACT_WAS_INSERT && AT_LAST_LINE_END)) {
     PIECE_TABLE_PUSH(table, ((Piece){1, fe->add_buf.len - 1, 1}));
     GOTO_END(failed);
   } else if (cr->row == 0 && cr->col == 0) {
@@ -336,12 +336,12 @@ end:
   }
   return failed;
 #undef LAST_ACT_WAS_INSERT
+#undef AT_LAST_LINE_END
 }
 
 
 void delete_at_piece_end(PieceTable* table, size_t piece_idx)
 {
-  bool failed = 0;
   Piece* p = &table->items[piece_idx];
   if (p->len - 1 > 0){
     p->len--;
@@ -352,7 +352,7 @@ void delete_at_piece_end(PieceTable* table, size_t piece_idx)
   }
 }
 
-bool delete_inside_piece(PieceTable* table, size_t piece_idx, size_t char_offset, FredEditor* fe)
+bool delete_inside_piece(PieceTable* table, size_t piece_idx, size_t char_offset_in_piece)
 {
   bool failed = 0;
   // FIXME+CHECK: i think char_offset HAS to be less than p->len, otherwise
@@ -361,8 +361,12 @@ bool delete_inside_piece(PieceTable* table, size_t piece_idx, size_t char_offset
   DA_MAYBE_GROW(table, 1, PIECE_TABLE_INIT_CAP, PieceTable);
   Piece* p = &table->items[piece_idx];
   memmove(p + 2, p + 1, (table->len - (piece_idx + 1)) * sizeof(*p));
-  p[1] = (Piece){p->which_buf, p->offset + char_offset + 1, p->len - (char_offset + 1)};
-  p->len = char_offset;
+  p[1] = (Piece){
+    p->which_buf, 
+    p->offset + char_offset_in_piece + 1,
+    p->len - (char_offset_in_piece + 1)
+  };
+  p->len = char_offset_in_piece;
   table->len++;
 end:
   return failed;
@@ -371,7 +375,8 @@ end:
 
 bool FRED_delete_text(FredEditor* fe)
 {
-#define buf(offset)((!p->which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+#define buf(p, offset)((!(p)->which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+#define AT_LAST_LINE_END (cr->row == ll->len - 1 && cr->col == (size_t)ll->items[cr->row])
 
   bool failed = 0;
 
@@ -383,7 +388,14 @@ bool FRED_delete_text(FredEditor* fe)
     return failed;
   }
   
-  if (cr->row == ll->len - 1 && cr->col == ll->items[cr->row]) {
+  char del_char = 0;
+
+  // NOTE+FIXME: this is not reached if you're editing 
+  // a file that ends with EOL since the EOL is 
+  // considered a proper line by get_lines_len()
+  if (AT_LAST_LINE_END) {
+    Piece* p = &table->items[table->len - 1];
+    del_char = buf(p, p->offset + (p->len - 1));
     delete_at_piece_end(table, table->len - 1);
     GOTO_END(0);
   }
@@ -394,18 +406,19 @@ bool FRED_delete_text(FredEditor* fe)
   }
   place_to_edit_offset += cr->col; // NOTE: col is on the char after
   
-  char del_char = 0;
   for (size_t i = 0, pieces_len = 0; i < table->len; i++) {
     Piece* p = &table->items[i];
     pieces_len += p->len;
+
     if (pieces_len == place_to_edit_offset) {
-      del_char = buf(p->offset + p->len - 1);
+      del_char = buf(p, p->offset + p->len - 1);
       delete_at_piece_end(table, i);
       GOTO_END(0);
+
     } else if (pieces_len > place_to_edit_offset){
-      size_t char_offset = p->len - 1 - (pieces_len - place_to_edit_offset);
-      del_char = buf(p->offset + char_offset);
-      failed = delete_inside_piece(table, i, char_offset, fe);
+      size_t char_offset_in_piece =  p->len - 1 - (pieces_len - place_to_edit_offset);
+      del_char = buf(p, p->offset + char_offset_in_piece);
+      failed = delete_inside_piece(table, i, char_offset_in_piece);
       GOTO_END(failed);
     }
   }
@@ -421,7 +434,8 @@ end:
     fe->last_edit.action = ACT_DELETE;
   }
   return failed;
-  #undef buf
+#undef buf
+#undef AT_LAST_LINE_END
 }
 
 
@@ -432,7 +446,7 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
   fprintf(stream, "LINES-LENGHTS:\n");
   fprintf(stream, "arr-len: %ld\n", fe->lines_len.len );
   for (size_t i = 0; i < fe->lines_len.len; i++){
-    fprintf(stream, "[%ld] = %d:\n", i + 1, fe->lines_len.items[i]);
+    fprintf(stream, "[%ld] = %d,\n", i + 1, fe->lines_len.items[i]);
   }
 
   fprintf(stream, "TABLE (len: %ld, cap: %ld):\n", fe->piece_table.len, fe->piece_table.cap);
@@ -451,9 +465,10 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
 }
 
 
-// NOTE: this computes all lines's length
-// as well as lines-count (LinesLen->len) for 
-// navigation in normal mode
+
+
+// TODO+NOTE: EOL at end of file (like the ones saved 
+// with neovim) will get considered as proper line 
 bool FRED_get_lines_len(FredEditor* fe)
 {
 #define is_last_char(t, p, i, j) ((i) == (t)->len - 1 && (j) == (p)->len - 1)
@@ -465,21 +480,22 @@ bool FRED_get_lines_len(FredEditor* fe)
   ll->len = 0;
   size_t line_start = 0;
   size_t tot_text_len = 0;
+  DA_PUSH(ll, 0, 8, LinesLen);
 
   for (size_t i = 0; i < t->len; i++) {
     Piece* p = &t->items[i];
     char* buf = !p->which_buf ? fe->file_buf.text : fe->add_buf.items;
-
     for (size_t j = 0; j < p->len; j++) {
       char c = buf[p->offset + j];
       if (c == '\n' || is_last_char(t, p, i, j)) {
-        // NOTE: we count the length from +1 past the end of the string
-        size_t line_end = tot_text_len + j + (is_last_char(t, p, i, j) && c != '\n');
-        assert(line_end - line_start <= UINT16_MAX, 
-               "line-length overflow (max is UINT16_MAX, 65535), length cannot be stored for later usage");
-        uint16_t line_len = line_end - line_start;
-        DA_PUSH(ll, line_len, 8, LinesLen);
+        size_t line_end = tot_text_len + j + (c != '\n');
+        size_t line_len = line_end - line_start;
+        // TODO: what if file is data not separated by newlines?
+        assert(line_len <= UINT16_MAX, "line-length overflow (max line-length is UINT16_MAX, 65535), "
+                                       "length cannot be stored for later usage");
+        ll->items[ll->len - 1] = (uint16_t)line_len;
         line_start = line_end + 1;
+        if (c == '\n') DA_PUSH(ll, 0, 8, LinesLen);
       }
     }
     tot_text_len += p->len;
@@ -550,7 +566,7 @@ void update_win_cursor(FredEditor* fe, TermWin* tw)
 
   if (cr->win_row > mid + 5) {
     size_t curr_line_rows = ll->items[cr->row] / tw_row_w + 1;
-    size_t rows = ll->items[tw->lines_to_scroll++] / tw_row_w + 1;
+    size_t rows = ll->items[tw->lines_to_scroll++] / tw_row_w + 1; // first line on the screen 
     // NOTE: the 2nd check will render the current line closer the center if it's wrapped
     while (rows < curr_line_rows || (curr_line_rows > 1 && rows <= curr_line_rows)) {
       rows += ll->items[++tw->lines_to_scroll] / tw_row_w + 1;
@@ -562,7 +578,7 @@ void update_win_cursor(FredEditor* fe, TermWin* tw)
       rows += ll->items[--tw->lines_to_scroll] / tw_row_w + 1;
     }
   }
-
+  
   // NOTE: loops from the 1st line on the screen
   size_t win_row = 0;
   for (size_t i = tw->lines_to_scroll; i < cr->row; i++) {
@@ -646,14 +662,10 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
 #endif 
   GOTO_END(failed);
 end:
-  if (!failed) { // else the ERROR() macro has already cleared the screen
+  if (!failed) { // NOTE: else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\033[2J\033[H");
   }
-  // for (size_t i = 0; i < fe->lines_len.len; i++) {
-    // fprintf(stdout, "%d\n", fe->lines_len.items[i]);
-  // }
-
-  dump_piece_table(fe, stdout);
+  // dump_piece_table(fe, stdout);
   fred_editor_free(fe);
   free(tw.text);
   return failed;
