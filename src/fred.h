@@ -187,10 +187,11 @@ typedef struct {
 } Cursor;
 
 
+// TODO: only size and lines_to_scroll need to be size_t
 typedef struct {
   char* text;
   size_t size;
-  size_t rows;
+  size_t rows; // TODO: shouldn't these be height and width? 
   size_t cols;
   size_t lines_to_scroll;
   short line_num_w; // NOTE: the max width for displaying line-nums
