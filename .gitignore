@@ -6,7 +6,9 @@ build_manual/
 empty_file
 tests/lua
 tests/test
+old-tests/
 notes/
 ./*.txt
 tests/test.o
 tests/test
+tests/fred_test_11
