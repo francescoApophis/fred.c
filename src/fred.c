@@ -152,50 +152,71 @@ end:
 
 
 
-
 void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
+#define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+
   memset(tw->text, SPACE_CH, tw->size);
 
   size_t last_row_idx = (tw->rows - 1) * tw->cols + 1;
   char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
   memcpy(tw->text + last_row_idx, mode, strlen(mode));
-  TW_WRITE_NUM_AT(tw, last_row_idx + tw->cols - 1, "%-ld:%-ld", fe->cursor.row + 1,fe->cursor.col + 1); 
+  TW_WRITE_NUM_AT(tw, last_row_idx + tw->cols - 1, "%-d:%-d", (int)fe->cursor.row + 1, (int)fe->cursor.col + 1); 
   TW_WRITE_NUM_AT(tw, tw->line_num_w - tw->line_num_w / 3, "%ld", tw->lines_to_scroll + 1); // first line-num
 
-  size_t tw_text_idx = tw->line_num_w;
-  size_t line = 0;
-  #define IS_NOT_EOF_NEWLINE (!(!piece->which_buf && piece_idx == fe->piece_table.len - 1 && i == piece->len - 1))
+  PieceTable* table = &fe->piece_table;
+  LinesLen* ll = &fe->lines_len;
 
-  for (size_t piece_idx = 0; piece_idx < fe->piece_table.len; piece_idx++){
-    Piece* piece = &fe->piece_table.items[piece_idx];
-    char* buf = !piece->which_buf ? fe->file_buf.text : fe->add_buf.items;
+  if (table->len == 0) return;
 
-    for (size_t i = 0; i < piece->len; i++){
-      char c = buf[piece->offset + i];
-      size_t tw_row = tw_text_idx / tw->cols;
-      size_t tw_col = tw_text_idx % tw->cols;
+  // TODO: could i cache it?  
+  size_t fl_offset = 0; // [f]irst [l]ine to render; offset in the fully built text
+  for (size_t i = 0; i < tw->lines_to_scroll; i++) {
+    fl_offset += ll->items[i] + 1; // NOTE: '+1' is for '\n' 
+  }
 
-      if (tw_row >= tw->rows - 1) return;
-      if (line < tw->lines_to_scroll){
-        if (c == '\n') line++;
-        continue;
+  size_t fl_piece_idx = 0, fl_piece_offset = 0;
+  if (fl_offset > 0) {
+    for (size_t i = 0, pieces_len = 0; i < table->len; i++) {
+      Piece p = table->items[i];
+      pieces_len += p.len;
+
+      if (!(pieces_len < fl_offset)) {
+        fl_piece_idx = i;
+        fl_piece_offset = p.len - (pieces_len - fl_offset);
+        break;
       }
+    }
+  }
+
+
+  size_t tw_text_idx = 0, line = tw->lines_to_scroll;
+  size_t limit = tw->size - tw->cols * 2;
+  size_t off = tw->line_num_w / 3;
+  for (size_t i = fl_piece_idx; i < table->len; i++) {
+    Piece p = table->items[i];
+
+    size_t j = i == fl_piece_idx ? fl_piece_offset : 0; 
+    for (; j < p.len; j++) {
+      if (tw_text_idx >= limit) return;
+
+      char c = buf(p, p.offset + j);
+      size_t tw_col = tw_text_idx % tw->cols;
 
       if (c != '\n'){
         if (tw_col == 0) tw_text_idx += tw->line_num_w;
         tw->text[tw_text_idx++] = c;
       } else {
         line++;
-        tw_text_idx = (tw_row + 1) * tw->cols + tw->line_num_w;
-        if (tw_row + 1 < tw->rows - 1 && IS_NOT_EOF_NEWLINE) {
-          TW_WRITE_NUM_AT(tw, tw_text_idx - tw->line_num_w / 3, "%ld", line + 1);
-        }
+        tw_text_idx += (tw->cols - tw_col) + tw->line_num_w;
+        TW_WRITE_NUM_AT(tw, tw_text_idx - off, "%ld", line + 1);
       }
     }
   }
-  #undef IS_NOT_EOF_NEWLINE
+
+#undef buf
 }
+
 
 
 
