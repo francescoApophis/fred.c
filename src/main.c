@@ -82,47 +82,11 @@ end:
   return failed;
 }
 
-
-// TODO: asserts do not reset the terminal back. Instead of 
-// exiting right away, make it behave like errors
-
-// TODO: write test. IN neovim record all the keypresses while editing a 
-// file with only Fred's controls and write them onto a file. 
-// Feed these data to Fred's function and test if the edited file
-// and Fred's output are the same. 
-// While recording I could even random randomize the keypresses
-// instead of writing it myself: just have an array of fred's controls,
-// get random control and random repetitions amount.
-
-
-// TODO+FIXME!!!!: the lines-scrolling code should be independant
-// from the code that handles cursor_move up/down.
-// lines should be scrolled also when editing text past the screen
-// threeshold.
 // FIXME: '\t' is not rendered properly
-// TODO: what if i just make the test.c a module that i will call 
-// directly from main.c on when testing? I wouldn't need to separate
-// everything into modules then. Maybe in the main I can have a flag or something 
-// that i can pass to the console?
-// FIXME: it happened only once, but after pressing 'k' in 
-// normal mode some of the deleted pieces got rendered again.
-// FIXME: win_row cannot scroll back to line-1 if (file->lines < tw->rows - 1), but you're technically there 
-// and if you type some text wou will get repositioned at the correct spot.
 // FIXME: SIGWINCH doesn't handle resizing on zooming in/out when
 // the terminal is not full screen?
-// FIXME: when zooming in too much, if the cursor win_row is greater than
-// the tw->rows the the lines should get scrolled.
 // FIXME: fred sometimes crashes with empty file even though that should already be handled
-//
-// TODO: can i like have a bit-flag  that says if I'm at the end or start of table/line or sum? 
-// TODO: when scrolling down, i could save a pointer to the 
-// piece that contatins the first line to render in TermWin, so I won't have
-// to parse the entire table when rendering.
 // TODO: utf-8 support.
-// TODO: if any of the realloc's (win_resize, DA_macros) were to fail,
-// since the contents should not be touched, I think the user 
-// should be prompted whether or not to write the all the edits 
-// to the file. But can you actually do that? 
 // TODO: handle ftruncate error
 // TODO: have a separate buffer to report error messages in the 
 // bottom line of the screen
@@ -135,7 +99,12 @@ end:
 // where ESC_KEY is a preproc constant
 
 
-// For the general structure of the project: 
+
+// Thanks for for  the main loop structure in FRED_start_editor(), 
+// the idea in FRED_get_text_to_render() of storing 
+// the to-be-rendered text in a buffer, and more generally
+// for the inspiration at the beginning of the project:
+//
 // https://github.com/tsoding/noed
 // Copyright 2022 Alexey Kutepov <reximkut@gmail.com>
 
