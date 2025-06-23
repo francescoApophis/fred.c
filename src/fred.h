@@ -48,6 +48,16 @@
   }                                                  \
 } while(0)
 
+#define assert2(cond, ...) do {                       \
+  if (!(cond)){                                      \
+    fprintf(stderr, "\033[2J\033[H");              \
+    fprintf(stderr, "ASSERTION FAILED:" #cond "\n"); \
+    fprintf(stderr, "%s, %d\n", __FILE__, __LINE__); \
+    fprintf(stderr, __VA_ARGS__);                    \
+    fprintf(stderr, "\n");                           \
+    exit(1); \
+  }                                                  \
+} while(0)
 
 
 #define DA_MAYBE_GROW(da, elem_count, da_cap_init, da_type) do {                      \
@@ -149,7 +159,7 @@
   char num_digits = snprintf(NULL, 0, format, __VA_ARGS__);           \
   char num_str[num_digits];                                           \
   sprintf(num_str, format, __VA_ARGS__);                              \
-  memcpy((tw)->text + ((offset) - num_digits), num_str, num_digits);  \
+  memcpy((tw)->elems + ((offset) - num_digits), num_str, num_digits);  \
 } while (0)
 
 
@@ -189,12 +199,13 @@ typedef struct {
 
 // TODO: only size and lines_to_scroll need to be size_t
 typedef struct {
-  char* text;
+  char* elems;
   size_t size;
-  size_t rows; // TODO: shouldn't these be height and width? 
-  size_t cols;
+  size_t width;
+  size_t height;
   size_t lines_to_scroll;
-  short line_num_w; // NOTE: the max width for displaying line-nums
+  short linenum_width; // NOTE: the max width between the left side of the screen 
+                       // and the start of the text; for displaying line-nums
 } TermWin;
 
 
@@ -218,7 +229,7 @@ typedef enum {
 } Action;
 
 typedef struct {
-  Action action;  // NOTE: 1 = insertion, 0 = deletion
+  Action action;
   Cursor cursor;
 } LastEdit;
 
@@ -247,5 +258,7 @@ void FRED_move_cursor(FredEditor* fe, char key);
 bool FRED_delete_text(FredEditor* fe);
 bool FRED_handle_input(FredEditor* fe, bool* running, bool* insert, char* key, ssize_t bytes_read);
 bool FRED_get_lines_len(FredEditor* fe);
+
+
 
 #endif 
