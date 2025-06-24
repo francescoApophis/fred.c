@@ -19,8 +19,8 @@ For test *generation*:
 
 # Commands
 There are two modes: 
-- Normal: for navigation  
-- Insert: for editing
+- Normal: navigate through the file
+- Insert: edit the file
 
 (Work in progress)
 
@@ -32,6 +32,7 @@ There are two modes:
 | ```j``` | Move down |
 | ```h``` | Move left |
 | ```l``` | Move right |
+| ```q``` | Quit |
 | ```Backspace``` | Delete text |
 
 # Debugging 
