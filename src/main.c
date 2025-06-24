@@ -102,8 +102,8 @@ end:
 
 // Thanks for for  the main loop structure in FRED_start_editor(), 
 // the idea in FRED_get_text_to_render() of storing 
-// the to-be-rendered text in a buffer, and more generally
-// for the inspiration at the beginning of the project:
+// the to-be-rendered text in a buffer, the error handling 
+// and more generally for the inspiration at the beginning of the project:
 //
 // https://github.com/tsoding/noed
 // Copyright 2022 Alexey Kutepov <reximkut@gmail.com>
