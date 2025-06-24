@@ -10,12 +10,18 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/fred.o
 DEBUG_OBJS = $(DEBUG_DIR)/main.o  $(DEBUG_DIR)/fred.o
 
 .PHONY = all                \
+				 Debug 							\
+				 Test 							\
          clean              \
          clean_debug        \
          $(DEBUG_DIR)/fred  \
 				 $(TEST_DIR)/test 
 
 all: $(BUILD_DIR)/$(EXE)
+
+Debug: $(DEBUG_DIR)/$(EXE)
+
+Test: $(TEST_DIR)/test 
 
 
 $(BUILD_DIR)/$(EXE) : $(OBJS)
@@ -29,7 +35,6 @@ $(BUILD_DIR)/fred.o : src/fred.c src/fred.h src/common.h | $(BUILD_DIR)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
-
 
 
 
@@ -64,9 +69,3 @@ clean_debug:
 
 
 
-# https://stackoverflow.com/questions/5178125/how-to-place-object-files-in-separate-subdirectory
-
-# debugging with gdb:  https://stackoverflow.com/questions/8963208/gdb-display-output-of-target-application-in-a-separate-window
-# debuggin with gdbserver: https://stackoverflow.com/a/15306382 (prefer this, for some reason using redirecting with tty 
-# causes the output terminal to crash sometimes)
-#
