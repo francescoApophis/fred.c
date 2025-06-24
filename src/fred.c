@@ -153,6 +153,64 @@ end:
 }
 
 
+// TODO: better name
+bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
+{
+// NOTE: we write the the escape keys over the previously written keyword 
+// NOTE: '9' the escape-codes lengths for color and reset 
+#define highlight(tt, word, word_len) do { \
+  DA_MAYBE_GROW((tt), 9, TABLE_TEXT_INIT_CAP, TableText); \
+  memcpy((tt)->items + (tt)->len - (word_len), "\x1b[31m" word "\x1b[0m", 5 + (word_len) + 4); \
+  (tt)->len += 9; \
+} while (0)
+#define buf(p, offset) ((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+#define matches(word, word_len, match, match_len) ((word_len) == (match_len) && 0 == memcmp((word), (match), (match_len)))
+#define MAX_WORD_LEN 32
+
+  bool failed = 0;
+  PieceTable* table = &fe->piece_table;
+  TableText* tt = &tw->table_text;
+
+  tt->len = 0;  
+  // TODO: for now we'll only parse C keywords: if, while, return, for
+  char word[MAX_WORD_LEN] = {0};
+  size_t word_len = 0;
+
+  for (size_t i = 0; i < table->len; i++) {
+    Piece p = table->items[i];
+    for (size_t j = 0; j < p.len; j++) {
+      char c = buf(p, p.offset + j);
+      if (word_len >= MAX_WORD_LEN) {
+        memset(word, 0, MAX_WORD_LEN);
+        word_len = 0;
+      } else if (c < 'a' || c > 'z') {
+        if (matches(word, word_len, "if", 2)) {
+          highlight(tt, "if", 2);
+        } else if (matches(word, word_len, "while", 5)) {
+          highlight(tt, "while", 5);
+        } else if (matches(word, word_len, "for", 3)) {
+          highlight(tt, "for", 3);
+        } else if (matches(word, word_len, "return", 6)) {
+          highlight(tt, "return", 6);
+        }
+        memset(word, 0, MAX_WORD_LEN);
+        word_len = 0;
+      } else {
+        word[word_len++] = c;
+      }
+      DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
+    }
+  }
+
+end:
+  return failed;
+#undef buf
+#undef highlight
+#undef matches
+#undef MAX_WORD_LEN
+}
+
+
 
 void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
@@ -160,68 +218,50 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 
   memset(tw->elems, SPACE_CH, tw->size);
 
-  PieceTable* table = &fe->piece_table;
   LinesLen* ll = &fe->lines_len;
   Cursor* cr = &fe->cursor;
+  TableText* tt = &tw->table_text;
 
   size_t last_row_offset = tw->size - tw->width;
   {
     size_t curs_offset = last_row_offset + tw->width - 1;
     size_t first_linenum_offset = tw->linenum_width - tw->linenum_width / 3;
     char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
-    memcpy(tw->elems + last_row_offset + 1, mode, strlen(mode));
+    memcpy(tw->elems + last_row_offset + 2, mode, strlen(mode));
     TW_WRITE_NUM_AT(tw, curs_offset, "%-d:%-d", (int)cr->row + 1, (int)cr->col + 1); 
     TW_WRITE_NUM_AT(tw, first_linenum_offset, "%ld", tw->lines_to_scroll + 1);
   }
 
-  if (table->len == 0) return;
+  if (ll->len == 0) return;
 
-  // TODO: could i cache it?  
-  size_t fl_offset = 0; // First Line to render; offset in the fully built text
+  // TODO: cache it
+  size_t fl_offset = 0; // First Line to render
   for (size_t i = 0; i < tw->lines_to_scroll; i++) {
     fl_offset += ll->items[i] + 1; // NOTE: '+1' is for '\n' 
   }
 
-  size_t fl_piece_idx = 0, fl_piece_offset = 0;
-  if (fl_offset > 0) {
-    for (size_t i = 0, tot_pieces_len = 0; i < table->len; i++) {
-      Piece p = table->items[i];
-      tot_pieces_len += p.len;
-
-      if (!(tot_pieces_len < fl_offset)) {
-        fl_piece_idx = i;
-        fl_piece_offset = p.len - (tot_pieces_len - fl_offset);
-        break;
-      }
-    }
-  }
-
-  size_t tw_elems_idx = 0, line = tw->lines_to_scroll;
+  size_t tw_elems_idx = 0;
+  size_t line = tw->lines_to_scroll;
   size_t linenum_offset = tw->linenum_width / 3;
 
-  for (size_t i = fl_piece_idx; i < table->len; i++) {
-    Piece p = table->items[i];
 
-    size_t j = i == fl_piece_idx ? fl_piece_offset : 0; 
-    for (; j < p.len; j++) {
-      if (tw_elems_idx >= last_row_offset) break;
+  for (size_t i = fl_offset; i < tt->len; i++) {
+    if (tw_elems_idx >= last_row_offset) break;
+    char c = tt->items[i];
+    size_t tw_col = tw_elems_idx % tw->width;
 
-      char c = buf(p, p.offset + j);
-      size_t tw_col = tw_elems_idx % tw->width;
-
-      if (c != '\n'){
-        if (tw_col == 0) tw_elems_idx += tw->linenum_width;
-        tw->elems[tw_elems_idx++] = c;
-      } else {
-        line++;
-        tw_elems_idx += (tw->width - tw_col) + tw->linenum_width;
-        if (tw_elems_idx < last_row_offset){
-          TW_WRITE_NUM_AT(tw, tw_elems_idx - linenum_offset, "%ld", line + 1);
-        }
+    if (c != '\n'){
+      if (tw_col == 0) tw_elems_idx += tw->linenum_width;
+      tw->elems[tw_elems_idx++] = c;
+    } else {
+      line++;
+      tw_elems_idx += (tw->width - tw_col) + tw->linenum_width;
+      if (tw_elems_idx < last_row_offset){
+        TW_WRITE_NUM_AT(tw, tw_elems_idx - linenum_offset, "%ld", line + 1);
       }
     }
   }
-
+ 
 #undef buf
 }
 
@@ -240,6 +280,8 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
 end:
   return failed;
 }
+
+
 
 bool insert_at_table_start(FredEditor* fe)
 {
@@ -380,6 +422,8 @@ end:
 }
 
 
+
+
 // DESC: either shrinks the piece at 'piece_idx'
 // or deletes it by moving all the next pieces on top of it  
 void delete_at_piece_end(PieceTable* table, size_t piece_idx)
@@ -428,7 +472,6 @@ bool FRED_delete_text(FredEditor* fe)
   }
   
   char del_char = 0;
-
   // NOTE+FIXME: this is not reached if you're editing 
   // a file that ends with EOL since the EOL is 
   // considered a proper line by get_lines_len()
@@ -673,10 +716,12 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   bool insert = false;
 
   TermWin tw = {0};
+  tw.table_text = (TableText){0};
   tw.linenum_width = 8;
   if (FRED_win_resize(&tw)) GOTO_END(1);
 
   FRED_get_lines_len(fe);
+  if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
 
 #if 1
   while (running) {
@@ -696,8 +741,12 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
     }
 
     if (bytes_read > 0) {
+      bool was_insert = insert;
       if (FRED_handle_input(fe, &running, &insert, key, bytes_read)) GOTO_END(1);
       update_win_cursor(fe, &tw);
+      if (was_insert) {
+        if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
+      }
     }
   }
 #endif 
@@ -709,13 +758,14 @@ end:
   // dump_piece_table(fe, stdout);
   fred_editor_free(fe);
   free(tw.elems);
+  free(tw.table_text.items);
   return failed;
 }
 
 // Thanks for for  the main loop structure in FRED_start_editor(), 
 // the idea in FRED_get_text_to_render() of storing 
-// the to-be-rendered text in a buffer, and more generally
-// for the inspiration at the beginning of the project:
+// the to-be-rendered text in a buffer, the error handling 
+// and more generally for the inspiration at the beginning of the project:
 //
 // https://github.com/tsoding/noed
 // Copyright 2022 Alexey Kutepov <reximkut@gmail.com>

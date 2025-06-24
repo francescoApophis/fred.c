@@ -9,6 +9,7 @@
 
 #define ADD_BUF_INIT_CAP 512
 #define PIECE_TABLE_INIT_CAP 8 
+#define TABLE_TEXT_INIT_CAP 512
 
 #define SPACE_CH 32
 #define ESC_CH 27
@@ -94,54 +95,10 @@
 } while (0)
 
 
-  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
-
-#define PIECE_TABLE_MAKE_ROOM(piece_table,  src_offset, dest_offset, n_bytes) do {            \
-  DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
-  if ((dest_offset) || (src_offset)) {                                                                  \
-    memmove((piece_table)->items + (dest_offset),                                                       \
-            (piece_table)->items + (src_offset),                                                        \
-            (n_bytes) * sizeof(Piece));                                                                 \
-  }                                                                                                     \
-} while(0)
-
 #define PIECE_TABLE_INSERT(piece_table, piece_idx, piece) do {  \
   (piece_table)->items[(piece_idx)] = (piece);                  \
   (piece_table)->len++;                                         \
 } while(0)
-
-
-
-
-// #define PIECE_TABLE_MAKE_ROOM(piece_table, piece_ptr, dest_offset, src_offset, n_bytes) do {            \
-  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
-  // DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
-  // if ((dest_offset) || (src_offset)) {                                                                  \
-    // memmove((piece_ptr) + (dest_offset), (piece_ptr) + (src_offset), (n_bytes) * sizeof(Piece));        \
-  // }                                                                                                     \
-// } while(0)
-
-// #define PIECE_TABLE_INSERT(piece_table, piece, wb, of, l) do {  \
-  // (piece) = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
-  // (piece_table)->len++;                                         \
-// } while(0)
-
-
-
-// #define PIECE_TABLE_MAKE_ROOM(piece_table, piece_idx, dest_offset, src_offset, n_bytes) do {            \
-  // if (!(n_bytes)) ASSERT_MSG(!(dest_offset) && !(src_offset), "%s", "Trying to 'memmove' 0 bytes." );   \
-  // DA_MAYBE_GROW((piece_table), (dest_offset) - (src_offset), PIECE_TABLE_INIT_CAP, PieceTable);         \
-  // if ((dest_offset) || (src_offset)) {                                                                  \
-    // memmove((piece_table)->items + (piece_idx) + (dest_offset),  \
-            // (piece_table)->items + (piece_idx) + (src_offset),  \
-            // (n_bytes) * sizeof(Piece));        \
-  // }                                                                                                     \
-// } while(0)
-
-// #define PIECE_TABLE_INSERT(piece_table, piece_idx, wb, of, l) do {  \
-  // (piece_table)->items[(piece_idx)] = ((Piece){.which_buf = wb, .offset = of, .len = l}); \
-  // (piece_table)->len++;                                         \
-// } while(0)
 
 
 
@@ -167,7 +124,7 @@ typedef struct termios termios;
 
 
 
-// NOTE: using uint32_t instead of size_t could save much more memory 
+
 typedef struct {
   bool which_buf;
   size_t offset;
@@ -197,9 +154,17 @@ typedef struct {
 } Cursor;
 
 
+typedef struct {
+  char* items;
+  size_t len;
+  size_t cap;
+} TableText;  // NOTE: stores the fully built and highlighted 
+              // text, only used for rendering
+
 // TODO: only size and lines_to_scroll need to be size_t
 typedef struct {
-  char* elems;
+  char* elems; // stores the text put in the right place, ready to be rendered
+  TableText table_text;
   size_t size;
   size_t width;
   size_t height;
