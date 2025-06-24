@@ -12,3 +12,7 @@ notes/
 tests/test.o
 tests/test
 tests/fred_test_11
+
+profile.sh
+profile_results.txt
+gmon.out
