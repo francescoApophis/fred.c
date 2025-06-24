@@ -4,6 +4,7 @@ Vim-like Terminal Text-Editor in C.
 # Dependencies 
 - C-compiler 
 - GNU-make
+
 The editor can only run on a Linux operating system 
 (tho I only tried it on Ubuntu so I don't really know).
 
