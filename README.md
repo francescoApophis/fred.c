@@ -1,7 +1,7 @@
 # fred.c
 Vim-like Terminal Text-Editor in C.
 
-# Dependencies 
+## Dependencies 
 - C-compiler 
 - GNU-make
 
@@ -13,12 +13,12 @@ For test *generation*:
 - Linux operating system for commands
 
 
-# Quick Installation
+## Quick Installation
 - ```git clone``` the repo
 - run ```$ make```
 - run ```$ ./build/fred <filename>```
 
-# Commands
+## Commands
 There are two modes: 
 - Normal: navigate through the file
 - Insert: edit the file
@@ -36,14 +36,14 @@ There are two modes:
 | ```q``` | Quit |
 | ```Backspace``` | Delete text |
 
-# Debugging 
+## Debugging 
 For debugging: 
 - ```$ make Debug```
 [You can then follow these instruction to debug with gdb](https://stackoverflow.com/a/15306382)
 from the terminal, which is what I use since I don't really know about 
 other debuggers.
 
-# Testing 
+## Testing 
 Fred uses a [piece-table](https://en.wikipedia.org/wiki/Piece_table)
 to store and edit text, and ```test.c``` at the moment tests only that
 part of the editor.
@@ -66,7 +66,7 @@ To run a test:
 - ```$ ./tests/test ./test/fred_test```
 
 
-# Special thanks:
+## Special thanks:
 
 Thanks for for  the main loop structure in FRED_start_editor(), 
 the idea in FRED_get_text_to_render() of storing 
