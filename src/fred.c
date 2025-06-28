@@ -807,7 +807,6 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
         if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
       }
       if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
-      if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
     }
   }
 #endif 
