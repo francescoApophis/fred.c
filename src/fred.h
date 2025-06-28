@@ -16,6 +16,7 @@
 #define MAX_KEY_LEN 32
 
 
+
 #define GOTO_END(value) do { failed = (value) ; goto end; } while (0)
 
 
@@ -154,17 +155,30 @@ typedef struct {
 } Cursor;
 
 
+// NOTE: an item contains the row, col in the 
+// term-win and length of the keyword (present
+// in the screen) that needs to be highlighted.
+// All three of them are stored into 2 bytes, LSB order. 
 typedef struct {
-  char* items;
+  size_t* items;
+  size_t len;
+  size_t cap;
+} HighlightOffsets;
+
+
+typedef struct {
+  signed char* items; // negative char represents start of keyword, for highlighting 
   size_t len;
   size_t cap;
 } TableText;  // NOTE: stores the fully built and highlighted 
               // text, only used for rendering
 
+
 // TODO: only size and lines_to_scroll need to be size_t
 typedef struct {
   char* elems; // stores the text put in the right place, ready to be rendered
   TableText table_text;
+  HighlightOffsets hs;
   size_t size;
   size_t width;
   size_t height;
@@ -216,7 +230,7 @@ bool fred_editor_init(FredEditor* fe, const char* file_path);
 void fred_editor_free(FredEditor* fe);
 bool FRED_start_editor(FredEditor* fe, const char* file_path);
 bool FRED_win_resize(TermWin* term_win);
-void FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
+bool FRED_get_text_to_render(FredEditor* fe, TermWin* term_win, bool insert);
 bool FRED_insert_text(FredEditor* fe, char c);
 void dump_piece_table(FredEditor* fe, FILE* stream);
 void FRED_move_cursor(FredEditor* fe, char key);

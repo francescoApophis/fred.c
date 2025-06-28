@@ -153,15 +153,19 @@ end:
 }
 
 
-// TODO: better name
+// DESC: store the piece-table text into a dynamic char array, 
+// flagging the start of keywords with the keyword's (negative) length.
+// This is rendering, specifically to make the job of 
+// FRED_get_text_to_render() easier, by avoiding 
+// jumping around in memory a lot (which we would have to do if parsing 
+// directly with pieces) 
 bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
 {
-// NOTE: we write the the escape keys over the previously written keyword 
-// NOTE: '9' the escape-codes lengths for color and reset 
 #define highlight(tt, word, word_len) do { \
-  DA_MAYBE_GROW((tt), 9, TABLE_TEXT_INIT_CAP, TableText); \
-  memcpy((tt)->items + (tt)->len - (word_len), "\x1b[31m" word "\x1b[0m", 5 + (word_len) + 4); \
-  (tt)->len += 9; \
+  DA_MAYBE_GROW((tt), 1, TABLE_TEXT_INIT_CAP, TableText); \
+  (tt)->items[(tt)->len - (word_len)] = (word_len) * -1; \
+  memcpy((tt)->items + (tt)->len - (word_len) + 1, (word), (word_len) * sizeof(*(tt)->items)); \
+  (tt)->len += 1; \
 } while (0)
 #define buf(p, offset) ((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
 #define matches(word, word_len, match, match_len) ((word_len) == (match_len) && 0 == memcmp((word), (match), (match_len)))
@@ -170,16 +174,17 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
   bool failed = 0;
   PieceTable* table = &fe->piece_table;
   TableText* tt = &tw->table_text;
-
+  
   tt->len = 0;  
-  // TODO: for now we'll only parse C keywords: if, while, return, for
   char word[MAX_WORD_LEN] = {0};
   size_t word_len = 0;
+  size_t word_offset = 0;
 
   for (size_t i = 0; i < table->len; i++) {
     Piece p = table->items[i];
     for (size_t j = 0; j < p.len; j++) {
       char c = buf(p, p.offset + j);
+
       if (word_len >= MAX_WORD_LEN) {
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
@@ -192,35 +197,45 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
           highlight(tt, "for", 3);
         } else if (matches(word, word_len, "return", 6)) {
           highlight(tt, "return", 6);
+        } else if (matches(word, word_len, "continue", 8)) {
+          highlight(tt, "continue", 8);
         }
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
       } else {
         word[word_len++] = c;
       }
+
       DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
     }
+    word_offset += p.len;
   }
 
 end:
   return failed;
 #undef buf
-#undef highlight
 #undef matches
 #undef MAX_WORD_LEN
 }
 
 
 
-void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
+// DESC: place char by char the editor's text 
+// and save the row/col in the window and 
+// length of to-be-highlighted keywords
+bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
 #define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+
+  bool failed = 0;
 
   memset(tw->elems, SPACE_CH, tw->size);
 
   LinesLen* ll = &fe->lines_len;
   Cursor* cr = &fe->cursor;
   TableText* tt = &tw->table_text;
+  HighlightOffsets* hs = &tw->hs;
+  hs->len = 0;
 
   size_t last_row_offset = tw->size - tw->width;
   {
@@ -232,35 +247,51 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
     TW_WRITE_NUM_AT(tw, first_linenum_offset, "%ld", tw->lines_to_scroll + 1);
   }
 
-  if (ll->len == 0) return;
+  if (ll->len == 0) return failed;
 
   // TODO: cache it
+  // FIXME: fl_offset doesn't take into account the keyword flags
   size_t fl_offset = 0; // First Line to render
   for (size_t i = 0; i < tw->lines_to_scroll; i++) {
     fl_offset += ll->items[i] + 1; // NOTE: '+1' is for '\n' 
   }
 
-  size_t tw_elems_idx = 0;
+  size_t tw_elems_idx = tw->linenum_width;
   size_t line = tw->lines_to_scroll;
-  size_t linenum_offset = tw->linenum_width / 3;
-
+  size_t linenum_offset = tw->linenum_width / 3; // TODO: cache it 
+  size_t tw_row = 0, tw_col = tw->linenum_width;
 
   for (size_t i = fl_offset; i < tt->len; i++) {
     if (tw_elems_idx >= last_row_offset) break;
     char c = tt->items[i];
-    size_t tw_col = tw_elems_idx % tw->width;
 
-    if (c != '\n'){
-      if (tw_col == 0) tw_elems_idx += tw->linenum_width;
+    if (c < 0) { // next there's a keyword to highlight
+      size_t kw_coords_and_len = tw_row | (tw_col << (16*1)) | ((size_t)(c * -1)) << (16 * 2);
+      DA_PUSH(hs, kw_coords_and_len, 8, HighlightOffsets);
+      continue;
+    }
+
+    if (c != '\n'){ 
+      if (tw_col + 1 > tw->width) {
+        tw_elems_idx += tw->linenum_width;
+        tw_col = tw->linenum_width;
+        tw_row++;
+      }
       tw->elems[tw_elems_idx++] = c;
+      tw_col++;
+
     } else {
       line++;
       tw_elems_idx += (tw->width - tw_col) + tw->linenum_width;
+      tw_col = tw->linenum_width;
+      tw_row++;
       if (tw_elems_idx < last_row_offset){
         TW_WRITE_NUM_AT(tw, tw_elems_idx - linenum_offset, "%ld", line + 1);
       }
     }
   }
+end:
+  return failed;
  
 #undef buf
 }
@@ -274,8 +305,35 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
   bool failed = 0;
   fprintf(stdout, "\x1b[H");
   fwrite(tw->elems, sizeof(*tw->elems), tw->size, stdout);
-  fprintf(stdout, "\033[%zu;%zuH", cr->win_row + 1, tw->linenum_width + cr->win_col + 1);
+  
+  HighlightOffsets* hs = &tw->hs;
+  for (size_t i = 0; i < hs->len; i++) {
+    size_t n = hs->items[i];
+    uint16_t tw_row = n & 0xffff;
+    uint16_t tw_col = (n >> (16 * 1)) & 0xffff;
+    uint16_t kw_len = (n >> (16 * 2)) & 0xffff;
+    char* kw = NULL;
+    switch (kw_len) {
+      case 2: { kw = "if";       break; }
+      case 5: { kw = "while";    break; }
+      case 6: { kw = "return";   break; }
+      case 3: { kw = "for";      break; }
+      case 8: { kw = "continue"; break; }
+      default: { fflush(stdout); ERROR("internal, unexpected keyword length (%d)", kw_len); }
+    }
+    fprintf(stdout, "\x1b[%u;%uH", tw_row + 1, tw_col + 1);
+    if (tw_col + kw_len > tw->width) { // keywords wraps into the next line
+      size_t kw_rest = tw_col + kw_len - tw->width;
+      fprintf(stdout, "\x1b[31m%.*s", (int)(kw_len - kw_rest), kw);
+      fprintf(stdout, "\x1b[%u;%uH", tw_row + 2, tw->linenum_width + 1);
+      fprintf(stdout, "%.*s\x1b[0m", (int)kw_rest, kw + (kw_len - kw_rest));
+    } else {
+      fprintf(stdout, "\x1b[31m%.*s\x1b[0m",(int)kw_len, kw);
+    }
+  }
+  fprintf(stdout, "\x1b[%zu;%zuH", cr->win_row + 1, tw->linenum_width + cr->win_col + 1);
   fflush(stdout);
+
   GOTO_END(failed);
 end:
   return failed;
@@ -715,22 +773,23 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   bool running = true;
   bool insert = false;
 
+  // TODO: make a term_win_init();
   TermWin tw = {0};
   tw.table_text = (TableText){0};
+  tw.hs = (HighlightOffsets){0};
   tw.linenum_width = 8;
   if (FRED_win_resize(&tw)) GOTO_END(1);
 
   FRED_get_lines_len(fe);
   if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
+  if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
 
 #if 1
   while (running) {
-    FRED_get_text_to_render(fe, &tw, insert);
-    FRED_render_text(&tw, &fe->cursor);
+    if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
 
     char key[MAX_KEY_LEN] = {0};
     ssize_t bytes_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
-
     if (bytes_read == -1) {
       if (errno == EINTR){
         if (FRED_win_resize(&tw)) GOTO_END(1);
@@ -747,13 +806,15 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (was_insert) {
         if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
       }
+      if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
+      if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
     }
   }
 #endif 
   GOTO_END(failed);
 end:
   if (!failed) { // NOTE: else the ERROR() macro has already cleared the screen
-    fprintf(stdout, "\033[2J\033[H");
+    fprintf(stdout, "\x1b[2J\x1b[H");
   }
   // dump_piece_table(fe, stdout);
   fred_editor_free(fe);
