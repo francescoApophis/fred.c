@@ -208,25 +208,26 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
             case 3: {
               if (word[0] == 'f' && match("for")) 
                 highlight("for", word_len, KW_FOR);
-              else if (match("#if")) 
+              else if (word[0] == '#' && match("#if")) 
                 highlight("#if", word_len, KW_IF_PREPROC);
               break;
             }
             case 4: {
-              if (match("else")) highlight("else", word_len, KW_ELSE);
+              if (word[0] == 'e' && match("else")) 
+                highlight("else", word_len, KW_ELSE);
               break;
             }
             case 5: {
               if (word[0] == 'w' && match("while")) 
                 highlight("while", word_len, KW_WHILE);
-              else if (match("#else")) 
+              else if (word[0] == '#' && match("#else")) 
                 highlight("#else", word_len, KW_ELSE_PREPROC);
               break;
             }
             case 6: {
               if (word[0] == 'r' && match("return")) 
                 highlight("return", word_len, KW_RETURN);
-              else if (match("#ifdef")) 
+              else if (word[0] == '#' && match("#ifdef")) 
                 highlight("#ifdef", word_len, KW_IFDEF);
               else if (match("#endif")) 
                 highlight("#endif", word_len, KW_ENDIF);
@@ -235,14 +236,14 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
             case 7: {
               if (word[1] == 'd' && match("#define")) 
                 highlight("#define", word_len, KW_DEFINE);
-              else if (match("#ifndef")) 
+              else if (match(word[1] == 'i' && "#ifndef")) 
                 highlight("#ifndef", word_len, KW_IFNDEF);
               break;
             }
             case 8: {
               if (word[0] == 'c' && match("continue")) 
                 highlight("continue", word_len, KW_CONTINUE);
-              else if (match("#include")) 
+              else if (match(word[0] == '#' && "#include")) 
                 highlight("#include", word_len, KW_INCLUDE);
             }
           }
