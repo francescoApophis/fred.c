@@ -714,46 +714,6 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
 
 
 
-#if 0
-// TODO+NOTE: EOL at end of file (like the ones saved 
-// with neovim) will get considered as proper line 
-bool FRED_get_lines_len(FredEditor* fe)
-{
-#define is_last_char(t, p, i, j) ((i) == (t)->len - 1 && (j) == (p).len - 1)
-#define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
-
-  bool failed = 0;
-  PieceTable* table = &fe->piece_table;
-  LinesLen* ll = &fe->lines_len;
-  
-  ll->len = 0;
-  size_t line_start = 0;
-  size_t tot_text_len = 0;
-  DA_PUSH(ll, 0, 8, LinesLen);
-
-  for (size_t i = 0; i < table->len; i++) {
-    Piece p = table->items[i];
-    for (size_t j = 0; j < p.len; j++) {
-      char c = buf(p, p.offset + j);
-      if (c == '\n' || is_last_char(table, p, i, j)) {
-        size_t line_end = tot_text_len + j + (c != '\n');
-        size_t line_len = line_end - line_start;
-        // TODO: what if file is some big ass data not separated by newlines?
-        assert(line_len <= UINT16_MAX, "line-length overflow (max line-length is UINT16_MAX, 65535), "
-                                       "length cannot be stored for later usage");
-        ll->items[ll->len - 1] = (uint16_t)line_len;
-        line_start = line_end + 1;
-        if (c == '\n') DA_PUSH(ll, 0, 8, LinesLen);
-      }
-    }
-    tot_text_len += p.len;
-  }
-end:
-  return failed;
-#undef is_last_char
-#undef buf
-}
-#endif 
 
 
 void FRED_move_cursor(FredEditor* fe, char key) 
