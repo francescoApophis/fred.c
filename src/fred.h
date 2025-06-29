@@ -140,7 +140,7 @@ typedef struct {
 
 
 typedef struct {
-  uint16_t* items;
+  uint32_t* items; // NOTE: 1st 2 bytes -> actual line length; 2nd 2 bytes -> line length + keyword-byte-flags count 
   size_t len; // total lines in piece-table
   size_t cap;
 } LinesLen;
@@ -258,7 +258,6 @@ void dump_piece_table(FredEditor* fe, FILE* stream);
 void FRED_move_cursor(FredEditor* fe, char key);
 bool FRED_delete_text(FredEditor* fe);
 bool FRED_handle_input(FredEditor* fe, bool* running, bool* insert, char* key, ssize_t bytes_read);
-bool FRED_get_lines_len(FredEditor* fe);
 
 
 
