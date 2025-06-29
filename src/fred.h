@@ -115,7 +115,7 @@
 
 #define TW_WRITE_NUM_AT(tw, offset, format, ...) do {                 \
   char num_digits = snprintf(NULL, 0, format, __VA_ARGS__);           \
-  char num_str[num_digits];                                           \
+  char num_str[num_digits + 1];                                           \
   sprintf(num_str, format, __VA_ARGS__);                              \
   memcpy((tw)->elems + ((offset) - num_digits), num_str, num_digits);  \
 } while (0)
@@ -181,6 +181,7 @@ typedef enum {
   KW_IF_PREPROC,
   KW_ELSE_PREPROC,
   KW_ENDIF,
+  KW_COMMENT,
   KW_COUNT,
 } KeywordId;
 

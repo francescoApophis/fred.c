@@ -154,22 +154,23 @@ end:
 
 
 // DESC: store the piece-table text into a dynamic char array, 
-// flagging the start of keywords with a negative id.
-// It's negative so it's faster to check for them.
+// flagging the start of keywords (including comments) with 
+// a negative id. It's negative so it's faster to check for them.
 // This is rendering, specifically to make the job of 
 // FRED_get_text_to_render() easier, by avoiding 
 // jumping around in memory a lot (which we would have to do if parsing 
 // directly with pieces) 
 bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
 {
-#define highlight(tt, keyword, keyword_len, keyword_id) do { \
-  DA_MAYBE_GROW((tt), 1, TABLE_TEXT_INIT_CAP, TableText); \
-  (tt)->items[(tt)->len - (keyword_len)] = (keyword_id) * -1; \
-  memcpy((tt)->items + (tt)->len - (keyword_len) + 1, (keyword), (keyword_len) * sizeof(*(tt)->items)); \
-  (tt)->len += 1; \
+#define highlight(keyword, keyword_len, keyword_id) do { \
+  DA_MAYBE_GROW(tt, 1, TABLE_TEXT_INIT_CAP, TableText); \
+  tt->items[tt->len - (keyword_len)] = (int8_t)(keyword_id) * -1; \
+  memcpy(tt->items + tt->len - (keyword_len) + 1, (keyword), (keyword_len) * sizeof(*tt->items)); \
+  tt->len += 1; \
 } while (0)
+#define match(match)(0 == memcmp(word, (match), word_len))
+
 #define buf(p, offset) ((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
-#define matches(word, word_len, match, match_len) ((word_len) == (match_len) && 0 == memcmp((word), (match), (match_len)))
 #define MAX_WORD_LEN 32
 
   bool failed = 0;
@@ -180,47 +181,79 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
   char word[MAX_WORD_LEN] = {0};
   size_t word_len = 0;
   size_t word_offset = 0;
+  bool is_comment = false;
 
   for (size_t i = 0; i < table->len; i++) {
     Piece p = table->items[i];
     for (size_t j = 0; j < p.len; j++) {
       char c = buf(p, p.offset + j);
-      if (word_len >= MAX_WORD_LEN) {
+
+      if (word[0]== '/' && word[1] == '/') {
+        highlight("//", word_len, KW_COMMENT);
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
-      } else if ((c < 'a' || c > 'z') && c != '#') {
-        if (matches(word, word_len, "if", 2)) {
-          highlight(tt, "if", word_len, (int8_t)KW_IF);
-        } else if (matches(word, word_len, "else", 4)) {
-          highlight(tt, "else", word_len, (int8_t)KW_ELSE);
-        } else if (matches(word, word_len, "while", 5)) {
-          highlight(tt, "while", word_len, (int8_t)KW_WHILE);
-        } else if (matches(word, word_len, "for", 3)) {
-          highlight(tt, "for", word_len, (int8_t)KW_FOR);
-        } else if (matches(word, word_len, "return", 6)) {
-          highlight(tt, "return", word_len, (int8_t)KW_RETURN);
-        } else if (matches(word, word_len, "continue", 8)) {
-          highlight(tt, "continue", word_len, (int8_t)KW_CONTINUE);
-        } else if (matches(word, word_len, "#define", 7)) {
-          highlight(tt, "#define", word_len, (int8_t)KW_DEFINE);
-        } else if (matches(word, word_len, "#include", 8)) {
-          highlight(tt, "#include", word_len, (int8_t)KW_INCLUDE);
-        } else if (matches(word, word_len, "#ifndef", 7)) {
-          highlight(tt, "#ifndef", word_len, (int8_t)KW_IFNDEF);
-        } else if (matches(word, word_len, "#ifdef", 6)) {
-          highlight(tt, "#ifdef", word_len, (int8_t)KW_IFDEF);
-        } else if (matches(word, word_len, "#if", 3)) {
-          highlight(tt, "#if", word_len, (int8_t)KW_IF_PREPROC);
-        } else if (matches(word, word_len, "#else", 5)) {
-          highlight(tt, "#else", word_len, (int8_t)KW_ELSE_PREPROC);
-        } else if (matches(word, word_len, "#endif", 6)) {
-          highlight(tt, "#endif", word_len, (int8_t)KW_ENDIF);
-        }
-        memset(word, 0, MAX_WORD_LEN);
-        word_len = 0;
-      } else {
-        word[word_len++] = c;
+        is_comment = true;
       }
+
+      if (!is_comment) {
+        if (word_len >= MAX_WORD_LEN) {
+          memset(word, 0, MAX_WORD_LEN);
+          word_len = 0;
+        } else if ((c < 'a' || c > 'z') && c != '#' && c != '/') {
+          switch (word_len) {
+            case 2: {
+              if (match("if")) highlight("if", word_len, KW_IF);
+              break;
+            }
+            case 3: {
+              if (word[0] == 'f' && match("for")) 
+                highlight("for", word_len, KW_FOR);
+              else if (match("#if")) 
+                highlight("#if", word_len, KW_IF_PREPROC);
+              break;
+            }
+            case 4: {
+              if (match("else")) highlight("else", word_len, KW_ELSE);
+              break;
+            }
+            case 5: {
+              if (word[0] == 'w' && match("while")) 
+                highlight("while", word_len, KW_WHILE);
+              else if (match("#else")) 
+                highlight("#else", word_len, KW_ELSE_PREPROC);
+              break;
+            }
+            case 6: {
+              if (word[0] == 'r' && match("return")) 
+                highlight("return", word_len, KW_RETURN);
+              else if (match("#ifdef")) 
+                highlight("#ifdef", word_len, KW_IFDEF);
+              else if (match("#endif")) 
+                highlight("#endif", word_len, KW_ENDIF);
+              break;
+            }
+            case 7: {
+              if (word[1] == 'd' && match("#define")) 
+                highlight("#define", word_len, KW_DEFINE);
+              else if (match("#ifndef")) 
+                highlight("#ifndef", word_len, KW_IFNDEF);
+              break;
+            }
+            case 8: {
+              if (word[0] == 'c' && match("continue")) 
+                highlight("continue", word_len, KW_CONTINUE);
+              else if (match("#include")) 
+                highlight("#include", word_len, KW_INCLUDE);
+            }
+          }
+          memset(word, 0, MAX_WORD_LEN);
+          word_len = 0;
+        } else {
+          word[word_len++] = c;
+        }
+      }
+
+      if (c == '\n') is_comment = false;
 
       DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
     }
@@ -238,7 +271,10 @@ end:
 
 // DESC: place char by char the editor's text 
 // and save the row/col in the window and 
-// length of to-be-highlighted keywords
+// length of to-be-highlighted keywords.
+// When parsing comments we also save its length,
+// which includes the right-side padding, so 
+// we can directly print them from the TermWin array
 bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
 #define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
@@ -276,12 +312,14 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   size_t line = tw->lines_to_scroll;
   size_t linenum_offset = tw->linenum_width / 3; // TODO: cache it 
   size_t tw_row = 0, tw_col = tw->linenum_width;
+  size_t comment_start = 0;
 
   for (size_t i = fl_offset; i < tt->len; i++) {
     if (tw_elems_idx >= last_row_offset) break;
     char c = tt->items[i];
 
     if (c < 0) { // next there's a keyword to highlight
+      if (c * -1 == KW_COMMENT) comment_start = tw_elems_idx;
       size_t kw_coords_and_id = tw_row | (tw_col << (16*1)) | ((size_t)(c * -1)) << (16 * 2);
       DA_PUSH(ho, kw_coords_and_id, 8, HighlightOffsets);
       continue;
@@ -295,9 +333,12 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
       }
       tw->elems[tw_elems_idx++] = c;
       tw_col++;
-
     } else {
       line++;
+      if (comment_start) {
+        ho->items[ho->len - 1] |= (tw_elems_idx - comment_start) << (16 * 3);
+        comment_start = 0;
+      }
       tw_elems_idx += (tw->width - tw_col) + tw->linenum_width;
       tw_col = tw->linenum_width;
       tw_row++;
@@ -330,6 +371,7 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
     uint16_t kw_id = (n >> (16 * 2)) & 0xffff;
     uint16_t kw_len = 0;
     char* kw = NULL;
+
     switch (kw_id) {
       case KW_IF:           { kw_len = 2; kw = "if"; break; }
       case KW_WHILE:        { kw_len = 5; kw = "while"; break; }
@@ -344,10 +386,20 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
       case KW_IF_PREPROC:   { kw_len = 3; kw = "#if"; break; }
       case KW_ENDIF:        { kw_len = 6; kw = "#endif"; break; }
       case KW_DEFINE:       { kw_len = 7; kw = "#define"; break; }
-      default: { fflush(stdout); ERROR("internal, unexpected keyword id (%d)", kw_id); }
+      case KW_COMMENT: {
+        uint16_t comment_len = (n >> (16 * 3) & 0xffff);
+        char* comment_start = &tw->elems[tw_row * tw->width + tw_col];
+        fprintf(stdout, "\x1b[%u;%uH", tw_row + 1, tw_col + 1);
+        fprintf(stdout, "\x1b[33m%.*s\x1b[0m", (int)(comment_len), comment_start);
+        continue; // NOTE: text is already wrapped 
+      }
+      default: { 
+        fflush(stdout);
+        ERROR("internal (highlighting): unexpected keyword ID (%d)", kw_id);
+      }
     }
-    fprintf(stdout, "\x1b[%u;%uH", tw_row + 1, tw_col + 1);
 
+    fprintf(stdout, "\x1b[%u;%uH", tw_row + 1, tw_col + 1);
     if (tw_col + kw_len > tw->width) { // keywords wraps into the next line
       size_t kw_rest = tw_col + kw_len - tw->width;
       fprintf(stdout, "\x1b[31m%.*s", (int)(kw_len - kw_rest), kw);
@@ -357,6 +409,7 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
       fprintf(stdout, "\x1b[31m%.*s\x1b[0m",(int)kw_len, kw);
     }
   }
+
   fprintf(stdout, "\x1b[%zu;%zuH", cr->win_row + 1, tw->linenum_width + cr->win_col + 1);
   fflush(stdout);
 
@@ -810,7 +863,6 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   if (build_and_highlight_table_text(fe, &tw)) GOTO_END(1);
   if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
 
-#if 1
   while (running) {
     if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
 
@@ -819,6 +871,7 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
     if (bytes_read == -1) {
       if (errno == EINTR){
         if (FRED_win_resize(&tw)) GOTO_END(1);
+        if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
         update_win_cursor(fe, &tw);
         continue;
       }
@@ -835,8 +888,6 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
     }
   }
-#endif 
-  GOTO_END(failed);
 end:
   if (!failed) { // NOTE: else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\x1b[2J\x1b[H");
@@ -845,6 +896,7 @@ end:
   fred_editor_free(fe);
   free(tw.elems);
   free(tw.table_text.items);
+  free(tw.ho.items);
   return failed;
 }
 
