@@ -165,6 +165,27 @@ typedef struct {
   size_t cap;
 } HighlightOffsets;
 
+// NOTE: id are negative so it's safer and easier 
+// to detect them in the TermWin char array.
+typedef enum {
+  KW_IF = 1,
+  KW_ELSE,
+  KW_RETURN,
+  KW_CONTINUE,
+  KW_WHILE,
+  KW_FOR,
+  KW_DEFINE,
+  KW_INCLUDE,
+  KW_IFDEF,
+  KW_IFNDEF,
+  KW_IF_PREPROC,
+  KW_ELSE_PREPROC,
+  KW_ENDIF,
+  KW_COUNT,
+} KeywordId;
+
+
+
 
 typedef struct {
   signed char* items; // negative char represents start of keyword, for highlighting 
@@ -178,7 +199,7 @@ typedef struct {
 typedef struct {
   char* elems; // stores the text put in the right place, ready to be rendered
   TableText table_text;
-  HighlightOffsets hs;
+  HighlightOffsets ho;
   size_t size;
   size_t width;
   size_t height;

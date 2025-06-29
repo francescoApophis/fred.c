@@ -154,17 +154,18 @@ end:
 
 
 // DESC: store the piece-table text into a dynamic char array, 
-// flagging the start of keywords with the keyword's (negative) length.
+// flagging the start of keywords with a negative id.
+// It's negative so it's faster to check for them.
 // This is rendering, specifically to make the job of 
 // FRED_get_text_to_render() easier, by avoiding 
 // jumping around in memory a lot (which we would have to do if parsing 
 // directly with pieces) 
 bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
 {
-#define highlight(tt, word, word_len) do { \
+#define highlight(tt, keyword, keyword_len, keyword_id) do { \
   DA_MAYBE_GROW((tt), 1, TABLE_TEXT_INIT_CAP, TableText); \
-  (tt)->items[(tt)->len - (word_len)] = (word_len) * -1; \
-  memcpy((tt)->items + (tt)->len - (word_len) + 1, (word), (word_len) * sizeof(*(tt)->items)); \
+  (tt)->items[(tt)->len - (keyword_len)] = (keyword_id) * -1; \
+  memcpy((tt)->items + (tt)->len - (keyword_len) + 1, (keyword), (keyword_len) * sizeof(*(tt)->items)); \
   (tt)->len += 1; \
 } while (0)
 #define buf(p, offset) ((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
@@ -184,21 +185,36 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
     Piece p = table->items[i];
     for (size_t j = 0; j < p.len; j++) {
       char c = buf(p, p.offset + j);
-
       if (word_len >= MAX_WORD_LEN) {
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
-      } else if (c < 'a' || c > 'z') {
+      } else if ((c < 'a' || c > 'z') && c != '#') {
         if (matches(word, word_len, "if", 2)) {
-          highlight(tt, "if", 2);
+          highlight(tt, "if", word_len, (int8_t)KW_IF);
+        } else if (matches(word, word_len, "else", 4)) {
+          highlight(tt, "else", word_len, (int8_t)KW_ELSE);
         } else if (matches(word, word_len, "while", 5)) {
-          highlight(tt, "while", 5);
+          highlight(tt, "while", word_len, (int8_t)KW_WHILE);
         } else if (matches(word, word_len, "for", 3)) {
-          highlight(tt, "for", 3);
+          highlight(tt, "for", word_len, (int8_t)KW_FOR);
         } else if (matches(word, word_len, "return", 6)) {
-          highlight(tt, "return", 6);
+          highlight(tt, "return", word_len, (int8_t)KW_RETURN);
         } else if (matches(word, word_len, "continue", 8)) {
-          highlight(tt, "continue", 8);
+          highlight(tt, "continue", word_len, (int8_t)KW_CONTINUE);
+        } else if (matches(word, word_len, "#define", 7)) {
+          highlight(tt, "#define", word_len, (int8_t)KW_DEFINE);
+        } else if (matches(word, word_len, "#include", 8)) {
+          highlight(tt, "#include", word_len, (int8_t)KW_INCLUDE);
+        } else if (matches(word, word_len, "#ifndef", 7)) {
+          highlight(tt, "#ifndef", word_len, (int8_t)KW_IFNDEF);
+        } else if (matches(word, word_len, "#ifdef", 6)) {
+          highlight(tt, "#ifdef", word_len, (int8_t)KW_IFDEF);
+        } else if (matches(word, word_len, "#if", 3)) {
+          highlight(tt, "#if", word_len, (int8_t)KW_IF_PREPROC);
+        } else if (matches(word, word_len, "#else", 5)) {
+          highlight(tt, "#else", word_len, (int8_t)KW_ELSE_PREPROC);
+        } else if (matches(word, word_len, "#endif", 6)) {
+          highlight(tt, "#endif", word_len, (int8_t)KW_ENDIF);
         }
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
@@ -234,8 +250,8 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   LinesLen* ll = &fe->lines_len;
   Cursor* cr = &fe->cursor;
   TableText* tt = &tw->table_text;
-  HighlightOffsets* hs = &tw->hs;
-  hs->len = 0;
+  HighlightOffsets* ho = &tw->ho;
+  ho->len = 0;
 
   size_t last_row_offset = tw->size - tw->width;
   {
@@ -266,8 +282,8 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
     char c = tt->items[i];
 
     if (c < 0) { // next there's a keyword to highlight
-      size_t kw_coords_and_len = tw_row | (tw_col << (16*1)) | ((size_t)(c * -1)) << (16 * 2);
-      DA_PUSH(hs, kw_coords_and_len, 8, HighlightOffsets);
+      size_t kw_coords_and_id = tw_row | (tw_col << (16*1)) | ((size_t)(c * -1)) << (16 * 2);
+      DA_PUSH(ho, kw_coords_and_id, 8, HighlightOffsets);
       continue;
     }
 
@@ -306,22 +322,32 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
   fprintf(stdout, "\x1b[H");
   fwrite(tw->elems, sizeof(*tw->elems), tw->size, stdout);
   
-  HighlightOffsets* hs = &tw->hs;
-  for (size_t i = 0; i < hs->len; i++) {
-    size_t n = hs->items[i];
+  HighlightOffsets* ho = &tw->ho;
+  for (size_t i = 0; i < ho->len; i++) {
+    size_t n = ho->items[i];
     uint16_t tw_row = n & 0xffff;
     uint16_t tw_col = (n >> (16 * 1)) & 0xffff;
-    uint16_t kw_len = (n >> (16 * 2)) & 0xffff;
+    uint16_t kw_id = (n >> (16 * 2)) & 0xffff;
+    uint16_t kw_len = 0;
     char* kw = NULL;
-    switch (kw_len) {
-      case 2: { kw = "if";       break; }
-      case 5: { kw = "while";    break; }
-      case 6: { kw = "return";   break; }
-      case 3: { kw = "for";      break; }
-      case 8: { kw = "continue"; break; }
-      default: { fflush(stdout); ERROR("internal, unexpected keyword length (%d)", kw_len); }
+    switch (kw_id) {
+      case KW_IF:           { kw_len = 2; kw = "if"; break; }
+      case KW_WHILE:        { kw_len = 5; kw = "while"; break; }
+      case KW_RETURN:       { kw_len = 6; kw = "return"; break; }
+      case KW_FOR:          { kw_len = 3; kw = "for"; break; }
+      case KW_CONTINUE:     { kw_len = 8; kw = "continue"; break; }
+      case KW_ELSE:         { kw_len = 4; kw = "else"; break; }
+      case KW_INCLUDE:      { kw_len = 8; kw = "#include"; break; }
+      case KW_IFDEF:        { kw_len = 6; kw = "#ifdef"; break; }
+      case KW_IFNDEF:       { kw_len = 7; kw = "#ifndef"; break; }
+      case KW_ELSE_PREPROC: { kw_len = 5; kw = "#else"; break; }
+      case KW_IF_PREPROC:   { kw_len = 3; kw = "#if"; break; }
+      case KW_ENDIF:        { kw_len = 6; kw = "#endif"; break; }
+      case KW_DEFINE:       { kw_len = 7; kw = "#define"; break; }
+      default: { fflush(stdout); ERROR("internal, unexpected keyword id (%d)", kw_id); }
     }
     fprintf(stdout, "\x1b[%u;%uH", tw_row + 1, tw_col + 1);
+
     if (tw_col + kw_len > tw->width) { // keywords wraps into the next line
       size_t kw_rest = tw_col + kw_len - tw->width;
       fprintf(stdout, "\x1b[31m%.*s", (int)(kw_len - kw_rest), kw);
@@ -776,7 +802,7 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   // TODO: make a term_win_init();
   TermWin tw = {0};
   tw.table_text = (TableText){0};
-  tw.hs = (HighlightOffsets){0};
+  tw.ho = (HighlightOffsets){0};
   tw.linenum_width = 8;
   if (FRED_win_resize(&tw)) GOTO_END(1);
 
