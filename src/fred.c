@@ -175,6 +175,7 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
   // TODO: for now we'll only parse C keywords: if, while, return, for
   char word[MAX_WORD_LEN] = {0};
   size_t word_len = 0;
+  size_t kw = 0;
 
   for (size_t i = 0; i < table->len; i++) {
     Piece p = table->items[i];
@@ -186,12 +187,16 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
       } else if (c < 'a' || c > 'z') {
         if (matches(word, word_len, "if", 2)) {
           highlight(tt, "if", 2);
+          kw++;
         } else if (matches(word, word_len, "while", 5)) {
           highlight(tt, "while", 5);
+          kw++;
         } else if (matches(word, word_len, "for", 3)) {
           highlight(tt, "for", 3);
+          kw++;
         } else if (matches(word, word_len, "return", 6)) {
           highlight(tt, "return", 6);
+          kw++;
         }
         memset(word, 0, MAX_WORD_LEN);
         word_len = 0;
@@ -201,6 +206,20 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
       DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
     }
   }
+
+  size_t next_tw_real_size = tw->size + kw * 9;
+
+  if (next_tw_real_size != tw->real_size) {
+    void* temp = realloc(tw->elems, next_tw_real_size * sizeof(*tw->elems));
+    if (temp == NULL) ERROR("not enough memory");
+    tw->elems = temp;
+    tw->real_size = next_tw_real_size;
+  }
+  
+
+  // TODO: i think we will have to make the 
+  // tw a dynamic array and we will store 
+  // the cap and size (actual size of the terminal window)
 
 end:
   return failed;
@@ -216,7 +235,7 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
 #define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
 
-  memset(tw->elems, SPACE_CH, tw->size);
+  memset(tw->elems, ' ', tw->size);
 
   LinesLen* ll = &fe->lines_len;
   Cursor* cr = &fe->cursor;
@@ -224,12 +243,12 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 
   size_t last_row_offset = tw->size - tw->width;
   {
-    size_t curs_offset = last_row_offset + tw->width - 1;
-    size_t first_linenum_offset = tw->linenum_width - tw->linenum_width / 3;
-    char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
-    memcpy(tw->elems + last_row_offset + 2, mode, strlen(mode));
-    TW_WRITE_NUM_AT(tw, curs_offset, "%-d:%-d", (int)cr->row + 1, (int)cr->col + 1); 
-    TW_WRITE_NUM_AT(tw, first_linenum_offset, "%ld", tw->lines_to_scroll + 1);
+    // size_t curs_offset = last_row_offset + tw->width - 1;
+    // size_t first_linenum_offset = tw->linenum_width - tw->linenum_width / 3;
+    // char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
+    // memcpy(tw->elems + last_row_offset + 2, mode, strlen(mode));
+    // TW_WRITE_NUM_AT(tw, curs_offset, "%-d:%-d", (int)cr->row + 1, (int)cr->col + 1); 
+    // TW_WRITE_NUM_AT(tw, first_linenum_offset, "%ld", tw->lines_to_scroll + 1);
   }
 
   if (ll->len == 0) return;
@@ -240,28 +259,56 @@ void FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
     fl_offset += ll->items[i] + 1; // NOTE: '+1' is for '\n' 
   }
 
-  size_t tw_elems_idx = 0;
+  size_t tw_elems_idx = tw->lines_to_scroll;
   size_t line = tw->lines_to_scroll;
   size_t linenum_offset = tw->linenum_width / 3;
+  size_t t1 = tw->lines_to_scroll;
 
+  bool ec = false;
 
   for (size_t i = fl_offset; i < tt->len; i++) {
     if (tw_elems_idx >= last_row_offset) break;
     char c = tt->items[i];
-    size_t tw_col = tw_elems_idx % tw->width;
+    size_t tw_col = t1 % tw->width;
 
     if (c != '\n'){
-      if (tw_col == 0) tw_elems_idx += tw->linenum_width;
+      if (tw_col == 0) {
+        t1 += tw->linenum_width;
+        tw_elems_idx += tw->linenum_width;
+      }
+      if (c == '\x1b') {
+        ec = true;
+      } else if (ec) {
+        if (c == 'm') ec = false;
+      } else {
+        t1++;
+      }
       tw->elems[tw_elems_idx++] = c;
     } else {
       line++;
-      tw_elems_idx += (tw->width - tw_col) + tw->linenum_width;
+      size_t offset = (tw->width - tw_col) + tw->linenum_width;
+      tw_elems_idx += offset;
+      t1 += offset;
+
       if (tw_elems_idx < last_row_offset){
         TW_WRITE_NUM_AT(tw, tw_elems_idx - linenum_offset, "%ld", line + 1);
       }
     }
   }
+
+  size_t m = tw_elems_idx + (tw->size - tw->width - t1);
+
+
+  // NOTE: this works
+  char* mode = insert ? "-- INSERT --" : "-- NORMAL --";
+  memcpy(tw->elems + m + 2, mode, strlen(mode));
+
+  // NOTE: cursor doesn't work 
+  // TW_WRITE_NUM_AT(tw, curs_offset, "%-d:%-d", (int)cr->row + 1, (int)cr->col + 1); 
  
+  size_t first_linenum_offset = tw->linenum_width - tw->linenum_width / 3;
+  TW_WRITE_NUM_AT(tw, first_linenum_offset, "%ld", tw->lines_to_scroll + 1);
+
 #undef buf
 }
 

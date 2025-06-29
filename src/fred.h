@@ -114,7 +114,7 @@
 
 #define TW_WRITE_NUM_AT(tw, offset, format, ...) do {                 \
   char num_digits = snprintf(NULL, 0, format, __VA_ARGS__);           \
-  char num_str[num_digits];                                           \
+  char num_str[num_digits + 1];                                       \
   sprintf(num_str, format, __VA_ARGS__);                              \
   memcpy((tw)->elems + ((offset) - num_digits), num_str, num_digits);  \
 } while (0)
@@ -165,7 +165,8 @@ typedef struct {
 typedef struct {
   char* elems; // stores the text put in the right place, ready to be rendered
   TableText table_text;
-  size_t size;
+  size_t size; // width * height
+  size_t real_size; // size to contain the escape codes as well
   size_t width;
   size_t height;
   size_t lines_to_scroll;
