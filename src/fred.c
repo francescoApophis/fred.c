@@ -236,14 +236,14 @@ bool build_and_highlight_table_text(FredEditor* fe, TermWin* tw)
             case 7: {
               if (word[1] == 'd' && match("#define")) 
                 highlight("#define", word_len, KW_DEFINE);
-              else if (match(word[1] == 'i' && "#ifndef")) 
+              else if (word[1] == 'i' && match( "#ifndef")) 
                 highlight("#ifndef", word_len, KW_IFNDEF);
               break;
             }
             case 8: {
               if (word[0] == 'c' && match("continue")) 
                 highlight("continue", word_len, KW_CONTINUE);
-              else if (match(word[0] == '#' && "#include")) 
+              else if (word[0] == '#' && match( "#include")) 
                 highlight("#include", word_len, KW_INCLUDE);
             }
           }
