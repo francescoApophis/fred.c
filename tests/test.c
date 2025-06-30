@@ -51,12 +51,15 @@ char* make_path(const char* file_name)
   size_t n = strlen(test_dir_path);
   size_t m = strlen(file_name);
   bool has_sep = test_dir_path[n - 1] == '/';
-  char* full_path = malloc((n + m + (!has_sep ? 2 : 1)) * sizeof(*full_path));
+  size_t full_path_len = n + m + (!has_sep ? 2 : 1);
+  char* full_path = malloc(full_path_len * sizeof(*full_path));
   assert_(full_path != NULL, "not enough memory");
 
-  strncat(full_path, test_dir_path, n);
+  memset(full_path, 0, full_path_len * sizeof(*full_path));
+
+  strncat(full_path, test_dir_path, n * sizeof(*full_path));
   if (!has_sep) strcat(full_path, "/");
-  strncat(full_path, file_name, m);
+  strncat(full_path, file_name, m * sizeof(*full_path));
 
   struct stat sb;
   if (stat(full_path, &sb) == -1) {
