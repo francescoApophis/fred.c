@@ -51,11 +51,9 @@ $(DEBUG_DIR):
 	mkdir -p $(DEBUG_DIR)
 
 
-$(TEST_DIR)/test : $(TEST_DIR)/test.o $(DEBUG_DIR)/fred.o
+$(TEST_DIR)/test : $(TEST_DIR)/test.h $(TEST_DIR)/test.c src/common.h src/fred.h src/fred.c
 	$(CC) -g -o $@ $^ $(CFLAGS) 
 
-$(TEST_DIR)/test.o : $(TEST_DIR)/test.c
-	$(CC) -g -c -o $@ $? $(CFLAGS) 
 
 
 
