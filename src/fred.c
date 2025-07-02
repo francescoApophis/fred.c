@@ -144,9 +144,10 @@ bool FRED_win_resize(TermWin* tw)
   tw->size = w.ws_row * w.ws_col;
   tw->height = w.ws_row;
   tw->width = w.ws_col;
-  void* temp = realloc(tw->elems, tw->size);
-  if (temp == NULL) ERROR("not enough memory to get and display text.");
-  tw->elems = temp;
+
+  // void* temp = realloc(tw->elems, tw->size);
+  // if (temp == NULL) ERROR("not enough memory to get and display text.");
+  // tw->elems = temp;
   GOTO_END(failed);
 end:
   return failed;
@@ -212,7 +213,7 @@ end:
 // for now we will keep it like this.
 
 
-
+#if 0
 // DESC: stores table-text in dyn-array, where
 // each keyword's start is flagged with a negative keywordID.
 // Also stores the keywords-per-line count in the last 
@@ -259,6 +260,7 @@ bool build_table_text_for_render(FredEditor* fe, TermWin* tw)
         keywords_per_line = 0;
       }
 
+      #if 0
       if (word[0] == '/' && word[1] == '/') {
         highlight("//", word_len, KW_COMMENT);
         is_comment = true;
@@ -328,6 +330,7 @@ bool build_table_text_for_render(FredEditor* fe, TermWin* tw)
       }
 
       if (c == '\n') is_comment = false;
+      #endif 
 
       
       DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
@@ -341,9 +344,10 @@ end:
 #undef matches
 #undef MAX_WORD_LEN
 }
+#endif 
 
 
-
+#if 0
 // DESC: places the editor's text char-by-char
 // into TermWin array, saves ID and row/col in TermWin
 // of keywords into a dyn-array for highlighting. 
@@ -434,6 +438,109 @@ end:
  
 #undef buf
 }
+#endif
+
+
+
+bool build_table_text(FredEditor* fe, TermWin* tw)
+{
+#define MAX_WORD_LEN 32
+#define buf(p, _offset) ((!(p).which_buf ? fe->file_buf.text : fe->add_buf.items)[(p).offset + (_offset)])
+#define highlight(tt, word, word_len) do { \
+  DA_MAYBE_GROW((tt), 9, TABLE_TEXT_INIT_CAP, TableText); \
+  memcpy((tt)->items + (tt)->len - (word_len), "\x1b[31m" word "\x1b[0m", ((word_len) + 9) * sizeof(*(tt)->items)); \
+  (tt)->len += 9; \
+} while(0)
+
+  bool failed = 0;
+  PieceTable* table = &fe->piece_table;
+  TableText* tt = &tw->table_text;
+  LinesLen* ll = &fe->lines_len;
+  HighlightOffsets* ho = &tw->ho;
+  tt->len = 0;
+  ho->len = 0;
+
+  char word[MAX_WORD_LEN] = {0};
+  size_t word_len = 0;
+  uint16_t row = 0;
+  size_t keywords_per_line = 0;
+
+  for (size_t i = 0; i < table->len; i++) {
+    Piece p = table->items[i];
+    for (size_t j = 0; j < p.len; j++){
+      char c = buf(p, j);
+
+      if (word_len >= MAX_WORD_LEN) {
+        memset(word, 0, MAX_WORD_LEN);
+        word_len = 0;
+      } else if (c >= 'a' && c <= 'z') {
+        word[word_len++] = c;
+      } else {
+        if (word_len == 2 && 0 == memcmp(word, "if", word_len)) {
+          highlight(tt, "if", 2);
+          keywords_per_line++;
+        }
+        memset(word, 0, MAX_WORD_LEN);
+        word_len = 0;
+      }
+      DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
+
+      if (c == '\n'){
+        ll->items[row] |= ((size_t)(ll->items[row] + (keywords_per_line)* 9) << 16);
+        row++;
+        keywords_per_line = 0;
+      }
+    }
+  }
+end:
+  return failed;
+}
+
+
+
+
+bool render(FredEditor* fe, TermWin* tw, bool insert)
+{
+  bool failed = 0;
+  LinesLen* ll = &fe->lines_len;
+  TableText* tt = &tw->table_text;
+  Cursor* cr = &fe->cursor;
+
+  size_t fl_offset = 0;
+  for (size_t i = 0; i < tw->lines_to_scroll; i++) {
+    size_t item = ll->items[i];
+    size_t tot_line_len = (item >> 16) & 0xffff;
+    fl_offset += tot_line_len + 1; // NOTE: '+1' is for '\n' 
+  }
+
+  fprintf(stdout, "\x1b[2J\x1b[H");
+  int linenum_offset = tw->linenum_width / 3;
+  int row = 1, col = tw->linenum_width;
+  signed char* line_start = &tt->items[fl_offset];
+
+  for (size_t i = tw->lines_to_scroll; i < ll->len; i++){
+    if ((size_t)row >= tw->height - 1) break;
+    size_t item = ll->items[i];
+    size_t tot_line_len = (item >> 16) & 0xffff;
+
+    fprintf(stdout, 
+            "\x1b[%d;%dH%d"
+            "\x1b[%d;%dH",
+            row, 1, (int)i + 1, // write linenum
+            row, col);
+    fprintf(stdout, "%.*s", (int)tot_line_len, line_start);
+
+    line_start += tot_line_len + 1;
+    row++;
+    col = tw->linenum_width;
+  }
+
+  fprintf(stdout, "\x1b[%ld;%ldH", cr->win_row + 1, cr->win_col + tw->linenum_width);
+  fflush(stdout);
+end:
+  return failed;
+#undef buf
+}
 
 
 
@@ -499,6 +606,9 @@ bool FRED_render_text(TermWin* tw, Cursor* cr)
 end:
   return failed;
 }
+
+
+
 
 
 
@@ -908,19 +1018,25 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   if (FRED_win_resize(&tw)) GOTO_END(1);
 
   if (FRED_get_lines_len(fe)) GOTO_END(1);
-  if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
-  if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
+  if (build_table_text(fe, &tw)) GOTO_END(1);
+
+  // if (render(fe, &tw, true)) GOTO_END(1);
+
+  // if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
+  // if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
   
 #if 1
   while (running) {
-    if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
+    // if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
+    if (render(fe, &tw, true)) GOTO_END(1);
 
     char key[MAX_KEY_LEN] = {0};
     ssize_t bytes_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
     if (bytes_read == -1) {
       if (errno == EINTR){
         if (FRED_win_resize(&tw)) GOTO_END(1);
-        if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
+        // if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
+        if (build_table_text(fe, &tw)) GOTO_END(1);
         update_win_cursor(fe, &tw);
         continue;
       }
@@ -932,9 +1048,10 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (FRED_handle_input(fe, &running, &insert, key, bytes_read)) GOTO_END(1);
       update_win_cursor(fe, &tw);
       if (was_insert) {
-        if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
+        // if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
+        if (build_table_text(fe, &tw)) GOTO_END(1);
       }
-      if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
+      // if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
     }
   }
 #endif 

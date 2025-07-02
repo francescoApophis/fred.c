@@ -1,3 +1,51 @@
+
+bool render(FredEditor* fe, TermWin* tw, bool insert)
+{
+  bool failed = 0;
+  LinesLen* ll = &fe->lines_len;
+  TableText* tt = &tw->table_text;
+  Cursor* cr = &fe->cursor;
+
+  fprintf(stdout, "\x1b[2J\x1b[H");
+  int linenum_offset = tw->linenum_width / 3;
+  int row = 1, col = tw->linenum_width;
+
+  size_t fl_offset = 0;
+  for (size_t i = 0; ; i++) {
+    if (i < tw->lines_to_scroll){
+      size_t item = ll->items[i];
+      size_t tot_line_len = (item >> 16) & 0xffff;
+      fl_offset += tot_line_len + 1; // NOTE: '+1' is for '\n' 
+      continue;
+    }
+
+    if ((size_t)row >= tw->height - 1){
+      break;
+    }
+
+    size_t item = ll->items[i];
+    size_t tot_line_len = (item >> 16) & 0xffff;
+    signed char* line_start = &tt->items[fl_offset];
+
+    fprintf(stdout, 
+            "\x1b[%d;%dH%d"
+            "\x1b[%d;%dH",
+            row, 1, (int)i + 1, // write linenum
+            row, col);
+    fprintf(stdout, "%.*s", (int)tot_line_len, line_start);
+
+    fl_offset += tot_line_len + 1;
+    row++;
+    col = tw->linenum_width;
+  }
+
+  fprintf(stdout, "\x1b[%ld;%ldH", cr->win_row + 1, cr->win_col + tw->linenum_width);
+  fflush(stdout);
+end:
+  return failed;
+#undef buf
+}
+-------------------------------------------------------------------------
       if (!is_comment) {
         if (word_len >= MAX_WORD_LEN) {
           memset(word, 0, MAX_WORD_LEN);

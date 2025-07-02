@@ -1,7 +1,7 @@
 
 EXE = fred
 CC = gcc 
-CFLAGS = -Wall -Wextra -Wpedantic -Wno-comment
+CFLAGS = -Wall -Wextra -Wpedantic -Wno-comment 
 BUILD_DIR = ./build
 DEBUG_DIR = ./debug
 TEST_DIR = ./tests

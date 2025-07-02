@@ -1,3 +1,8 @@
+
+About ditching TermWin array:
+
+
+---------------------------------------------------------------------
 About having broken the test by merging lines-length retrivial 
 (no termwin needed) with text-building (termwin needed):
 
