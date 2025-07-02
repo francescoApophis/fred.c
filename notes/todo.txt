@@ -1,0 +1,186 @@
+------------------------------------------------------------
+goal: FIXING TEST
+      - integrated lines-length retrieval breaks tests
+        If we choose to keep both functions, make 
+        a comment explaining the situation as to 
+        why we're doing this.
+
+      - FIXME: now i cannot reach the end anymore with 
+        the win-cursor, tho i can edit it.
+        [UPDATE]:
+        
+      - FIXME: comment highlighting, the first comment is not highlighted 
+        "//\n 
+         // sokmething\n
+        "
+
+------------------------------------------------------------
+       
+
+TODO: rewrite the highlight-lexing 
+
+TESTING TODOs:
+      - run all tests at once 
+        - when --all test_failure() should not exit right away
+          as well as not print any output to the terminal; instead 
+          it should write the outputs to a log-file with timestamps
+          for each failure and just continue
+
+      - TODO: print the inserted key in last successful snapshot
+        in test_failure()
+
+      - TODO: make more 'aimed' tests like: 
+        mass-delete, deletion from end file
+        and stuff like that 
+
+        TODO: add tests that modify non-empty files in between, at the start and at the end
+
+      - TODO: remove output.txt from generated files, it's
+        useless
+
+      - TODO: add fast test, feed all keys and compare only 
+        the last screenshot.
+
+      - TODO: in keys_readable.txt, add '(NORMAL MODE)' or '(INSERT MODE)' 
+        in between keys
+
+      - TODO: on test failure add a feature to pass the 'failing' piece-table
+        to a full Fred instance so that you can play around 
+        with what's happening, especially when you have mismatched cursors.
+        If the user does some edits in this 'mode', we could have a keymap to 
+        restore the piece-table to the 'failing' state.
+
+
+TODO: handle tabs 
+
+TODO: render cursor differently if in insert mode 
+
+FIXME: cursor is fucked up a little but couldn't reproduce; 
+       i think it happens when you write a lot of '\n', 
+       scrolling lines basically, in the middle of text 
+       and then move around.
+
+       [UPDATE]:
+       the moment you put '\n' and scroll a line, the 
+       cursor row is off by -1
+
+FIXME: in the new highlight renderer, save the lines-len
+      containing the keyword flags
+
+
+TODOOOO: naming is all over the place 
+
+
+FIXME: when vert scrolling, if you go past a limit and then 
+      scroll the opposite direction, you go in the same direction
+      at least once. I think it's caused by the mechanism that 
+      scrolls the line more towards the center 
+
+FIXME: passing too many files triggers an error which doesn't reset the terminal properly 
+
+
+TODO: handle posix endofline. By standard posix will requires 
+      a eol at end of file. But since at the moment we're not 
+      posix compliant, fred ends up treating it as an actual line.
+      We could when opening a file remove it (just read one char less)? 
+      But we would need to check if the file is posix compliant in some way. 
+
+
+TODO: fred shouldn't need a file to start 
+
+
+
+FIXME: after running the lua-test script, my comment key doesn't work anymore
+
+
+(related)
+FIXME: insertion at the end of full file is broken
+FIXME: deleting full file from the end creates a separate piece. 
+  [LIKELY FIXED]: this is because the files i opened where 
+    edited with neovim (posix compliant) which adds a '\n' at the end of a file.
+    Still, we should better check.
+
+FIXME: when you hold '\n' in inster mode, sometimes it scrolls 
+  back to the top and it's a little bit weird
+
+
+
+FIXME: in test.c, if user redirects output to file control char will
+       fuck up everything. We can disable them inside the macros
+       with an if-stmnt.
+       Detect redirection through ioctl:  https://unix.stackexchange.com/a/227065
+       [UPDATE]: haven't tried to fix it yet but tried to redirect and 
+       for now doesn't work at all, it literally does not dump anything to the file.
+
+
+FIXME: scroll is broken on term-size 67x31, 
+       while scrolling right at end of last 
+       line of files/text.txt; it scrolls up 
+       and down if you hold scroll-right
+       [UPDATE]: on size 66x31 scrolling 
+       is completely fucked up. 
+       cr->win_row goes on tw->rows-1 sometimes,
+       it's not able to scroll multiple lines and shit.
+       [UPDATE]: the old method checks win_row for 
+       going off-limit without any offset, so it gets
+       detected only AFTER we went past the limit.
+       
+          if (cr->win_row > mid + 5) {
+
+       This results in the win_row not being able to
+       scroll lines if you scroll to the second line
+       if the first one is too long. 
+
+
+-------------------------------------------------------------------
+
+
+
+TODO: make files in fred_test read-only
+
+TODO: add a README.md in tests, explaining how the 
+tests work and that the lua-script DOESN'T ADD A 
+'\n' THE END of files (especially snaps.txt), so 
+any modification will make the test file. 
+
+
+
+
+FIXME: make up my mind about GOTO_END() style; 
+  i could have a GOTO_END(FAILED); with '#define FAILED 1' 
+
+
+TODO: rendering is incredibly slow. If you zoom out a lot,
+  the cursor will start flickering when scrolling. Neovim 
+  instead doesn't, even though it does a lot more. I know 
+  it's probably multithreaded and shit, but my shit is not
+  doing anything at all so i should be able to do this 
+
+
+FOR DEBUGGING:
+    TODO: sometimes i would like to see internal values 
+    like tot-lines and shit and see it change live.
+    I would like for this stuff to be easy to add and 
+    remove once I'm done.
+    The way rendering works right now does not allow me
+    to do that.
+    Maybe i could store the text to render 
+    globally so I can modify it easily? I would 
+    love to have a safer way.
+
+    For all of this debug-data i will need to store it in 
+    some separate buffer or will only see them for a second   
+    if the function that handles them is called every
+    once in a while 
+
+-----------------------------------------------------------------------------
+
+TODO: i could add a special mode which logs every action and 
+state of the editor into a file.
+
+TODO: faster rendering.
+
+TODO: utf-8 
+  useful link: https://www.reddit.com/r/C_Programming/comments/1l4k373/how_to_handle_wrapping_text_that_would_contain/
+
+------------------------------------------------------------------------------------

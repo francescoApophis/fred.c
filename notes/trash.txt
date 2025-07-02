@@ -1,0 +1,5 @@
+
+tw->rows -> tw->width
+tw->cols -> tw->height 
+tw->text -> tw->elems
+pieces_len -> tot_pieces_len

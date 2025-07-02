@@ -1,0 +1,49 @@
+
+[snapshot: 1, inserted: "E", 1:1]
+E
+[snapshot: 2, inserted: "h", 1:2]
+Eh
+[snapshot: 3, inserted: "}", 1:1]
+}Eh
+[snapshot: 4, inserted: "\\", 1:2]
+}\Eh
+[snapshot: 5, inserted: "$", 1:5]
+}\Eh$
+[snapshot: 6, inserted: "l", 1:6]
+}\Eh$l
+[snapshot: 7, inserted: "l", 1:2]
+}l\Eh$l
+[snapshot: 8, inserted: "a", 1:3]
+}la\Eh$l
+[snapshot: 9, inserted: "L", 1:1]
+L}la\Eh$l
+[snapshot: 10, inserted: "h", 1:2]
+Lh}la\Eh$l
+[snapshot: 11, inserted: "P", 1:3]
+LhP}la\Eh$l
+[snapshot: 12, inserted: "1", 1:6]
+LhP}l1a\Eh$l
+[snapshot: 13, inserted: "x", 1:7]
+LhP}l1xa\Eh$l
+[snapshot: 14, inserted: "c", 1:1]
+cLhP}l1xa\Eh$l
+[snapshot: 15, inserted: ")", 1:2]
+c)LhP}l1xa\Eh$l
+[snapshot: 16, inserted: "Y", 1:3]
+c)YLhP}l1xa\Eh$l
+[snapshot: 17, inserted: "]", 1:12]
+c)YLhP}l1xa]\Eh$l
+[snapshot: 18, inserted: "Z", 1:13]
+c)YLhP}l1xa]Z\Eh$l
+[snapshot: 19, inserted: "BACKSPACE", 1:9]
+c)YLhP}1xa]Z\Eh$l
+[snapshot: 20, inserted: "R", 1:8]
+c)YLhP}R1xa]Z\Eh$l
+[snapshot: 21, inserted: "K", 1:7]
+c)YLhPK}R1xa]Z\Eh$l
+[snapshot: 22, inserted: "BACKSPACE", 1:13]
+c)YLhPK}R1x]Z\Eh$l
+[snapshot: 23, inserted: "BACKSPACE", 1:12]
+c)YLhPK}R1]Z\Eh$l
+[snapshot: 24, inserted: "z", 1:11]
+c)YLhPK}R1z]Z\Eh$l

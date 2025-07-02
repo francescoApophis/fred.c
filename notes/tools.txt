@@ -1,0 +1,16 @@
+
+------------------------------------------------
+Using gprof: 
+  - compile executable with flag:
+      -pg (profiling flag)
+  - run the executable by itself 
+      ./target
+  - call gprof with target-executable
+      $ gprof target (without the './')
+------------------------------------------------
+https://stackoverflow.com/questions/5178125/how-to-place-object-files-in-separate-subdirectory
+------------------------------------------------
+debugging with gdb:  https://stackoverflow.com/questions/8963208/gdb-display-output-of-target-application-in-a-separate-window
+debuggin with gdbserver: https://stackoverflow.com/a/15306382 (prefer this, for some reason using redirecting with tty 
+causes the output terminal to crash sometimes)
+

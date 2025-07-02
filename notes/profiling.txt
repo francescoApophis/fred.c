@@ -1,0 +1,154 @@
+[18/06/25, 14:32, OLD FRED_get_text_to_render()]
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 93.82      0.15     0.15     1456     0.10     0.10  FRED_get_text_to_render
+  6.25      0.16     0.01     1456     0.01     0.01  update_win_cursor
+  0.00      0.16     0.00     1456     0.00     0.00  FRED_handle_input
+  0.00      0.16     0.00     1456     0.00     0.00  FRED_render_text
+  0.00      0.16     0.00     1455     0.00     0.00  FRED_move_cursor
+  0.00      0.16     0.00        1     0.00     0.00  FRED_get_lines_len
+  0.00      0.16     0.00        1     0.00     0.00  FRED_open_file
+  0.00      0.16     0.00        1     0.00   160.11  FRED_start_editor
+  0.00      0.16     0.00        1     0.00     0.00  FRED_win_resize
+  0.00      0.16     0.00        1     0.00     0.00  fred_editor_free
+  0.00      0.16     0.00        1     0.00     0.00  fred_editor_init
+  0.00      0.16     0.00        1     0.00     0.00  setup_terminal
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+---------------------------------------------------------------------------------------------------------------
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+100.08      0.02     0.02     1449     0.01     0.01  FRED_get_text_to_render
+  0.00      0.02     0.00     1449     0.00     0.00  FRED_handle_input
+  0.00      0.02     0.00     1449     0.00     0.00  FRED_render_text
+  0.00      0.02     0.00     1449     0.00     0.00  update_win_cursor
+  0.00      0.02     0.00     1448     0.00     0.00  FRED_move_cursor
+  0.00      0.02     0.00        1     0.00     0.00  FRED_get_lines_len
+  0.00      0.02     0.00        1     0.00     0.00  FRED_open_file
+  0.00      0.02     0.00        1     0.00    20.02  FRED_start_editor
+  0.00      0.02     0.00        1     0.00     0.00  FRED_win_resize
+  0.00      0.02     0.00        1     0.00     0.00  fred_editor_free
+  0.00      0.02     0.00        1     0.00     0.00  fred_editor_init
+  0.00      0.02     0.00        1     0.00     0.00  setup_terminal
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+------------------------------------------------------------------------------------------------------------------
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+100.08      0.01     0.01        1    10.01    10.01  FRED_win_resize
+  0.00      0.01     0.00     1449     0.00     0.00  FRED_get_text_to_render
+  0.00      0.01     0.00     1449     0.00     0.00  FRED_handle_input
+  0.00      0.01     0.00     1449     0.00     0.00  FRED_render_text
+  0.00      0.01     0.00     1449     0.00     0.00  update_win_cursor
+  0.00      0.01     0.00     1448     0.00     0.00  FRED_move_cursor
+  0.00      0.01     0.00        1     0.00     0.00  FRED_get_lines_len
+  0.00      0.01     0.00        1     0.00     0.00  FRED_open_file
+  0.00      0.01     0.00        1     0.00    10.01  FRED_start_editor
+  0.00      0.01     0.00        1     0.00     0.00  fred_editor_free
+  0.00      0.01     0.00        1     0.00     0.00  fred_editor_init
+  0.00      0.01     0.00        1     0.00     0.00  setup_terminal
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+----------------------------------------------------------------------------------------------

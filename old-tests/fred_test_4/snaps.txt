@@ -1,0 +1,41 @@
+
+[snapshot: 1, inserted: "BACKSPACE"]
+
+[snapshot: 2, inserted: "BACKSPACE"]
+
+[snapshot: 3, inserted: "BACKSPACE"]
+
+[snapshot: 4, inserted: "="]
+=
+[snapshot: 5, inserted: "3"]
+=3
+[snapshot: 6, inserted: "r"]
+=3r
+[snapshot: 7, inserted: "I"]
+=3rI
+[snapshot: 8, inserted: "J"]
+=J3rI
+[snapshot: 9, inserted: "$"]
+=$J3rI
+[snapshot: 10, inserted: "L"]
+=L$J3rI
+[snapshot: 11, inserted: "BACKSPACE"]
+=$J3rI
+[snapshot: 12, inserted: "/"]
+=/$J3rI
+[snapshot: 13, inserted: "A"]
+=/$JA3rI
+[snapshot: 14, inserted: "@"]
+=/$JA@3rI
+[snapshot: 15, inserted: "G"]
+G=/$JA@3rI
+[snapshot: 16, inserted: "C"]
+G=/$JCA@3rI
+[snapshot: 17, inserted: "`"]
+G=/$JCA@`3rI
+[snapshot: 18, inserted: "("]
+G=/$JCA@`(3rI
+[snapshot: 19, inserted: "q"]
+G=/$JCA@`(q3rI
+[snapshot: 20, inserted: "\\"]
+G=\/$JCA@`(q3rI

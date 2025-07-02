@@ -1,0 +1,2303 @@
+
+[snapshot: 1, inserted: "5", 1:2]
+5
+[snapshot: 2, inserted: "Y", 1:3]
+5Y
+[snapshot: 3, inserted: ".", 1:4]
+5Y.
+[snapshot: 4, inserted: ",", 1:5]
+5Y.,
+[snapshot: 5, inserted: "c", 1:6]
+5Y.,c
+[snapshot: 6, inserted: "d", 1:7]
+5Y.,cd
+[snapshot: 7, inserted: "NEWLINE", 2:1]
+5Y.,cd
+
+[snapshot: 8, inserted: "R", 2:2]
+5Y.,cd
+R
+[snapshot: 9, inserted: "3", 2:3]
+5Y.,cd
+R3
+[snapshot: 10, inserted: "BACKSPACE", 2:2]
+5Y.,cd
+R
+[snapshot: 11, inserted: "E", 2:3]
+5Y.,cd
+RE
+[snapshot: 12, inserted: "}", 2:4]
+5Y.,cd
+RE}
+[snapshot: 13, inserted: "z", 2:5]
+5Y.,cd
+RE}z
+[snapshot: 14, inserted: "BACKSPACE", 2:4]
+5Y.,cd
+RE}
+[snapshot: 15, inserted: "F", 2:5]
+5Y.,cd
+RE}F
+[snapshot: 16, inserted: "j", 2:6]
+5Y.,cd
+RE}Fj
+[snapshot: 17, inserted: "E", 2:7]
+5Y.,cd
+RE}FjE
+[snapshot: 18, inserted: "i", 2:8]
+5Y.,cd
+RE}FjEi
+[snapshot: 19, inserted: "?", 2:9]
+5Y.,cd
+RE}FjEi?
+[snapshot: 20, inserted: "u", 2:10]
+5Y.,cd
+RE}FjEi?u
+[snapshot: 21, inserted: "BACKSPACE", 2:9]
+5Y.,cd
+RE}FjEi?
+[snapshot: 22, inserted: "^", 2:10]
+5Y.,cd
+RE}FjEi?^
+[snapshot: 23, inserted: "BACKSPACE", 2:2]
+5Y.,cd
+R}FjEi?^
+[snapshot: 24, inserted: "BACKSPACE", 2:1]
+5Y.,cd
+}FjEi?^
+[snapshot: 25, inserted: "BACKSPACE", 1:7]
+5Y.,cd}FjEi?^
+[snapshot: 26, inserted: "BACKSPACE", 1:6]
+5Y.,c}FjEi?^
+[snapshot: 27, inserted: "BACKSPACE", 1:5]
+5Y.,}FjEi?^
+[snapshot: 28, inserted: "BACKSPACE", 1:4]
+5Y.}FjEi?^
+[snapshot: 29, inserted: "BACKSPACE", 1:3]
+5Y}FjEi?^
+[snapshot: 30, inserted: "BACKSPACE", 1:2]
+5}FjEi?^
+[snapshot: 31, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 32, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 33, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 34, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 35, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 36, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 37, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 38, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 39, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 40, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 41, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 42, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 43, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 44, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 45, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 46, inserted: "BACKSPACE", 1:1]
+}FjEi?^
+[snapshot: 47, inserted: "b", 1:9]
+}FjEi?^b
+[snapshot: 48, inserted: "BACKSPACE", 1:8]
+}FjEi?^
+[snapshot: 49, inserted: "R", 1:9]
+}FjEi?^R
+[snapshot: 50, inserted: "y", 1:10]
+}FjEi?^Ry
+[snapshot: 51, inserted: "K", 1:11]
+}FjEi?^RyK
+[snapshot: 52, inserted: "}", 1:12]
+}FjEi?^RyK}
+[snapshot: 53, inserted: "BACKSPACE", 1:11]
+}FjEi?^RyK
+[snapshot: 54, inserted: "BACKSPACE", 1:10]
+}FjEi?^Ry
+[snapshot: 55, inserted: "/", 1:11]
+}FjEi?^Ry/
+[snapshot: 56, inserted: "p", 1:12]
+}FjEi?^Ry/p
+[snapshot: 57, inserted: "N", 1:13]
+}FjEi?^Ry/pN
+[snapshot: 58, inserted: "y", 1:14]
+}FjEi?^Ry/pNy
+[snapshot: 59, inserted: "z", 1:15]
+}FjEi?^Ry/pNyz
+[snapshot: 60, inserted: "o", 1:16]
+}FjEi?^Ry/pNyzo
+[snapshot: 61, inserted: "r", 1:17]
+}FjEi?^Ry/pNyzor
+[snapshot: 62, inserted: "BACKSPACE", 1:11]
+}FjEi?^Ry/Nyzor
+[snapshot: 63, inserted: "BACKSPACE", 1:10]
+}FjEi?^RyNyzor
+[snapshot: 64, inserted: "BACKSPACE", 1:9]
+}FjEi?^RNyzor
+[snapshot: 65, inserted: "BACKSPACE", 1:8]
+}FjEi?^Nyzor
+[snapshot: 66, inserted: "BACKSPACE", 1:7]
+}FjEi?Nyzor
+[snapshot: 67, inserted: "BACKSPACE", 1:6]
+}FjEiNyzor
+[snapshot: 68, inserted: "BACKSPACE", 1:5]
+}FjENyzor
+[snapshot: 69, inserted: "BACKSPACE", 1:4]
+}FjNyzor
+[snapshot: 70, inserted: "BACKSPACE", 1:3]
+}FNyzor
+[snapshot: 71, inserted: "BACKSPACE", 1:2]
+}Nyzor
+[snapshot: 72, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 73, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 74, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 75, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 76, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 77, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 78, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 79, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 80, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 81, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 82, inserted: "BACKSPACE", 1:1]
+Nyzor
+[snapshot: 83, inserted: "o", 1:3]
+Noyzor
+[snapshot: 84, inserted: ">", 1:4]
+No>yzor
+[snapshot: 85, inserted: "~", 1:5]
+No>~yzor
+[snapshot: 86, inserted: "BACKSPACE", 1:4]
+No>yzor
+[snapshot: 87, inserted: "E", 1:5]
+No>Eyzor
+[snapshot: 88, inserted: "z", 1:6]
+No>Ezyzor
+[snapshot: 89, inserted: "L", 1:7]
+No>EzLyzor
+[snapshot: 90, inserted: "?", 1:8]
+No>EzL?yzor
+[snapshot: 91, inserted: "q", 1:9]
+No>EzL?qyzor
+[snapshot: 92, inserted: "BACKSPACE", 1:8]
+No>EzL?yzor
+[snapshot: 93, inserted: "NEWLINE", 2:1]
+No>EzL?
+yzor
+[snapshot: 94, inserted: "BACKSPACE", 1:8]
+No>EzL?yzor
+[snapshot: 95, inserted: ",", 1:9]
+No>EzL?,yzor
+[snapshot: 96, inserted: ".", 1:10]
+No>EzL?,.yzor
+[snapshot: 97, inserted: "M", 1:11]
+No>EzL?,.Myzor
+[snapshot: 98, inserted: "{", 1:12]
+No>EzL?,.M{yzor
+[snapshot: 99, inserted: "W", 1:13]
+No>EzL?,.M{Wyzor
+[snapshot: 100, inserted: "e", 1:14]
+No>EzL?,.M{Weyzor
+[snapshot: 101, inserted: "9", 1:2]
+9No>EzL?,.M{Weyzor
+[snapshot: 102, inserted: "Q", 1:3]
+9QNo>EzL?,.M{Weyzor
+[snapshot: 103, inserted: "2", 1:2]
+29QNo>EzL?,.M{Weyzor
+[snapshot: 104, inserted: "~", 1:3]
+2~9QNo>EzL?,.M{Weyzor
+[snapshot: 105, inserted: "^", 1:4]
+2~^9QNo>EzL?,.M{Weyzor
+[snapshot: 106, inserted: "I", 1:5]
+2~^I9QNo>EzL?,.M{Weyzor
+[snapshot: 107, inserted: "d", 1:6]
+2~^Id9QNo>EzL?,.M{Weyzor
+[snapshot: 108, inserted: "T", 1:7]
+2~^IdT9QNo>EzL?,.M{Weyzor
+[snapshot: 109, inserted: ">", 1:8]
+2~^IdT>9QNo>EzL?,.M{Weyzor
+[snapshot: 110, inserted: "BACKSPACE", 1:15]
+2~^IdT>9QNo>Ez?,.M{Weyzor
+[snapshot: 111, inserted: "BACKSPACE", 1:14]
+2~^IdT>9QNo>E?,.M{Weyzor
+[snapshot: 112, inserted: "BACKSPACE", 1:13]
+2~^IdT>9QNo>?,.M{Weyzor
+[snapshot: 113, inserted: "BACKSPACE", 1:12]
+2~^IdT>9QNo?,.M{Weyzor
+[snapshot: 114, inserted: "BACKSPACE", 1:11]
+2~^IdT>9QN?,.M{Weyzor
+[snapshot: 115, inserted: "BACKSPACE", 1:10]
+2~^IdT>9Q?,.M{Weyzor
+[snapshot: 116, inserted: "BACKSPACE", 1:9]
+2~^IdT>9?,.M{Weyzor
+[snapshot: 117, inserted: "BACKSPACE", 1:8]
+2~^IdT>?,.M{Weyzor
+[snapshot: 118, inserted: "BACKSPACE", 1:7]
+2~^IdT?,.M{Weyzor
+[snapshot: 119, inserted: "BACKSPACE", 1:6]
+2~^Id?,.M{Weyzor
+[snapshot: 120, inserted: "BACKSPACE", 1:5]
+2~^I?,.M{Weyzor
+[snapshot: 121, inserted: "BACKSPACE", 1:4]
+2~^?,.M{Weyzor
+[snapshot: 122, inserted: "BACKSPACE", 1:3]
+2~?,.M{Weyzor
+[snapshot: 123, inserted: "BACKSPACE", 1:2]
+2?,.M{Weyzor
+[snapshot: 124, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 125, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 126, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 127, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 128, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 129, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 130, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 131, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 132, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 133, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 134, inserted: "BACKSPACE", 1:1]
+?,.M{Weyzor
+[snapshot: 135, inserted: "W", 1:13]
+?,.M{WeyzorW
+[snapshot: 136, inserted: "m", 1:14]
+?,.M{WeyzorWm
+[snapshot: 137, inserted: "BACKSPACE", 1:13]
+?,.M{WeyzorW
+[snapshot: 138, inserted: "L", 1:14]
+?,.M{WeyzorWL
+[snapshot: 139, inserted: "|", 1:15]
+?,.M{WeyzorWL|
+[snapshot: 140, inserted: "R", 1:16]
+?,.M{WeyzorWL|R
+[snapshot: 141, inserted: "^", 1:17]
+?,.M{WeyzorWL|R^
+[snapshot: 142, inserted: "b", 1:18]
+?,.M{WeyzorWL|R^b
+[snapshot: 143, inserted: "t", 1:19]
+?,.M{WeyzorWL|R^bt
+[snapshot: 144, inserted: "L", 1:20]
+?,.M{WeyzorWL|R^btL
+[snapshot: 145, inserted: "L", 1:21]
+?,.M{WeyzorWL|R^btLL
+[snapshot: 146, inserted: "&", 1:22]
+?,.M{WeyzorWL|R^btLL&
+[snapshot: 147, inserted: "E", 1:23]
+?,.M{WeyzorWL|R^btLL&E
+[snapshot: 148, inserted: "3", 1:24]
+?,.M{WeyzorWL|R^btLL&E3
+[snapshot: 149, inserted: "}", 1:25]
+?,.M{WeyzorWL|R^btLL&E3}
+[snapshot: 150, inserted: "i", 1:25]
+?,.M{WeyzorWL|R^btLL&E3i}
+[snapshot: 151, inserted: "E", 1:26]
+?,.M{WeyzorWL|R^btLL&E3iE}
+[snapshot: 152, inserted: "r", 1:27]
+?,.M{WeyzorWL|R^btLL&E3iEr}
+[snapshot: 153, inserted: " ", 1:28]
+?,.M{WeyzorWL|R^btLL&E3iEr }
+[snapshot: 154, inserted: "D", 1:29]
+?,.M{WeyzorWL|R^btLL&E3iEr D}
+[snapshot: 155, inserted: "w", 1:30]
+?,.M{WeyzorWL|R^btLL&E3iEr Dw}
+[snapshot: 156, inserted: "BACKSPACE", 1:29]
+?,.M{WeyzorWL|R^btLL&E3iEr D}
+[snapshot: 157, inserted: "p", 1:30]
+?,.M{WeyzorWL|R^btLL&E3iEr Dp}
+[snapshot: 158, inserted: "O", 1:31]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO}
+[snapshot: 159, inserted: "Q", 1:32]
+?,.M{WeyzorWL|R^btLL&E3iEr DpOQ}
+[snapshot: 160, inserted: "\\", 1:33]
+?,.M{WeyzorWL|R^btLL&E3iEr DpOQ\}
+[snapshot: 161, inserted: "BACKSPACE", 1:32]
+?,.M{WeyzorWL|R^btLL&E3iEr DpOQ}
+[snapshot: 162, inserted: "BACKSPACE", 1:31]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO}
+[snapshot: 163, inserted: "7", 1:32]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO7}
+[snapshot: 164, inserted: "6", 1:33]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO76}
+[snapshot: 165, inserted: "K", 1:34]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO76K}
+[snapshot: 166, inserted: "a", 1:35]
+?,.M{WeyzorWL|R^btLL&E3iEr DpO76Ka}
+[snapshot: 167, inserted: "B", 1:28]
+?,.M{WeyzorWL|R^btLL&E3iErB DpO76Ka}
+[snapshot: 168, inserted: "T", 1:29]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpO76Ka}
+[snapshot: 169, inserted: "u", 1:34]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu76Ka}
+[snapshot: 170, inserted: "-", 1:35]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-76Ka}
+[snapshot: 171, inserted: "x", 1:36]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-x76Ka}
+[snapshot: 172, inserted: "L", 1:37]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xL76Ka}
+[snapshot: 173, inserted: "P", 1:38]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP76Ka}
+[snapshot: 174, inserted: "`", 1:39]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`76Ka}
+[snapshot: 175, inserted: "|", 1:40]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|76Ka}
+[snapshot: 176, inserted: "<", 1:41]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<76Ka}
+[snapshot: 177, inserted: "X", 1:42]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<X76Ka}
+[snapshot: 178, inserted: "q", 1:43]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq76Ka}
+[snapshot: 179, inserted: "0", 1:44]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq076Ka}
+[snapshot: 180, inserted: "B", 1:45]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0B76Ka}
+[snapshot: 181, inserted: "f", 1:46]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf76Ka}
+[snapshot: 182, inserted: "-", 1:47]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-76Ka}
+[snapshot: 183, inserted: "(", 1:48]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(76Ka}
+[snapshot: 184, inserted: "W", 1:49]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(W76Ka}
+[snapshot: 185, inserted: "v", 1:50]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wv76Ka}
+[snapshot: 186, inserted: "9", 1:51]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wv976Ka}
+[snapshot: 187, inserted: "i", 1:52]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wv9i76Ka}
+[snapshot: 188, inserted: "BACKSPACE", 1:51]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wv976Ka}
+[snapshot: 189, inserted: "BACKSPACE", 1:50]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wv76Ka}
+[snapshot: 190, inserted: "g", 1:51]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg76Ka}
+[snapshot: 191, inserted: "{", 1:52]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{76Ka}
+[snapshot: 192, inserted: "c", 1:53]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 193, inserted: "F", 1:24]
+?,.M{WeyzorWL|R^btLL&EF3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 194, inserted: "BACKSPACE", 1:23]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 195, inserted: "r", 1:24]
+?,.M{WeyzorWL|R^btLL&Er3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 196, inserted: "BACKSPACE", 1:23]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 197, inserted: "[", 1:24]
+?,.M{WeyzorWL|R^btLL&E[3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 198, inserted: "BACKSPACE", 1:23]
+?,.M{WeyzorWL|R^btLL&E3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 199, inserted: ",", 1:24]
+?,.M{WeyzorWL|R^btLL&E,3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 200, inserted: "t", 1:25]
+?,.M{WeyzorWL|R^btLL&E,t3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 201, inserted: "BACKSPACE", 1:24]
+?,.M{WeyzorWL|R^btLL&E,3iErBT DpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 202, inserted: "BACKSPACE", 1:31]
+?,.M{WeyzorWL|R^btLL&E,3iErBT pOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 203, inserted: "BACKSPACE", 1:30]
+?,.M{WeyzorWL|R^btLL&E,3iErBTpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 204, inserted: "BACKSPACE", 1:29]
+?,.M{WeyzorWL|R^btLL&E,3iErBpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 205, inserted: "BACKSPACE", 1:28]
+?,.M{WeyzorWL|R^btLL&E,3iErpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 206, inserted: "BACKSPACE", 1:27]
+?,.M{WeyzorWL|R^btLL&E,3iEpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 207, inserted: "BACKSPACE", 1:26]
+?,.M{WeyzorWL|R^btLL&E,3ipOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 208, inserted: "BACKSPACE", 1:25]
+?,.M{WeyzorWL|R^btLL&E,3pOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 209, inserted: "BACKSPACE", 1:24]
+?,.M{WeyzorWL|R^btLL&E,pOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 210, inserted: "BACKSPACE", 1:23]
+?,.M{WeyzorWL|R^btLL&EpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 211, inserted: "BACKSPACE", 1:22]
+?,.M{WeyzorWL|R^btLL&pOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 212, inserted: "BACKSPACE", 1:21]
+?,.M{WeyzorWL|R^btLLpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 213, inserted: "BACKSPACE", 1:20]
+?,.M{WeyzorWL|R^btLpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 214, inserted: "BACKSPACE", 1:19]
+?,.M{WeyzorWL|R^btpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 215, inserted: "BACKSPACE", 1:18]
+?,.M{WeyzorWL|R^bpOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 216, inserted: "BACKSPACE", 1:17]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(Wvg{c76Ka}
+[snapshot: 217, inserted: "b", 1:38]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(Wvgb{c76Ka}
+[snapshot: 218, inserted: "O", 1:39]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO{c76Ka}
+[snapshot: 219, inserted: "f", 1:40]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbOf{c76Ka}
+[snapshot: 220, inserted: "BACKSPACE", 1:39]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO{c76Ka}
+[snapshot: 221, inserted: "4", 1:40]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO4{c76Ka}
+[snapshot: 222, inserted: "0", 1:41]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40{c76Ka}
+[snapshot: 223, inserted: "=", 1:42]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40={c76Ka}
+[snapshot: 224, inserted: "Y", 1:43]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=Y{c76Ka}
+[snapshot: 225, inserted: "BACKSPACE", 1:42]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40={c76Ka}
+[snapshot: 226, inserted: "<", 1:43]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<{c76Ka}
+[snapshot: 227, inserted: "C", 1:44]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<C{c76Ka}
+[snapshot: 228, inserted: "BACKSPACE", 1:43]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<{c76Ka}
+[snapshot: 229, inserted: "a", 1:44]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a{c76Ka}
+[snapshot: 230, inserted: "]", 1:45]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]{c76Ka}
+[snapshot: 231, inserted: "=", 1:46]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]={c76Ka}
+[snapshot: 232, inserted: "BACKSPACE", 1:45]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]{c76Ka}
+[snapshot: 233, inserted: "@", 1:46]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@{c76Ka}
+[snapshot: 234, inserted: "f", 1:47]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@f{c76Ka}
+[snapshot: 235, inserted: "m", 1:48]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fm{c76Ka}
+[snapshot: 236, inserted: "w", 1:49]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmw{c76Ka}
+[snapshot: 237, inserted: "p", 1:50]
+?,.M{WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 238, inserted: "NEWLINE", 2:1]
+?,.M{
+WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 239, inserted: "v", 2:2]
+?,.M{
+vWeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 240, inserted: ".", 2:3]
+?,.M{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 241, inserted: "n", 1:6]
+?,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 242, inserted: "S", 1:3]
+?S,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 243, inserted: "t", 1:4]
+?St,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 244, inserted: "a", 1:5]
+?Sta,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 245, inserted: "%", 1:6]
+?Sta%,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 246, inserted: "U", 1:7]
+?Sta%U,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 247, inserted: "[", 1:8]
+?Sta%U[,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 248, inserted: "8", 1:9]
+?Sta%U[8,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 249, inserted: "Y", 1:10]
+?Sta%U[8Y,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 250, inserted: "BACKSPACE", 1:9]
+?Sta%U[8,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 251, inserted: ">", 1:10]
+?Sta%U[8>,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 252, inserted: "S", 1:11]
+?Sta%U[8>S,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 253, inserted: "N", 1:12]
+?Sta%U[8>SN,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 254, inserted: "u", 1:13]
+?Sta%U[8>SNu,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 255, inserted: "}", 1:14]
+?Sta%U[8>SNu},.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 256, inserted: "BACKSPACE", 1:13]
+?Sta%U[8>SNu,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 257, inserted: "=", 1:14]
+?Sta%U[8>SNu=,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 258, inserted: "/", 1:15]
+?Sta%U[8>SNu=/,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 259, inserted: "BACKSPACE", 1:14]
+?Sta%U[8>SNu=,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 260, inserted: "\"", 1:15]
+?Sta%U[8>SNu=",.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 261, inserted: "TAB", 1:16]
+?Sta%U[8>SNu="	,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 262, inserted: "BACKSPACE", 1:15]
+?Sta%U[8>SNu=",.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 263, inserted: "-", 1:16]
+?Sta%U[8>SNu="-,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 264, inserted: "BACKSPACE", 1:15]
+?Sta%U[8>SNu=",.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 265, inserted: "M", 1:16]
+?Sta%U[8>SNu="M,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 266, inserted: "BACKSPACE", 1:15]
+?Sta%U[8>SNu=",.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 267, inserted: "s", 1:16]
+?Sta%U[8>SNu="s,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 268, inserted: "|", 1:17]
+?Sta%U[8>SNu="s|,.Mn{
+v.WeyzorWL|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 269, inserted: "BACKSPACE", 2:10]
+?Sta%U[8>SNu="s|,.Mn{
+v.WeyzorW|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 270, inserted: "BACKSPACE", 2:9]
+?Sta%U[8>SNu="s|,.Mn{
+v.Weyzor|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 271, inserted: "BACKSPACE", 2:8]
+?Sta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 272, inserted: "5", 2:9]
+?Sta%U[8>SNu="s|,.Mn{
+v.Weyzo5|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 273, inserted: "BACKSPACE", 2:8]
+?Sta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO40=<a]@fmwp{c76Ka}
+[snapshot: 274, inserted: "A", 2:35]
+?Sta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 275, inserted: "U", 1:4]
+?SUta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 276, inserted: "[", 1:5]
+?SU[ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 277, inserted: "BACKSPACE", 1:4]
+?SUta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 278, inserted: "C", 1:5]
+?SUCta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 279, inserted: "e", 1:6]
+?SUCeta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 280, inserted: "\\", 1:7]
+?SUCe\ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 281, inserted: "$", 1:8]
+?SUCe\$ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 282, inserted: "BACKSPACE", 1:7]
+?SUCe\ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 283, inserted: "BACKSPACE", 1:6]
+?SUCeta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 284, inserted: ";", 1:7]
+?SUCe;ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 285, inserted: "BACKSPACE", 1:6]
+?SUCeta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 286, inserted: " ", 1:7]
+?SUCe ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 287, inserted: "Q", 1:8]
+?SUCe Qta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 288, inserted: "BACKSPACE", 1:7]
+?SUCe ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 289, inserted: "W", 2:22]
+?SUCe ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<WXq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 290, inserted: "+", 2:23]
+?SUCe ta%U[8>SNu="s|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 291, inserted: "TAB", 1:21]
+?SUCe ta%U[8>SNu="s	|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 292, inserted: "e", 1:22]
+?SUCe ta%U[8>SNu="s	e|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 293, inserted: "#", 1:23]
+?SUCe ta%U[8>SNu="s	e#|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 294, inserted: "R", 1:24]
+?SUCe ta%U[8>SNu="s	e#R|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 295, inserted: "BACKSPACE", 1:23]
+?SUCe ta%U[8>SNu="s	e#|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 296, inserted: "NEWLINE", 2:1]
+?SUCe ta%U[8>SNu="s	e#
+|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 297, inserted: "2", 2:2]
+?SUCe ta%U[8>SNu="s	e#
+2|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 298, inserted: ";", 2:3]
+?SUCe ta%U[8>SNu="s	e#
+2;|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 299, inserted: "U", 2:4]
+?SUCe ta%U[8>SNu="s	e#
+2;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 300, inserted: "]", 2:3]
+?SUCe ta%U[8>SNu="s	e#
+2];U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 301, inserted: ">", 2:4]
+?SUCe ta%U[8>SNu="s	e#
+2]>;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 302, inserted: " ", 2:5]
+?SUCe ta%U[8>SNu="s	e#
+2]> ;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 303, inserted: "BACKSPACE", 2:4]
+?SUCe ta%U[8>SNu="s	e#
+2]>;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 304, inserted: "W", 2:5]
+?SUCe ta%U[8>SNu="s	e#
+2]>W;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 305, inserted: ".", 2:6]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 306, inserted: "7", 2:7]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.7;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 307, inserted: "BACKSPACE", 2:6]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 308, inserted: "=", 2:7]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 309, inserted: "3", 2:8]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=3;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 310, inserted: "5", 2:9]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=35;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 311, inserted: "6", 2:10]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 312, inserted: "P", 2:11]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356P;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 313, inserted: "M", 2:12]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PM;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 314, inserted: "F", 2:13]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 315, inserted: "5", 2:14]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 316, inserted: "4", 2:15]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 317, inserted: "/", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 318, inserted: "8", 2:17]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/8;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 319, inserted: "A", 2:18]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/8A;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 320, inserted: "v", 2:19]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/8Av;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 321, inserted: "n", 2:20]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/8Avn;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 322, inserted: "$", 2:21]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 323, inserted: "F", 2:15]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F4/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 324, inserted: "i", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5Fi4/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 325, inserted: "TAB", 2:17]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5Fi	4/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 326, inserted: "w", 2:18]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5Fi	w4/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 327, inserted: "5", 2:19]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5Fi	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 328, inserted: "I", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5FIi	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 329, inserted: "=", 2:17]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5FI=i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 330, inserted: "BACKSPACE", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5FIi	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 331, inserted: "BACKSPACE", 2:15]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5Fi	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 332, inserted: "&", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 333, inserted: "TAB", 2:17]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&	i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 334, inserted: "BACKSPACE", 2:16]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 335, inserted: "`", 3:29]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf`-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 336, inserted: "BACKSPACE", 3:28]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0Bf-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 337, inserted: "BACKSPACE", 3:27]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0B-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 338, inserted: "Y", 3:28]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 339, inserted: "\\", 3:29]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 340, inserted: "J", 3:30]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\J-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 341, inserted: "BACKSPACE", 3:29]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 342, inserted: "*", 3:30]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\*-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 343, inserted: "BACKSPACE", 3:29]
+?SUCe ta%U[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 344, inserted: "BACKSPACE", 1:10]
+?SUCe ta%[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 345, inserted: "BACKSPACE", 1:9]
+?SUCe ta[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 346, inserted: "BACKSPACE", 1:8]
+?SUCe t[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 347, inserted: "/", 1:9]
+?SUCe t/[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 348, inserted: " ", 1:10]
+?SUCe t/ [8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 349, inserted: "<", 1:11]
+?SUCe t/ <[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 350, inserted: "Y", 1:12]
+?SUCe t/ <Y[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 351, inserted: "M", 1:13]
+?SUCe t/ <YM[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 352, inserted: "=", 1:14]
+?SUCe t/ <YM=[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 353, inserted: "#", 1:15]
+?SUCe t/ <YM=#[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 354, inserted: "-", 1:16]
+?SUCe t/ <YM=#-[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 355, inserted: "(", 1:17]
+?SUCe t/ <YM=#-([8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 356, inserted: "Q", 1:18]
+?SUCe t/ <YM=#-(Q[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 357, inserted: "6", 1:19]
+?SUCe t/ <YM=#-(Q6[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 358, inserted: "+", 1:20]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 359, inserted: "'", 2:22]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54'/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 360, inserted: "t", 2:23]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 361, inserted: "b", 2:24]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54'tb/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 362, inserted: "BACKSPACE", 2:23]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 363, inserted: "S", 2:24]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54'tS/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 364, inserted: "BACKSPACE", 2:23]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 365, inserted: "_", 2:24]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't_/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 366, inserted: "BACKSPACE", 2:23]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 367, inserted: "7", 2:24]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 368, inserted: "%", 2:25]
+?SUCe t/ <YM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 369, inserted: "n", 1:13]
+?SUCe t/ <YnM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 370, inserted: "|", 1:14]
+?SUCe t/ <Yn|M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 371, inserted: "6", 1:15]
+?SUCe t/ <Yn|6M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 372, inserted: ":", 1:16]
+?SUCe t/ <Yn|6:M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 373, inserted: "z", 1:17]
+?SUCe t/ <Yn|6:zM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 374, inserted: "i", 1:18]
+?SUCe t/ <Yn|6:ziM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 375, inserted: "NEWLINE", 2:1]
+?SUCe t/ <Yn|6:zi
+M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 376, inserted: "V", 2:2]
+?SUCe t/ <Yn|6:zi
+VM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 377, inserted: "_", 2:3]
+?SUCe t/ <Yn|6:zi
+V_M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 378, inserted: "=", 2:4]
+?SUCe t/ <Yn|6:zi
+V_=M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 379, inserted: ">", 2:5]
+?SUCe t/ <Yn|6:zi
+V_=>M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 380, inserted: "BACKSPACE", 2:4]
+?SUCe t/ <Yn|6:zi
+V_=M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 381, inserted: "R", 2:5]
+?SUCe t/ <Yn|6:zi
+V_=RM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 382, inserted: "X", 2:6]
+?SUCe t/ <Yn|6:zi
+V_=RXM=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 383, inserted: "/", 2:7]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 384, inserted: "u", 3:12]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 385, inserted: "K", 3:13]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 386, inserted: "N", 3:14]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKNMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 387, inserted: "|", 3:15]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 388, inserted: "2", 3:16]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|2MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 389, inserted: "9", 3:17]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|29MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 390, inserted: "BACKSPACE", 3:16]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|2MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 391, inserted: "BACKSPACE", 3:15]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 392, inserted: "u", 3:16]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 393, inserted: "M", 3:17]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uMMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 394, inserted: "X", 3:18]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uMXMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 395, inserted: "BACKSPACE", 3:17]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uMMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 396, inserted: "TAB", 3:18]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 397, inserted: "0", 3:19]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	0MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 398, inserted: "BACKSPACE", 3:18]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 399, inserted: "E", 3:19]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	EMF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 400, inserted: "7", 3:20]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 401, inserted: "]", 3:21]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 402, inserted: "*", 3:22]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]*MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 403, inserted: "5", 3:23]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]*5MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 404, inserted: "^", 3:24]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 405, inserted: "^", 3:25]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]*5^^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 406, inserted: "BACKSPACE", 3:24]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 407, inserted: "6", 2:25]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 408, inserted: "i", 2:26]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 409, inserted: "-", 2:27]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 410, inserted: "U", 2:28]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-U	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 411, inserted: "%", 2:29]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-U%	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 412, inserted: "BACKSPACE", 2:28]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-U	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 413, inserted: "h", 2:29]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 414, inserted: "(", 2:30]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 415, inserted: "}", 2:31]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(}	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 416, inserted: "&", 2:32]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(}&	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 417, inserted: "I", 2:33]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(}&I	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 418, inserted: "J", 2:34]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(}&IJ	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 419, inserted: "X", 2:35]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 420, inserted: "_", 2:10]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=_#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 421, inserted: "}", 2:11]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=_}#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 422, inserted: "/", 2:12]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=_}/#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 423, inserted: "BACKSPACE", 2:11]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=_}#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 424, inserted: "A", 2:12]
+?SUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 425, inserted: "7", 1:4]
+?S7UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 426, inserted: "h", 1:5]
+?S7hUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 427, inserted: "Z", 1:6]
+?S7hZUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 428, inserted: "O", 1:7]
+?S7hZOUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 429, inserted: "1", 1:8]
+?S7hZO1UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 430, inserted: "TAB", 1:9]
+?S7hZO1	UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 431, inserted: ":", 1:10]
+?S7hZO1	:UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 432, inserted: "BACKSPACE", 1:9]
+?S7hZO1	UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 433, inserted: "a", 1:10]
+?S7hZO1	aUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 434, inserted: "B", 1:11]
+?S7hZO1	aBUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 435, inserted: "t", 1:12]
+?S7hZO1	aBtUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 436, inserted: "j", 1:13]
+?S7hZO1	aBtjUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 437, inserted: "I", 1:14]
+?S7hZO1	aBtjIUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 438, inserted: "c", 1:15]
+?S7hZO1	aBtjIcUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 439, inserted: "8", 1:16]
+?S7hZO1	aBtjIc8UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 440, inserted: "O", 1:17]
+?S7hZO1	aBtjIc8OUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 441, inserted: "BACKSPACE", 1:16]
+?S7hZO1	aBtjIc8UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 442, inserted: "^", 1:17]
+?S7hZO1	aBtjIc8^UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 443, inserted: "V", 1:18]
+?S7hZO1	aBtjIc8^VUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 444, inserted: "y", 1:19]
+?S7hZO1	aBtjIc8^VyUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 445, inserted: "+", 1:20]
+?S7hZO1	aBtjIc8^Vy+UCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 446, inserted: "l", 1:21]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 447, inserted: "D", 3:30]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&Di	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 448, inserted: "3", 3:31]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 449, inserted: "g", 3:32]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gi	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 450, inserted: "J", 3:33]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJi	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 451, inserted: "B", 3:34]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBi	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 452, inserted: "H", 3:35]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBHi	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 453, inserted: "|", 3:36]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 454, inserted: "!", 3:37]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0=<a]@fmwp{c76Ka}
+[snapshot: 455, inserted: "C", 4:40]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0C=<a]@fmwp{c76Ka}
+[snapshot: 456, inserted: ",", 4:41]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0C,=<a]@fmwp{c76Ka}
+[snapshot: 457, inserted: "BACKSPACE", 4:40]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0C=<a]@fmwp{c76Ka}
+[snapshot: 458, inserted: "a", 4:41]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca=<a]@fmwp{c76Ka}
+[snapshot: 459, inserted: "7", 4:42]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+v.Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 460, inserted: "BACKSPACE", 4:2]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 461, inserted: "g", 4:3]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vgWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 462, inserted: "'", 4:4]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 463, inserted: "D", 4:5]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 464, inserted: "W", 4:6]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DWWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 465, inserted: "9", 4:7]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW9Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 466, inserted: "-", 4:8]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW9-Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 467, inserted: "BACKSPACE", 4:7]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW9Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 468, inserted: "BACKSPACE", 4:6]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DWWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 469, inserted: "\\", 4:7]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 470, inserted: "p", 4:8]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\pWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 471, inserted: "@", 4:9]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 472, inserted: "TAB", 4:10]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 473, inserted: "m", 4:11]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 474, inserted: "m", 4:12]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 475, inserted: "C", 4:13]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 476, inserted: "+", 4:14]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmC+Weyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 477, inserted: "BACKSPACE", 4:13]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 478, inserted: "J", 3:19]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	JE7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 479, inserted: "m", 3:20]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	JmE7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 480, inserted: "v", 3:21]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	JmvE7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 481, inserted: ";", 3:22]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 482, inserted: ",", 3:23]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 483, inserted: "+", 3:24]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{c76Ka}
+[snapshot: 484, inserted: "7", 4:63]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7c76Ka}
+[snapshot: 485, inserted: "J", 4:64]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7Jc76Ka}
+[snapshot: 486, inserted: "0", 4:65]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7J0c76Ka}
+[snapshot: 487, inserted: "BACKSPACE", 4:64]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7Jc76Ka}
+[snapshot: 488, inserted: "W", 4:65]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JWc76Ka}
+[snapshot: 489, inserted: "`", 4:66]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`c76Ka}
+[snapshot: 490, inserted: "5", 4:67]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`5c76Ka}
+[snapshot: 491, inserted: "BACKSPACE", 4:66]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`c76Ka}
+[snapshot: 492, inserted: "g", 4:67]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`gc76Ka}
+[snapshot: 493, inserted: "7", 4:68]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7c76Ka}
+[snapshot: 494, inserted: "[", 4:69]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[c76Ka}
+[snapshot: 495, inserted: "Q", 4:70]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[Qc76Ka}
+[snapshot: 496, inserted: "N", 4:71]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNc76Ka}
+[snapshot: 497, inserted: "q", 4:72]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNqc76Ka}
+[snapshot: 498, inserted: "7", 4:73]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq7c76Ka}
+[snapshot: 499, inserted: "8", 4:74]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78c76Ka}
+[snapshot: 500, inserted: "!", 4:75]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!c76Ka}
+[snapshot: 501, inserted: "D", 4:76]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!Dc76Ka}
+[snapshot: 502, inserted: "BACKSPACE", 4:75]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!c76Ka}
+[snapshot: 503, inserted: "D", 4:76]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!Dc76Ka}
+[snapshot: 504, inserted: "[", 4:77]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 505, inserted: ")", 3:23]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;),+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 506, inserted: "BACKSPACE", 3:22]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 507, inserted: "E", 3:23]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;E,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 508, inserted: "Q", 3:24]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;EQ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 509, inserted: "BACKSPACE", 3:23]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;E,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 510, inserted: "z", 3:24]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ez,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 511, inserted: "p", 3:25]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 512, inserted: "/", 3:26]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 513, inserted: "i", 3:27]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/i,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 514, inserted: "k", 3:28]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 515, inserted: "%", 3:29]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 516, inserted: "Z", 3:30]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Z,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 517, inserted: "c", 3:31]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Zc,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 518, inserted: "%", 3:32]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Zc%,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 519, inserted: "+", 3:33]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Zc%+,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 520, inserted: "BACKSPACE", 3:32]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Zc%,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 521, inserted: "BACKSPACE", 3:31]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%Zc,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 522, inserted: "K", 3:32]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 523, inserted: "!", 3:33]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 524, inserted: "P", 3:34]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 525, inserted: "-", 3:35]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 526, inserted: ")", 3:36]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-),+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 527, inserted: "X", 3:37]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)X,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 528, inserted: "V", 3:38]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XV,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 529, inserted: "J", 3:39]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 530, inserted: "\\", 2:3]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 531, inserted: "M", 2:4]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\M_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 532, inserted: "l", 2:5]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 533, inserted: "-", 2:6]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 534, inserted: "l", 2:7]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 535, inserted: "$", 2:8]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 536, inserted: "[", 2:47]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e[#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 537, inserted: "BACKSPACE", 2:46]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	e#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 538, inserted: "Z", 2:47]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 539, inserted: "?", 2:48]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 540, inserted: "x", 2:49]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 541, inserted: "TAB", 2:50]
+?S7hZO1	aBtjIc8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 542, inserted: "`", 1:16]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 543, inserted: "k", 3:8]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 544, inserted: " ", 1:34]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn| 6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 545, inserted: " ", 1:35]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 546, inserted: "#", 1:36]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  #6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 547, inserted: "`", 1:37]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  #`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 548, inserted: "BACKSPACE", 1:36]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  #6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 549, inserted: "BACKSPACE", 1:35]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 550, inserted: "}", 1:36]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 551, inserted: "(", 1:37]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 552, inserted: "NEWLINE", 2:1]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 553, inserted: "b", 2:2]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+b6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 554, inserted: "O", 2:3]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bO6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 555, inserted: "w", 2:4]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOw6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 556, inserted: "r", 2:5]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwr6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 557, inserted: "j", 2:6]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrj6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 558, inserted: "Q", 2:7]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 559, inserted: "\\", 2:8]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 560, inserted: "[", 2:9]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 561, inserted: "~", 2:10]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[~6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 562, inserted: "BACKSPACE", 2:9]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 563, inserted: "`", 2:10]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 564, inserted: "BACKSPACE", 1:1]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 565, inserted: "BACKSPACE", 1:1]
+?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 566, inserted: "/", 1:2]
+/?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 567, inserted: "s", 1:3]
+/s?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 568, inserted: "P", 1:4]
+/sP?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 569, inserted: "'", 1:5]
+/sP'?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 570, inserted: "TAB", 1:6]
+/sP'	?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 571, inserted: "9", 1:7]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 572, inserted: "NEWLINE", 6:1]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@f
+mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 573, inserted: "BACKSPACE", 5:58]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@fmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 574, inserted: "BACKSPACE", 5:57]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 575, inserted: "Z", 5:58]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@Zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 576, inserted: "T", 5:59]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 577, inserted: "x", 5:60]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTxmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 578, inserted: "BACKSPACE", 5:59]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 579, inserted: "E", 5:60]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTEmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 580, inserted: "NEWLINE", 6:1]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE
+mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 581, inserted: "BACKSPACE", 5:60]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTEmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 582, inserted: ",", 5:61]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 583, inserted: "<", 5:62]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 584, inserted: "o", 5:63]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<omwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 585, inserted: "(", 5:64]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<o(mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 586, inserted: "BACKSPACE", 5:63]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<omwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 587, inserted: "h", 5:64]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 588, inserted: "R", 5:65]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 589, inserted: "N", 5:66]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRNmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 590, inserted: "3", 5:67]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 591, inserted: "z", 5:68]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 592, inserted: "=", 5:69]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3z=mwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 593, inserted: "BACKSPACE", 5:68]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54't7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 594, inserted: "6", 4:68]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 595, inserted: "-", 4:69]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 596, inserted: "-", 4:70]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6--t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 597, inserted: ">", 4:71]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 598, inserted: "T", 4:72]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 599, inserted: "v", 4:73]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tvt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 600, inserted: "BACKSPACE", 4:72]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 601, inserted: "u", 4:73]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tut7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 602, inserted: "H", 4:74]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->TuHt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 603, inserted: "/", 4:75]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->TuH/t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 604, inserted: "BACKSPACE", 4:74]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->TuHt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 605, inserted: "BACKSPACE", 4:73]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tut7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 606, inserted: "BACKSPACE", 4:72]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->Tt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 607, inserted: ":", 4:73]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 608, inserted: ".", 4:74]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.t7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 609, inserted: "Z", 4:75]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 610, inserted: "c", 3:9]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 611, inserted: "*", 3:10]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$c*_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 612, inserted: "BACKSPACE", 3:9]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 613, inserted: "Q", 2:15]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziQ
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 614, inserted: "BACKSPACE", 2:14]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:zi
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 615, inserted: "G", 2:15]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 616, inserted: "3", 2:16]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 617, inserted: "@", 2:17]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 618, inserted: "M", 2:18]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 619, inserted: ")", 2:19]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M)
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 620, inserted: "4", 2:20]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M)4
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 621, inserted: "T", 2:21]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M)4T
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 622, inserted: "e", 2:22]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M)4Te
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}
+[snapshot: 623, inserted: "P", 2:23]
+/sP'	9?S7hZO1	aBtjIc`8^Vy+lUCe t/ <Yn|  }(
+bOwrjQ\[`6:ziG3@M)4TeP
+V\Ml-l$c_=RX/M=_}A#-(Q6+[8>SNu="s6i-Uh(}&IJX	eZ?x	#
+2]>W.=k356PuKN|uM	Jmv;Ezp/ik%ZcK!P-)XVJ,+E7]*5^MF5F&D3gJBH|!i	w54'6-->T:.Zt7%/8Avn$;U|,.Mn{
+vg'DW\p@	mmCWeyzo|R^pOu-xLP`|<W+Xq0BY\-(WvgbO4A0Ca7=<a]@ZTE,<ohRN3zmwp{7JW`g7[QNq78!D[c76Ka}

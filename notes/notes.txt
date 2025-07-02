@@ -1,0 +1,409 @@
+About having broken the test by merging lines-length retrivial 
+(no termwin needed) with text-building (termwin needed):
+
+  I thought merging these two was a good idea, because
+  doing it separately meant parsing the same exact 
+  data TWICE.  
+
+  I did it without even knowing if it ever had any 
+  real improvement and didn't run the tests before 
+  pushing to main.
+
+  I then ran the tests and of course they were broken:
+  in the tests i only call editor-functions, no 
+  rendering-function as it's not needed to test the 
+  piece-table. I was even careful in splitting 
+  the editor and the rendering just for the 
+  testing. 
+
+  The tests failed because the get_lines_len() didn't 
+  exists anymore. I never called 'build_table_text_and_get_lines_len()'
+  anywhere in the test, but since the piece-table  
+  algorithm doens't strictly need lines-length info
+  to edit its data (insertion after piece, editing same 
+  last piece), it manage to work without breaking and 
+  fail normally.
+  
+  Now this can be solved in a few ways: 
+    - fake polymorphism through preprocessor: 
+      through the preprocessor i could disable 
+      the function parameter declaration so it 
+      doesn't need the TermWin array when testing, 
+      as well disabling the highlighting + text-building
+      logic, ending up basically with the same
+      get_lines_len() i had before.
+
+      But I don't know if it would work because i don't 
+      know in which order the preprocessor edits the file, 
+      meaning that if i do '#define TESTING_TABLE' in 
+      test.c and disable the logic in fred.c/h with if it
+      exists, I don't know if fred.c/h will get parsed 
+      first, which means the logic could end up not 
+      getting disabled and giving a false-positive failure.
+
+      [IDEA]:
+      I can make it work if i eidt 
+
+
+    - having 'build_table_text_and_get_lines_len()' do 
+      the current job and keeping the old 'get_lines_len()'
+      just for testing:
+
+      This is risky, because if i edit the line 
+      retrieval logic in 'build_table_text_and_get_lines_len()'
+      i will absouletely forget about editing 'get_lines_len()'
+
+    - making them separate again:
+      I can just keep them separate and have 
+      build_table_text_and_get_lines_len() backpatch the 
+      lines-length. 
+      This means doing the same job twice.
+    - 
+     
+
+
+----------------------------------------------------------------
+About highlighting:
+
+  we will build the all text with the escape codes right before 
+  the keyword, and in get_text_to_render() we will place them into 
+  the tw.
+  --------------------------
+  About the escape codes fucking up the text to render:
+    I feel like the answer is so close, i mean, the 
+    offset amount is constant to the number of escape codes.
+
+    Maybe this has something to do with it?
+    https://stackoverflow.com/a/66193363
+    But we MANAGE TO GET the highlighting, it's just the placement 
+    that gets fucked.
+  --------------------------
+  [UPDATE]:
+  The moment the '[' of an escape code gets parsed, the text gets shifted.
+
+
+  [ISSUE, unrelated to what was talking about]:
+  With the second everything is *almost* perfect: lines
+  are placed where they should UNTIL you scroll. 
+  The moment you scroll down and a line with escape codes 
+  past the top limit of the screen, everything gets fucked up.
+
+  [FIXED? found the bug, no fix added]:
+  This is caused by us using the lines len of the NORMAL text 
+  as start offset, where we should actually be using lines_len
+  that also count the escape-codes length.
+  
+  [IDEA]:
+    we can store lines-len into uin32_t 
+    and use the last 2 bytes to store the lines-len
+    considering the escape codes. 
+    This way we can go back to using that 
+    to find the first_line_to_render_offset.
+
+    ACTUALLY in the 2 bytes we can just store 
+    the count of highligted words and 
+    calculate the length separately. 
+    
+    [ISSUES]:
+    But this is not very good if 
+    we wanna allow escape codes with different 
+    lengths.
+
+    So maybe we can just store the all length.  
+
+  Back to what i was saying, changing the escape codes 
+  to visible chars, shows that now it isn't my problem:
+  before I was taking into account the escape lenghts, but 
+  now that i'm not the problem still persist, tho it's less 
+  visisble with proper escape codes. If you try and 
+  use visible chars as fake escape codes, everything works.
+
+  So it has to do with the ANSI character '\x1b'.
+  -------------------
+  
+  [NEW IDEA]:
+
+  what if i do my old rendering and then i directly print the 
+  highlighted words ON TOP the already drawn chars??? 
+
+  I just need to save the offsets of the words start of the 
+  words and the type of the word.
+  --------------------
+
+  What if in the table text i set a flag-byte at the start 
+  of each keyword and then in get_text_to_render 
+  when meeting it i save the window row/col?
+
+  [UPDATE IDEA]:
+    As flag you we can use the length of the keyword but negative 
+  --------------------
+
+
+  Unfortunately this highlighting technique doesn't work 
+  too well with huge bodies of text such as comments.
+  The way we can make it work is to reprinting 
+  te comment by retrieving it with the row/col we stored. 
+
+
+
+  [UPDATES about old highlight idea]:
+    I tried again to subsitute the escape codes with visible 
+    characters and test this with files/files2.txt and src/fred.c.
+    Everything gets rendered at the right place.
+
+    In fred_get_text_To_render(), we then tried putting a sentinel character ('.') at the end of 
+    the tw->elems and see if it ever got overwritten; 
+    this assert we used to check it never failed, which means
+    this purely a rendering problem with fwrite and stdout, NOT MINE.
+
+    [UPDATE]: 
+    i'm starting to think that my terminal cannot support this specific case 
+    of rendering for some reason
+
+    ------------------------------
+    [UPDATE]:
+    I tried to subsitute the escape codes with visible 
+    characters and test this with files/files2.txt and src/fred.c.
+
+    With the first file, everything gets rendered perfectly: 
+    the lines are placed where they should. 
+
+    [UPDATE, breakthrough]:
+    This is totally all my fault, the comments on reddit 
+    were right.
+    Storing the escape codes decreases the 
+    the number of slots needed for the 'right-side' padding,
+    but since they're not rendered, the text appears to 
+    get pushed backwards.
+
+    So we need to place the escape codes, but not count them  
+    when we calculate the offset to the next line.
+
+    So we need to place the new lines much forward than 
+    before.
+
+    So it's totaly my fault.
+
+
+    We almost succeded but i'm not able to set the cursor
+    to the right place.
+
+    Basically we will always end up writing outside the 
+    tw array, which means we have to reallocate it 
+    every time we tokenize it.  
+    Despite that we will always end up placing the text 
+    ahead of where it should be if no escape code were 
+    there (we're still in boundaries if we reallocate),
+    which makes adding text at the bottom of the screen 
+    very hard, especially at the right-bottom, because 
+    we have to shift it and such. 
+
+    
+
+  
+ 
+--------------------------------------------------------------------------
+About getting the text-to-be-rendered:
+  Right now FRED_get_text_to_render() builds
+  the text after both navigating (text hasn't changed)
+  and editing (text has changed).
+  I think we shouldn't need that for when we navigate,
+  we should like build it once to use until you
+  edit. 
+  But this means having an ADDITIONAL copy of the table 
+  content which i think is wasteful and stupid.
+  ----------------
+
+  This phase needs to:
+    - be fast enough not have artifacts when resizing the window
+    - support highlighting, meaning text parsing and adding  
+      the control chars to the text
+    - i want the TW content to be easily editable so that :
+      in debug mode, when i want to see a variable I should 
+      be able to write it to the TW, as well as having  
+      a window system 
+                      
+  ----------------------
+
+  I just tried to memcpy the table content in TW, without 
+  caring about newlines and all.
+
+  PROS: 
+    - It automatically takes care of the lines placement, since 
+      we have the newlines.
+    - It leaves the line-wrapping to the terminal itself.
+    - It's much faster, if you resize you don't have artifacts.
+
+  CONS: 
+    - No control over what is shown, basically you can only 
+      render the table content. 
+    - When resizing you don't 'stay' on your current line; 
+      instead as the lines wrap, the text gets scrolled 
+      (normal terminal behaviour, just not what we want).
+
+  The problem with all of this research is that i
+  think assignment char-by-char is slower than memcpy
+  with NO ACTUAL EVIDENCE.
+
+  The only think i know for sure is faster is using the 
+  LinesLen to reach the first line in the table to render,
+  which is totally unrelated to the points above (it was 
+  faster even by using char-by-char parsing).
+
+  If i now force the use of mempcy, the compiler might 
+  not be able to optimize to something faster 
+  ------------------------------
+
+
+
+                      
+                      
+      
+      
+
+
+--------------------------------------------------------------------------------
+About fixing broken test_big_2:
+  [FIXED]: when scrolling up/down in fred, if the next line is shorter 
+  than the current cursor column, this will set to the end of the next line. 
+
+  Now, the next random position could be several lines away,
+  but we were only doing this 'cursor-column fixing' ONLY for 
+  the line at the next position,  when we should have done it 
+  for ALL the lines between the current and the next position.
+
+  To find out all of this, we looked at the at the snapshot 
+  before the failing one and saw that cursor poisitions were 
+  different. 
+
+  We than looked at the navigation key before  
+  the inserted-key and tried to check manually on the term if
+  they would lead to the right spot. 
+  Here we found out that Fred's output was correct.
+  ---------------------------------------------
+
+  It's the test-keys generation that is wrong:
+  When you scroll up, the cursor-col will be equal to the 
+  line-above length if the line above is SHORTER, otherwise
+  it stays the same. THAT'S THE BEHAVIOUR WE WANT.
+
+  on big_2, we fail at snapshot 304, after having scrolled 
+  up from the last line to the 1st one. 
+  At this moment the 2nd line is SHORTER than the 1st one. 
+
+  During the snapshot generation however, 
+  when scrolling from the 2nd up to the 1st one, 
+  we moved the cursor to the end of the 1st line!!!
+
+
+  This means we're doing something wrong in gen_keys_to_next_curs_pos(). 
+
+  What i think happened is that the next positon generated 
+  was the END of 1st line, but when generating the keys   
+  we didn't generate the keys to go there, we only moved up and not to the right.
+  So the cursor stayed the same and when running the test we got that 
+  result, so the behaviour of fred is correct. 
+
+  [UPDATE]: it's confirmed that we indeed didn't generate the keys 
+  to reach the next random position, i looked at the coordinates  
+  generated during the script and the next position was indeed the 
+  end of the 1st line. We correclty generated the keys to move 
+  up but not the ones to move to the right.
+
+
+
+--------------------------------------------------------------------------------------
+About using lines-lengths to reach piece to edit faster:
+
+- find offset of current-line-start by summing all lines-length until 
+  line before current one, lets call it 'line_start_offset', and 
+  add the cursor column to it
+
+
+- sum all pieces lengths till it's equal or greater to 
+
+
+------------------------------------------------------------------------------------
+About saving piece-info alongside lines-length 
+for much faster editing [ABORTED IDEA]: 
+
+    If i somehow save the piece-info of line-start/end 
+    in the array, editing will be much faster.
+    But would it actually make it faster?
+
+    [ABORTED]: this idea would: 
+      - make "lines_length[cursor.row];" impossible 
+      - info is valid only once, as after an
+        edit the info is different; you have
+        to recompute it after each edit
+      - require more space
+      - be difficult to parse: is the slot piece-info
+        or line-length?
+
+    - ISSUES!!!!: 
+      this would the array useless.
+      Using the array in for edit requires rebuilding 
+      the array after each edit, cause the info is 
+      now out-of-date.
+      The point of the array is to get the info 
+      and not have to recompute until new info
+      is needed.
+
+    I just need to save the piece-idx and the
+    offset to the start of the line. 
+    - ISSUES:
+      - What if the line is spread across multiple 
+        pieces?
+        When editing I would still end up having 
+        to travel n-pieces to get where i need 
+        to edit the line, where worst case is n = table->len.
+
+      - What if multiple line-starts in 'live' in 
+        the same piece? It's wasteful to
+        store the same piece-info many times.
+        This means sharing, which means having a 
+        flagging system to tell apart
+        piece-info slots from lines-lengths slots.
+
+        - ISSUE: this would make the array useless:
+          The piece-info would likely be at the start,
+          which means this:
+              lines_length[cursor.row];
+          is not possible anymore.
+
+        - IDEA: use negative numbers but this 
+          would half the max length you can store. 
+          I could store it AS the max value and then
+          convert to int and check if it's -1? 
+          - ISSUES:
+            - Risky I could have at some point some 
+              65355 characters-long line. This would 
+              fuck up badly the editor.
+
+-------------------------------------------------------------------------
+About fred failure caused by memmoving freed pointers:
+
+all tests fail because of realloc() errors, sometimes 'invalid next size',
+  other times some malloc assertion or something like that, the error messages
+  vary on the test being run. 
+  Either way something corrupts the heap.
+  
+  All of them are DETECTED and reported by realloc(), when the corruption
+  has already happened.
+
+  I strongly believe is me doing some memmove() the wrong way: 
+  I occasionally realloc the piece-table and pass an old piece-pointer (I created
+  before the realloc() call) to memmove(). 
+  This old piece-pointer could now be invalidated if the piece-table 
+  got reallocated somewhere else, so maybe memmove() is moving data it shouldn't touch.
+
+  Something that tells me this is right is that the corruption doesn't happen right 
+  away, but after several realloc()  calls. So using the old-pointer to memmove()
+  works as long as the pointed-to memory is the same.
+
+  Maybe I can pass a piece-index to piece_table_make_room() macro instead of a 
+  piece-pointer, so i can then take the proper piece-pointer and using in memmove().
+  
+
+
+

@@ -1,0 +1,181 @@
+
+
+/*
+FIXME: the bytes_read was needed to detect 
+multi-byte chars and quit on any of them. 
+Now i just ignore them but in the future
+i will handle them. 
+The thing is that in the tests right now 
+we don't even read from the stdin.
+So what do i do?
+Do i just set 'bytes_read = 1' in test.c?
+*/
+
+bool FRED_handle_input(FredEditor* fe, bool running, bool insert, char* key, ssize_t bytes_read)
+{
+  bool failed = 0;
+  fe->cursor.prev_row = fe->cursor.row;
+  fe->cursor.prev_col = fe->cursor.col;
+
+  if (insert){
+    if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")){ // escape
+      fe->last_edit.cursor = fe->cursor;
+      insert = false;
+    } else if (KEY_IS(key, "\x7f")){
+      if (FRED_delete_text(fe)) GOTO_END(1);
+    } else{
+      if (b_read == 1) {
+        if (FRED_insert_text(fe, key[0])) GOTO_END(1);
+      }
+    }
+    FRED_get_lines_len(fe);
+  } else {
+    if (KEY_IS(key, "h") || KEY_IS(key, "j") || KEY_IS(key, "k") || KEY_IS(key, "l"))  {
+      FRED_move_cursor(fe, key[0]); // TODO: don't save the prev_curs here anymore 
+      update_win_cursor(fe, &tw);
+    } else if (KEY_IS(key, "q")){
+      running = false;
+    } else if (KEY_IS(key, "i")) {
+      insert = true;
+    } else if (KEY_IS(key, "\x1b") || KEY_IS(key, "\x1b ")) {
+      insert = false;
+    }
+  }
+end:
+  return failed;
+}
+
+void fred_start_editor()
+{
+...
+...
+  while (running) {
+    FRED_get_text_to_render(fe, &tw, insert);
+    FRED_render_text(&tw, &fe->cursor);
+
+    char key[MAX_KEY_LEN] = {0};
+    ssize_t b_read = read(STDIN_FILENO, key, MAX_KEY_LEN);
+
+    if (b_read == -1) {
+      if (errno == EINTR){
+        if (FRED_win_resize(&tw) GOTO_END(1);
+        update_win_cursor(fe, &tw);
+        continue;
+      }
+      ERROR("failed to read from stdin");
+    }
+
+    if (b_read > 0) {
+      if (FRED_handle_input(fe, running, insert, key, bytes_read)) GOTO_END(1);
+      update_win_cursor(fe, &tw);
+    }
+  }
+}
+
+
+
+---------------------------------------------------------------
+
+// NOTE: dest lives on the heap;
+// if we need bigger we realloc, else
+// we just reuse.
+// I can store the lines-count and the 
+// array length in the first 2 slots;
+// But this assumes that we can only have 
+// array size up to 65535 and lines-count   
+// up to 65535, as the 2 slots are always 
+// occupied.
+
+void get_lines_length(PT* t, uint16_t* dest)
+{
+
+  size_t _tot_text_len = 0;
+    for (size_t i = 0; i < t->len; i++) {
+    piece = t[i];
+    _tot_text_len += piece->len;
+  }
+
+  // Not sure I will encode the length
+  ENCODE_LEN_AND_RESIZE_ARRAY_MACRO(dest, tot_text_len);
+
+  int next_line_start = 0;
+  int tot_text_len = 0;
+  for (int i = 0; i < t->len; i++) {
+    piece = t[i];
+    buf = piece->buf;
+
+    for (int j = 0;I < piece->len; j++) {
+      char c = buf[j];
+      if (c == '\n' || is_last_piece_last_char) {
+        // NOTE: we add +1 because we count from 1 past the string's end:  
+        // "abcd", 'a' -> idx = 0, 'd' -> idx = 3
+        // str_len = 3 - 0 = 3, but we have 4 chars
+        // So we count +1 from the end of the string.
+        // str_len = 4 - 0 = 4
+        // If last char is '\n' we don't need to add the +1, just 
+        // use the newline's idx, cause it's past the string's end 
+
+        // TODO: what if last_char is '\n'???
+        int curr_line_end = tot_text_len + j + (is_last_piece_last_char);
+        *dest++ = curr_line_end - last_line_offset;
+        next_line_start = curr_line_end + 1; // TODO: what if last_char is '\n'??? What would its length be???
+      }
+    }
+    tot_text_len += piece->len;
+  }
+}
+
+
+
+
+
+TODO: win_cursor should be repositioned after: 
+- editing
+- moving the cursor 
+- window resizing 
+
+CHECK: should all cursor movement happen from
+one function? For example insert_text() also
+edits the cursor. 
+If i decide to do it this way, it would get
+messy because I need to pass a lot of info
+around.
+
+
+-----------------------------------------------------------
+
+
+void normal_mode_edit(char key, uint16_t* lines_len)
+{
+  if (key in ( 'd', 'x', 'p')) {
+    edit();
+  }
+  get_line_len(lines_len);
+}
+
+fred_main_loop(TermWin* tw)
+{
+  get_text();
+  render_text();
+
+  uint16_t* lines_len;
+
+  if (normal_mode) {
+    switch(key) {
+      case nav:               navigate();
+      case quit:              quit();
+      case imode:             set_imode();
+      case normal_mode_edit:  normal_mode_edit(key, lines_len)
+    }
+  } else {
+    if (key == ESC) {
+      set_nmode();
+      get_line_len(lines_len);
+    } else {
+      edit(key);
+    }
+  }
+  FIXME: but this happens even when 
+  its not needed.
+  show_win_cursor(); // text scrolling should happen here
+}

@@ -1,0 +1,79 @@
+------------------------------------------------------------------------------------
+# FILES = src/%.c src/%.h -> i guess % only works inside the actual target or prerequisites 
+------------------------------------------------------------------------------------
+
+-- '$<' variable and compiling object files with multiple headers
+
+The '-c' flag means compiling without linking. 
+Remember that linking is the phase the object files are merged into one executable.
+Compiling instead is the phase when you take a SINGLE source file (.c) 
+and its headers (a translation unit) and generate an 'object' file.
+
+If you use multiple source files (.c) with the -c flag, the compiler 
+will complain about it.
+
+So if compiling without linking can only use a SINGLE source file, why does this rule work?
+
+        $(BUILD_DIR)/main.o : src/main.c src/fred.h src/common.h | $(BUILD_DIR)
+          $(CC) -c -o $@ $< $(CFLAGS)
+
+I mean, the prerequisites specify multiple files right? It should complain, right? 
+This is because my understanding of prerequisites was wrong.
+I thought the prerequisites were automatically passed down to 
+the recipe. 
+
+The prerequisites specify files that needs to be checked for changes (or if they're 
+non-existent). Sometimes this files are also targer-rules. 
+What basically happens is that Make will look for a file matching 
+that has not being changed since the last check. 
+
+If it fails (meaning the file either doesn't exist or has been 
+changed since last time), Make then look for a target-rule matching 
+the prerequisite to re-build the file.
+
+So PREREQUISITES ARE JUST FILES TO BE CHECKED FOR ANY CHANGE. That's it. 
+In rule above, Make checks if any of 'main.c', 'fred.h' or 'common.h' have 
+changed, it does not automatically pass them to the recipe.
+
+But we need to pass something to the recipe, namely the source file (.c) 
+that we want to use for the object file. 
+For that the rule it's using the '$<' variable, which expands to 
+the FIRST prerequisite (and ONLY to the first) in the given to the rule, 
+in this case 'main.c'.
+
+The COMPILER does NOT really need you to pass the header files, 
+because the preprocessor knows already that it needs to include
+the headers. 
+
+For Make INSTEAD you do need to specify the header files, because  
+if they change, the source file that includes them needs to be rebuilt. 
+But Make does not know by itself that it needs to also check for this
+headers, that's why you specify them in the rule.
+
+
+
+
+--------------------------------------------------------------------------
+FILES was expanded to 'src/fred.c src/main.c ...' and 
+'$<' expands to the FIRST prerequisite, meaning 'src/fred.c'.
+Building the object files works fine, but because the wrong 
+files are used to generate them, you have the right object file
+under the wrong name, which will give you linking erros: 
+'build/main.o' used 'src/fred.c' to build itseld, 
+which has no main(). The same goes  for all the other linking problems 
+
+This is the output:
+cc -c -o build/main.o src/fred.c -Wall -Wextra -Wpedantic 
+src/fred.c: In function ‘FRED_start_editor’:
+src/fred.c:485:52: warning: unused parameter ‘file_path’ [-Wunused-parameter]
+# 485 | bool FRED_start_editor(FredEditor* fe, const char* file_path)
+    # |                                        ~~~~~~~~~~~~^~~~~~~~~
+gcc -c -o build/fred.o src/fred.c -Wall -Wextra -Wpedantic
+src/fred.c: In function ‘FRED_start_editor’:
+src/fred.c:485:52: warning: unused parameter ‘file_path’ [-Wunused-parameter]
+# 485 | bool FRED_start_editor(FredEditor* fe, const char* file_path)
+    # |                                        ~~~~~~~~~~~~^~~~~~~~~
+gcc -o build/fred build/main.o -Wall -Wextra -Wpedantic 
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x24): undefined reference to `main'
+collect2: error: ld returned 1 exit status
