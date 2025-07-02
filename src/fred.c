@@ -153,17 +153,75 @@ end:
 }
 
 
-// DESC: store the piece-table text into a dynamic char array, 
-// flagging the start of keywords (including comments) with 
-// a negative id. It's negative so it's faster to check for them.
-// For each line, store its proper length and the 
-// length + keywords-per-line, each into 2 bytes of a uint32_t.
-// This is rendering, specifically to make the job of 
-// FRED_get_text_to_render() easier, by avoiding 
-// jumping around in memory a lot (which we would have to do if parsing 
-// directly with pieces) 
-bool build_table_text_and_get_lines_len(FredEditor* fe, TermWin* tw)
+// TODO+NOTE: EOL at end of file (like the ones saved 
+// with neovim) will get considered as proper line 
+// NOTE: last 2 bytes in line-item are reserved 
+// for the keywords-per-line count, used for 
+// rendering highlighting
+bool FRED_get_lines_len(FredEditor* fe)
 {
+#define is_last_char(t, p, i, j) ((i) == (t)->len - 1 && (j) == (p).len - 1)
+#define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
+
+  bool failed = 0;
+  PieceTable* table = &fe->piece_table;
+  LinesLen* ll = &fe->lines_len;
+  
+  ll->len = 0;
+  size_t line_start = 0;
+  size_t tot_text_len = 0;
+  DA_PUSH(ll, 0, 8, LinesLen);
+
+  for (size_t i = 0; i < table->len; i++) {
+    Piece p = table->items[i];
+    for (size_t j = 0; j < p.len; j++) {
+      char c = buf(p, p.offset + j);
+      if (c == '\n' || is_last_char(table, p, i, j)) {
+        size_t line_end = tot_text_len + j + (c != '\n');
+        size_t line_len = line_end - line_start;
+        // TODO: what if file is some big ass data not separated by newlines?
+        assert(line_len <= UINT16_MAX, "line-length overflow (max line-length is UINT16_MAX, 65535), "
+                                       "length cannot be stored for later usage");
+        ll->items[ll->len - 1] = (uint16_t)line_len;
+        line_start = line_end + 1;
+        if (c == '\n') DA_PUSH(ll, 0, 8, LinesLen);
+      }
+    }
+    tot_text_len += p.len;
+  }
+end:
+  return failed;
+#undef is_last_char
+#undef buf
+}
+
+
+
+// NOTE+TODO: get_lines_len() and build_table_text_for_render()
+// parse the table twice back to back, so it would 
+// be reasonable to have just one big function.
+// However, this mixes up the editor's logic with 
+// rendering logic, which doesn't play nice with 
+// 'test.c' since it should only test the piece-table 
+// (and later on the more of editor logic) and shouldn't 
+// need any rendering info (TermWin array, win size etc.) at all.
+// I tried using one big function and disabling 
+// the rendering logic with the preprocessor,
+// but i couldn't make it work and everything got messy.
+// I would like to fix this in the future, but 
+// for now we will keep it like this.
+
+
+
+// DESC: stores table-text in dyn-array, where
+// each keyword's start is flagged with a negative keywordID.
+// Also stores the keywords-per-line count in the last 
+// 2 bytes of each LinesLen item. 
+// All this is solely for easier rendering, 
+// never used in editing logic.
+bool build_table_text_for_render(FredEditor* fe, TermWin* tw)
+{
+
 #define highlight(keyword, keyword_len, keyword_id) do { \
   DA_MAYBE_GROW(tt, 1, TABLE_TEXT_INIT_CAP, TableText); \
   tt->items[tt->len - (keyword_len)] = (int8_t)(keyword_id) * -1; \
@@ -178,19 +236,16 @@ bool build_table_text_and_get_lines_len(FredEditor* fe, TermWin* tw)
 
   bool failed = 0;
   PieceTable* table = &fe->piece_table;
+  LinesLen* ll = &fe->lines_len;
+  size_t curr_line = 0;
+
   TableText* tt = &tw->table_text;
   tt->len = 0;  
-
-  LinesLen* ll = &fe->lines_len;
-  ll->len = 0;
-  size_t line_start = 0;
-  size_t tot_text_len = 0;
-  DA_PUSH(ll, 0, 8, LinesLen);
 
   char word[MAX_WORD_LEN] = {0};
   size_t word_len = 0;
   size_t word_offset = 0;
-  uint32_t keywords_per_line = 0;
+  size_t keywords_per_line = 0;
   bool is_comment = false;
 
   for (size_t i = 0; i < table->len; i++) {
@@ -199,34 +254,28 @@ bool build_table_text_and_get_lines_len(FredEditor* fe, TermWin* tw)
       char c = buf(p, p.offset + j);
 
       if (c == '\n' || is_last_char(table, p, i, j)) {
-        size_t line_end = word_offset + j + (c != '\n');
-        uint32_t line_len = line_end - line_start;
-        // TODO: what if file is some big ass data not separated by newlines?
-        assert(line_len <= UINT16_MAX, "line-length overflow (max line-length is UINT16_MAX, 65535), "
-                                       "length cannot be stored for later usage");
-        ll->items[ll->len - 1] = line_len | (uint32_t)(line_len + keywords_per_line) << (16*1);
-        line_start = line_end + 1;
-        if (c == '\n') {
-          DA_PUSH(ll, 0, 8, LinesLen);
-          keywords_per_line = 0;
-        }
+        assert(curr_line < ll->len, "tried to write past limit, when saving keywords count per line");
+        ll->items[curr_line++] |= (keywords_per_line << (16*1));
+        keywords_per_line = 0;
       }
 
-      if (word[0]== '/' && word[1] == '/') {
+      if (word[0] == '/' && word[1] == '/') {
         highlight("//", word_len, KW_COMMENT);
-        memset(word, 0, MAX_WORD_LEN);
-        word_len = 0;
         is_comment = true;
+        word_len = 0;
+        memset(word, 0, MAX_WORD_LEN);
       }
 
       if (!is_comment) {
         if (word_len >= MAX_WORD_LEN) {
           memset(word, 0, MAX_WORD_LEN);
           word_len = 0;
+
         } else if ((c < 'a' || c > 'z') && c != '#' && c != '/') {
           switch (word_len) {
             case 2: {
-              if (match("if")) highlight("if", word_len, KW_IF);
+              if (word[0] == 'i' && word[1] == 'f') 
+                highlight("if", word_len, KW_IF);
               break;
             }
             case 3: {
@@ -280,6 +329,7 @@ bool build_table_text_and_get_lines_len(FredEditor* fe, TermWin* tw)
 
       if (c == '\n') is_comment = false;
 
+      
       DA_PUSH(tt, c, TABLE_TEXT_INIT_CAP, TableText);
     }
     word_offset += p.len;
@@ -294,12 +344,13 @@ end:
 
 
 
-// DESC: place char by char the editor's text 
-// and save the row/col in the window and 
-// length of to-be-highlighted keywords.
-// When parsing comments we also save its length,
-// which includes the right-side padding, so 
-// we can directly print them from the TermWin array
+// DESC: places the editor's text char-by-char
+// into TermWin array, saves ID and row/col in TermWin
+// of keywords into a dyn-array for highlighting. 
+// When parsing a comment also saves 
+// comment's length + any right/left-padding.
+// This way we can print the highlighted comment directly
+// from the TermWin array.
 bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
 {
 #define buf(p, offset)((!(p).which_buf ? fe->file_buf.text: fe->add_buf.items)[(offset)])
@@ -329,7 +380,9 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
   // TODO: cache it
   size_t fl_offset = 0; // First Line to render
   for (size_t i = 0; i < tw->lines_to_scroll; i++) {
-    fl_offset += (ll->items[i] >> (16*1) & 0xffff) + 1; // NOTE: '+1' is for '\n' 
+    size_t item = ll->items[i];
+    size_t line_len = (item & 0xffff) + ((item >> (16*1)) & 0xffff); // NOTE: line len + keywords count in line
+    fl_offset +=  line_len + 1; // NOTE: '+1' is for '\n' 
   }
 
   size_t tw_elems_idx = tw->linenum_width;
@@ -342,10 +395,11 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
     if (tw_elems_idx >= last_row_offset) break;
     char c = tt->items[i];
 
-    if (c < 0) { // next there's a keyword to highlight
-      if (c * -1 == KW_COMMENT) comment_start = tw_elems_idx;
-      size_t kw_coords_and_id = tw_row | (tw_col << (16*1)) | ((size_t)(c * -1)) << (16 * 2);
-      DA_PUSH(ho, kw_coords_and_id, 8, HighlightOffsets);
+    if (c < 0) { // NOTE: Next there's a keyword to highlight
+      size_t keyword_id = c * -1;
+      if (keyword_id == KW_COMMENT) comment_start = tw_elems_idx;
+      size_t item = tw_row | (tw_col << (16*1)) | (keyword_id << (16 * 2));
+      DA_PUSH(ho, item, 8, HighlightOffsets); // TODO: make a ho-init-cap
       continue;
     }
 
@@ -355,7 +409,7 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
         tw_col = tw->linenum_width;
         tw_row++;
       }
-      if (comment_start && i == tt->len - 1) {
+      if (comment_start && i == tt->len - 1) { // NOTE: saving comment length + any right/left-padding
         ho->items[ho->len - 1] |= ((tw_elems_idx + 1) - comment_start) << (16 * 3);
         comment_start = 0;
       }
@@ -363,7 +417,7 @@ bool FRED_get_text_to_render(FredEditor* fe, TermWin* tw, bool insert)
       tw_col++;
     } else {
       line++;
-      if (comment_start) {
+      if (comment_start) { // NOTE: saving comment length + any right/left-padding
         ho->items[ho->len - 1] |= (tw_elems_idx - comment_start) << (16 * 3);
         comment_start = 0;
       }
@@ -693,9 +747,10 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
   fprintf(stream, "LINES-LENGHTS:\n");
   fprintf(stream, "arr-len: %ld\n", fe->lines_len.len );
   for (size_t i = 0; i < fe->lines_len.len; i++){
-    fprintf(stream, "[%ld] = %d,\n", i + 1, fe->lines_len.items[i]);
+    fprintf(stream, "[%ld] = %d,\n", i + 1, (fe->lines_len.items[i] & 0xffff));
   }
 
+#if 0
   fprintf(stream, "TABLE (len: %ld, cap: %ld):\n", fe->piece_table.len, fe->piece_table.cap);
   for (size_t i = 0; i < fe->piece_table.len; i++){
     Piece piece = fe->piece_table.items[i];
@@ -709,6 +764,7 @@ void dump_piece_table(FredEditor* fe, FILE* stream)
   fprintf(stream, "ADD-BUF:\n");
   fprintf(stream, "%.*s\n", (int)fe->add_buf.len, fe->add_buf.items);
   fprintf(stream, "----------------------------------------------------------------------\n");
+#endif
 }
 
 
@@ -822,6 +878,7 @@ bool FRED_handle_input(FredEditor* fe, bool* running, bool* insert, char* key, s
     } else if (bytes_read == 1) {
       if (FRED_insert_text(fe, key[0])) GOTO_END(1);
     }
+    if (FRED_get_lines_len(fe)) GOTO_END(1);
   } else {
     if (KEY_IS(key, "h") || KEY_IS(key, "j") || KEY_IS(key, "k") || KEY_IS(key, "l"))  {
       FRED_move_cursor(fe, key[0]);
@@ -850,9 +907,11 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
   tw.linenum_width = 8;
   if (FRED_win_resize(&tw)) GOTO_END(1);
 
-  if (build_table_text_and_get_lines_len(fe, &tw)) GOTO_END(1);
+  if (FRED_get_lines_len(fe)) GOTO_END(1);
+  if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
   if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
-
+  
+#if 1
   while (running) {
     if (FRED_render_text(&tw, &fe->cursor)) GOTO_END(1);
 
@@ -873,11 +932,12 @@ bool FRED_start_editor(FredEditor* fe, const char* file_path)
       if (FRED_handle_input(fe, &running, &insert, key, bytes_read)) GOTO_END(1);
       update_win_cursor(fe, &tw);
       if (was_insert) {
-        if (build_table_text_and_get_lines_len(fe, &tw)) GOTO_END(1);
+        if (build_table_text_for_render(fe, &tw)) GOTO_END(1);
       }
       if (FRED_get_text_to_render(fe, &tw, insert)) GOTO_END(1); 
     }
   }
+#endif 
 end:
   if (!failed) { // NOTE: else the ERROR() macro has already cleared the screen
     fprintf(stdout, "\x1b[2J\x1b[H");

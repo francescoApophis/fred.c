@@ -140,7 +140,9 @@ typedef struct {
 
 
 typedef struct {
-  uint32_t* items; // NOTE: 1st 2 bytes -> actual line length; 2nd 2 bytes -> line length + keyword-byte-flags count 
+  uint32_t* items; // NOTE: LSB order, 
+                   // 1st 2 bytes -> actual line length; 
+                   // 2nd 2 bytes -> keywords in line count, used only for highlight rendering
   size_t len; // total lines in piece-table
   size_t cap;
 } LinesLen;
