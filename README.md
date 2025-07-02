@@ -39,6 +39,7 @@ There are two modes:
 ## Debugging 
 For debugging: 
 - ```$ make Debug```
+
 [You can then follow these instruction to debug with gdb](https://stackoverflow.com/a/15306382)
 from the terminal, which is what I use since I don't really know about 
 other debuggers.
